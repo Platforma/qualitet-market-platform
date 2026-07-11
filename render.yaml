@@ -1,0 +1,94 @@
+# Render Deployment Configuration
+# Deploy with: https://render.com/deploy?repo=https://github.com/Platforma/qualitet-market
+
+version: 1
+
+services:
+  # Backend API Service
+  - type: web
+    name: qualitet-market-api
+    env: docker
+    repo: https://github.com/Platforma/qualitet-market
+    region: frankfurt
+    branch: main
+    dockerfilePath: backend/Dockerfile
+    buildCommand: npm install && npm run migrate
+    startCommand: npm start
+    port: 10000
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: PLATFORM_MARGIN_DEFAULT
+        value: "15"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "100"
+      - key: AUTH_RATE_LIMIT_MAX
+        value: "30"
+      - key: UPLOAD_MAX_SIZE_MB
+        value: "10"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_HOST
+        fromDatabase:
+          name: qualitet-market-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: qualitet-market-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: qualitet-market-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: qualitet-market-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: qualitet-market-db
+          property: password
+      - key: ALLOWED_ORIGINS
+        value: https://qualitet-market.com,https://www.qualitet-market.com
+      - key: APP_URL
+        value: https://www.qualitet-market.com
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+
+  # Frontend Service (Next.js)
+  - type: web
+    name: qualitet-market-web
+    env: node
+    repo: https://github.com/Platforma/qualitet-market
+    region: frankfurt
+    branch: main
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    port: 3000
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE
+        fromService:
+          name: qualitet-market-api
+          property: url
+        value: /api
+
+# Database
+databases:
+  - name: qualitet-market-db
+    databaseName: hurtdetal_qualitet
+    user: postgres
+    plan: free
+    region: frankfurt
