@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Subdomain store routes – accessed via slug.qualitetmarket.pl.
+ * Subdomain store routes – accessed via slug.qualitet-market.com.
  *
  * All three endpoints require the resolveStoreFromSubdomain middleware to have
  * resolved req.store from the Host header before the handler runs.
@@ -93,17 +93,14 @@ router.get('/categories', async (req, res) => {
 
   try {
     const result = await db.query(
-      `SELECT DISTINCT p.category AS name
+      `SELECT DISTINCT p.category
        FROM shop_products sp
        JOIN products p ON sp.product_id = p.id
-       WHERE sp.store_id = $1
-         AND sp.active = true
-         AND p.category IS NOT NULL
-       ORDER BY p.category`,
+       WHERE sp.store_id = $1 AND sp.active = true
+       ORDER BY p.category ASC`,
       [req.store.id]
     );
-
-    return res.json({ categories: result.rows.map((r) => r.name) });
+    return res.json({ categories: result.rows.map(r => r.category) });
   } catch (err) {
     console.error('store categories error:', err.message);
     return res.status(500).json({ error: 'Błąd serwera' });
