@@ -15,7 +15,7 @@
 
 const db = require('../config/database');
 
-const BASE_DOMAIN = process.env.BASE_DOMAIN || 'qualitet-market.com';
+const BASE_DOMAIN = process.env.BASE_DOMAIN || 'qualitetmarket.pl';
 
 async function resolveStoreFromSubdomain(req, res, next) {
   const rawHost = (req.headers.host || '').toLowerCase();
