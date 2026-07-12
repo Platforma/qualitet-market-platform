@@ -74,4 +74,4 @@ jobs:
         if: steps.rebase.outputs.rebase_status == 'success'
         run: |
           BRANCH="${{ github.head_ref || github.ref_name }}"
-          git push origin "HEAD:refs/heads/${BRANCH}" --force-with-lease
+          git push origin "HEAD:refs/heads/${BRANCH}" --force
