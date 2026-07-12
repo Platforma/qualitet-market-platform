@@ -15,7 +15,13 @@
 
 const db = require('../config/database');
 
-const BASE_DOMAIN = process.env.BASE_DOMAIN || 'qualitetmarket.pl';
+const _raw = process.env.BASE_DOMAIN || 'qualitetmarket.pl';
+// Validate: must be a plain hostname (letters, digits, hyphens, dots) with no
+// scheme or path – guards against a misconfigured BASE_DOMAIN env var.
+if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(_raw)) {
+  throw new Error(`Invalid BASE_DOMAIN value: "${_raw}"`);
+}
+const BASE_DOMAIN = _raw;
 
 async function resolveStoreFromSubdomain(req, res, next) {
   const rawHost = (req.headers.host || '').toLowerCase();
