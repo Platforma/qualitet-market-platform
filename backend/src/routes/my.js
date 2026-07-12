@@ -713,7 +713,7 @@ function generatePromotionContent({ productName = '', price = null, storeUrl = '
   const priceStr = price != null ? ` za jedyne ${price} zł` : '';
   const urlLine  = storeUrl ? `\n🔗 Kup teraz: ${storeUrl}` : '';
 
-  const post = `${emoji} ${productName}${priceStr}!\n\nSprawdź naszą ofertę – szybka wysyłka, najlepsza jakość!${urlLine}\n\n#qualitet #dropshipping #uszefa`;
+  const post = `${emoji} ${productName}${priceStr}!\n\nSprawdź naszą ofertę – szybka wysyłka, najlepsza jakość!${urlLine}\n\n#qualitet #dropshipping #qualitetmarket`;
   const productDescription = `${productName} to doskonały wybór dla wymagających klientów. Wysoka jakość wykonania, atrakcyjna cena${priceStr}. Zamów już dziś i ciesz się szybką dostawą!`;
 
   return { post, productDescription, platform, emoji };
