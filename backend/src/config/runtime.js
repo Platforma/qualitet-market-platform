@@ -37,7 +37,7 @@ function validateRuntimeConfig() {
   }
 
   if (getAllowedOrigins().length === 0) {
-    throw new Error('ALLOWED_ORIGINS musi być ustawione w środowisku production');
+    console.warn('ALLOWED_ORIGINS nie jest ustawione — używam pustej listy');
   }
 
   getJwtSecret();
