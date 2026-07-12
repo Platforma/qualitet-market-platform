@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Initial product catalog seed
+-- QUALITETMARKET PLATFORMA – Initial product catalog seed
 -- Applies after 011_platform_commission.sql
 --
 -- Inserts 210 central-catalog products across 5 categories (50+40+45+35+40):
@@ -256,7 +256,7 @@ priced AS (
   FROM raw r
 )
 SELECT
-  uuid_generate_v4(),
+  gen_random_uuid(),
   NULL::UUID,           -- store_id (central product)
   NULL::UUID,           -- supplier_id
   p.name,

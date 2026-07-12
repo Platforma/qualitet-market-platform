@@ -632,7 +632,7 @@ router.post(
       // Non-critical — skip if products table isn't available
     }
 
-    const base = process.env.APP_URL || 'https://uszefaqualitet.pl';
+    const base = process.env.APP_URL || 'https://qualitet-market.com';
     const salesLink = `${base}/sklep.html?slug=${content.slug}`;
 
     return res.json({
@@ -713,7 +713,7 @@ function generatePromotionContent({ productName = '', price = null, storeUrl = '
   const priceStr = price != null ? ` za jedyne ${price} zł` : '';
   const urlLine  = storeUrl ? `\n🔗 Kup teraz: ${storeUrl}` : '';
 
-  const post = `${emoji} ${productName}${priceStr}!\n\nSprawdź naszą ofertę – szybka wysyłka, najlepsza jakość!${urlLine}\n\n#qualitet #dropshipping #uszefa`;
+  const post = `${emoji} ${productName}${priceStr}!\n\nSprawdź naszą ofertę – szybka wysyłka, najlepsza jakość!${urlLine}\n\n#qualitet #dropshipping #qualitetmarket`;
   const productDescription = `${productName} to doskonały wybór dla wymagających klientów. Wysoka jakość wykonania, atrakcyjna cena${priceStr}. Zamów już dziś i ciesz się szybką dostawą!`;
 
   return { post, productDescription, platform, emoji };
@@ -763,7 +763,7 @@ router.get(
 
       const storeSlug    = store ? store.slug    : null;
       const storeId      = store ? store.id      : null;
-      const baseUrl      = process.env.APP_URL || 'https://uszefaqualitet.pl';
+      const baseUrl      = process.env.APP_URL || 'https://qualitet-market.com';
       const storeFrontUrl = storeSlug ? `${baseUrl}/sklep.html?slug=${storeSlug}` : null;
 
       const steps = [

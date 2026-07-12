@@ -1,11 +1,11 @@
 -- Migration 027: Company Campaigns System
 -- Adds tables for brand/company marketing campaigns and creator participation
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Brand/company campaigns
 CREATE TABLE IF NOT EXISTS campaigns (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id         UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title            VARCHAR(255) NOT NULL,
   description      TEXT,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS campaigns (
 
 -- Products linked to a campaign
 CREATE TABLE IF NOT EXISTS campaign_products (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   campaign_id  UUID NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
   product_id   UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   created_at   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS campaign_products (
 
 -- Creators who joined a campaign
 CREATE TABLE IF NOT EXISTS campaign_participants (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   campaign_id  UUID NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
   creator_id   UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   status       VARCHAR(20) NOT NULL DEFAULT 'pending', -- pending | approved | rejected
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS campaign_participants (
 
 -- Promoted product listings (featured slots)
 CREATE TABLE IF NOT EXISTS promoted_listings (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id   UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   seller_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   plan         VARCHAR(20) NOT NULL DEFAULT '7d', -- 7d | 30d

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-15  
 **Prepared by:** GitHub Copilot Coding Agent  
-**Repository:** `uszefapromo-hub/HurtDetalUszefaQUALITET`  
+**Repository:** `uszefapromo-hub/QUALITETMARKET PLATFORMA`  
 **Branch:** `copilot/full-repository-audit-report`  
 
 ---

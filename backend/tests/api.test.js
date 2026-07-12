@@ -2955,7 +2955,7 @@ describe('GET /api/store/categories (subdomain)', () => {
   it('returns categories for valid subdomain', async () => {
     db.query
       .mockResolvedValueOnce({ rows: [{ id: STORE_ID, name: 'Mój Sklep', slug: 'moj-sklep', status: 'active', subdomain_blocked: false }] }) // store
-      .mockResolvedValueOnce({ rows: [{ name: 'Meble' }, { name: 'Sport' }] });
+      .mockResolvedValueOnce({ rows: [{ category: 'Meble' }, { category: 'Sport' }] });
 
     const res = await request(app)
       .get('/api/store/categories')

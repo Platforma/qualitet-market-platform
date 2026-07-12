@@ -1,6 +1,6 @@
 # Qualitet Platform – Architecture Map
 
-> **Wersja:** 1.0 · **Data:** 2026-03 · **Właściciel:** UszefaQualitet
+> **Wersja:** 1.0 · **Data:** 2026-03 · **Właściciel:** QUALITETMARKET PLATFORMA
 
 Dokument stanowi mapę architektury całego systemu Qualitet.
 Wszystkie decyzje backendowe, bazodanowe i frontendowe są spójne z opisanym tutaj modelem.

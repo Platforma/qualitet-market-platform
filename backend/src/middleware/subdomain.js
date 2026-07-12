@@ -3,7 +3,7 @@
 /**
  * Middleware: resolveStoreFromSubdomain
  *
- * Reads the Host header, extracts the subdomain from *.qualitet-market.com,
+ * Reads the Host header, extracts the subdomain from *.qualitetmarket.pl,
  * looks up the store by slug, and attaches it to req.store.
  *
  * If the host is not a subdomain of BASE_DOMAIN the middleware calls next()
@@ -15,7 +15,13 @@
 
 const db = require('../config/database');
 
-const BASE_DOMAIN = process.env.BASE_DOMAIN || 'qualitet-market.com';
+const _raw = process.env.BASE_DOMAIN || 'qualitetmarket.pl';
+// Validate: must be a plain hostname (letters, digits, hyphens, dots) with no
+// scheme or path – guards against a misconfigured BASE_DOMAIN env var.
+if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(_raw)) {
+  throw new Error(`Invalid BASE_DOMAIN value: "${_raw}"`);
+}
+const BASE_DOMAIN = _raw;
 
 async function resolveStoreFromSubdomain(req, res, next) {
   const rawHost = (req.headers.host || '').toLowerCase();
@@ -28,7 +34,7 @@ async function resolveStoreFromSubdomain(req, res, next) {
 
   const slug = host.slice(0, host.length - BASE_DOMAIN.length - 1);
 
-  // Reject empty or nested subdomain (e.g. a.b.qualitet-market.com)
+  // Reject empty or nested subdomain (e.g. a.b.qualitetmarket.pl)
   if (!slug || slug.includes('.')) {
     return next();
   }

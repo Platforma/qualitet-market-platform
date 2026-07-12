@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – product status & shop_products custom fields
+-- QUALITETMARKET PLATFORMA – product status & shop_products custom fields
 -- Applies after 002_extended_schema.sql
 
 -- ─── Product status column ────────────────────────────────────────────────────

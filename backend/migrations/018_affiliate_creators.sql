@@ -1,11 +1,11 @@
 -- Migration 018: Affiliate Creator System
 -- Allows users and creators to promote products from stores and earn commission per sale.
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Per-product affiliate settings configured by sellers
 CREATE TABLE IF NOT EXISTS product_affiliate_settings (
-  id                   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id           UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   store_id             UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
   commission_percent   NUMERIC(5,2) NOT NULL DEFAULT 5.00,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS product_affiliate_settings (
 
 -- Affiliate links created by creators
 CREATE TABLE IF NOT EXISTS affiliate_links (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   creator_id  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   product_id  UUID REFERENCES products(id) ON DELETE SET NULL,
   store_id    UUID REFERENCES stores(id) ON DELETE SET NULL,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS affiliate_links (
 
 -- Click tracking per affiliate link
 CREATE TABLE IF NOT EXISTS affiliate_clicks (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   link_id    UUID NOT NULL REFERENCES affiliate_links(id) ON DELETE CASCADE,
   ip_hash    VARCHAR(64),
   user_agent TEXT,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS affiliate_clicks (
 
 -- Conversion tracking: a click that resulted in an order
 CREATE TABLE IF NOT EXISTS affiliate_conversions (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   link_id           UUID NOT NULL REFERENCES affiliate_links(id) ON DELETE RESTRICT,
   order_id          UUID NOT NULL REFERENCES orders(id) ON DELETE RESTRICT,
   creator_id        UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS affiliate_conversions (
 
 -- Withdrawal requests by creators
 CREATE TABLE IF NOT EXISTS affiliate_withdrawals (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   creator_id   UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   amount       NUMERIC(12,2) NOT NULL,
   status       VARCHAR(20) NOT NULL DEFAULT 'pending',

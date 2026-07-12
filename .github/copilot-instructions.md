@@ -1,10 +1,10 @@
-# GitHub Copilot – instrukcje dla projektu HurtDetalUszefaQUALITET
+# GitHub Copilot – instrukcje dla projektu QUALITETMARKET PLATFORMA
 
 ## Opis projektu
 
 **Qualitet Platform** to polska platforma marketplace B2B/B2C łącząca hurtowników (dostawców) z detalistami (sprzedawcami) i kupującymi.
 
-- Strona produkcyjna: https://uszefaqualitet.pl
+- Strona produkcyjna: https://qualitet-market.com
 - Architektura: REST API (Node.js/Express) + PWA frontend (HTML5/Vanilla JS)
 - Baza danych: PostgreSQL
 

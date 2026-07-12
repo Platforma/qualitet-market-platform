@@ -17,8 +17,8 @@
  *   SMTP_SECURE   – 'true' to enable TLS (default: false)
  *   SMTP_USER     – SMTP auth username
  *   SMTP_PASS     – SMTP auth password
- *   SMTP_FROM     – sender address (default: noreply@uszefaqualitet.pl)
- *   DASHBOARD_URL – URL shown in notification emails (default: https://uszefaqualitet.pl/produkty.html)
+ *   SMTP_FROM     – sender address (default: noreply@qualitet-market.com)
+ *   DASHBOARD_URL – URL shown in notification emails (default: https://qualitet-market.com/produkty.html)
  */
 
 // Optional nodemailer – non-critical; gracefully skipped if not installed.
@@ -71,7 +71,7 @@ async function dispatchSmtp(to, subject, text) {
   });
 
   await transporter.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@uszefaqualitet.pl',
+    from: process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@qualitet-market.com',
     to,
     subject,
     text,
@@ -108,7 +108,7 @@ async function sendImportNotification({
       return;
     }
 
-    const dashboardUrl = process.env.DASHBOARD_URL || 'https://uszefaqualitet.pl/produkty.html';
+    const dashboardUrl = process.env.DASHBOARD_URL || 'https://qualitet-market.com/produkty.html';
     const completedAtStr = completedAt.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
 
     let subject, body;

@@ -1,11 +1,11 @@
--- HurtDetalUszefaQUALITET – extended marketplace schema
+-- QUALITETMARKET PLATFORMA – extended marketplace schema
 -- Applies after 001_initial_schema.sql
 -- Adds: categories, product_images, shop_products, carts, cart_items, payments, audit_logs
 
 -- ─── Categories ───────────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS categories (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name        VARCHAR(100) NOT NULL,
   slug        VARCHAR(100) UNIQUE NOT NULL,
   parent_id   UUID REFERENCES categories (id) ON DELETE SET NULL,
@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS idx_categories_active    ON categories (active);
 -- ─── Product images ───────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS product_images (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id  UUID NOT NULL REFERENCES products (id) ON DELETE CASCADE,
   url         TEXT NOT NULL,
   alt         VARCHAR(255),
@@ -39,7 +39,7 @@ CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (prod
 -- price / margin overrides.
 
 CREATE TABLE IF NOT EXISTS shop_products (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id        UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
   product_id      UUID NOT NULL REFERENCES products (id) ON DELETE CASCADE,
   price_override  NUMERIC(12, 2),   -- NULL → use product selling_price
@@ -58,7 +58,7 @@ CREATE INDEX IF NOT EXISTS idx_shop_products_active     ON shop_products (store_
 -- ─── Carts ────────────────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS carts (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id    UUID REFERENCES users (id) ON DELETE CASCADE,  -- NULL for guest carts
   store_id   UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
   session_id VARCHAR(128),           -- for guest / pre-login carts
@@ -75,7 +75,7 @@ CREATE INDEX IF NOT EXISTS idx_carts_status     ON carts (status);
 -- ─── Cart items ───────────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS cart_items (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   cart_id    UUID NOT NULL REFERENCES carts (id) ON DELETE CASCADE,
   product_id UUID NOT NULL REFERENCES products (id) ON DELETE CASCADE,
   quantity   INTEGER NOT NULL DEFAULT 1,
@@ -90,7 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_cart_items_cart_id ON cart_items (cart_id);
 -- ─── Payments ─────────────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS payments (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id     UUID NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
   user_id      UUID NOT NULL REFERENCES users (id),
   amount       NUMERIC(12, 2) NOT NULL,
@@ -110,7 +110,7 @@ CREATE INDEX IF NOT EXISTS idx_payments_status   ON payments (status);
 -- ─── Audit logs ───────────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS audit_logs (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID REFERENCES users (id) ON DELETE SET NULL,
   action      VARCHAR(100) NOT NULL,   -- e.g. 'order.created', 'user.login'
   resource    VARCHAR(50),             -- e.g. 'order', 'product', 'user'

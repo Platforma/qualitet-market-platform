@@ -2,7 +2,7 @@
 -- Adds tables for platform-wide announcements and mail-message queues.
 
 CREATE TABLE IF NOT EXISTS announcements (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title        VARCHAR(255) NOT NULL,
   body         TEXT         NOT NULL,
   type         VARCHAR(50)  NOT NULL DEFAULT 'info',  -- info | warning | success | alert
@@ -17,7 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_announcements_active ON announcements(is_active, 
 
 -- Mail message queue for platform-to-user communications
 CREATE TABLE IF NOT EXISTS mail_messages (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   to_email     VARCHAR(255) NOT NULL,
   to_user_id   UUID         REFERENCES users(id) ON DELETE SET NULL,
   subject      VARCHAR(500) NOT NULL,

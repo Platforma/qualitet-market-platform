@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Platform commission settings
+-- QUALITETMARKET PLATFORMA – Platform commission settings
 -- Adds global platform_settings table and order_total column to orders
 
 -- ─── Platform settings ────────────────────────────────────────────────────────

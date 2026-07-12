@@ -1,10 +1,10 @@
--- HurtDetalUszefaQUALITET – seed initial supplier: BigBuy
+-- QUALITETMARKET PLATFORMA – seed initial supplier: BigBuy
 -- Run after 007_suppliers_import.sql
 
 -- Insert BigBuy dropshipping supplier if it does not already exist
 INSERT INTO suppliers (id, name, integration_type, active, status, created_at)
 SELECT
-  uuid_generate_v4(),
+  gen_random_uuid(),
   'BigBuy',
   'dropshipping',
   true,

@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Referral promo system schema reconciliation
+-- QUALITETMARKET PLATFORMA – Referral promo system schema reconciliation
 -- Applies after 014_referral_analytics_scripts.sql
 --
 -- Migration 014 created referral_codes with owner_id (discount code system, referrals.js).

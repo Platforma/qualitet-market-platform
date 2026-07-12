@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Subscription marketplace migration
+-- QUALITETMARKET PLATFORMA – Subscription marketplace migration
 -- Adds shop-based subscription fields and order commission fields
 
 -- ─── Subscriptions: add shop_id, product_limit, commission_rate, started_at, expires_at ───────────

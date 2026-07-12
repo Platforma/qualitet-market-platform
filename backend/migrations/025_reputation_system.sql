@@ -2,11 +2,11 @@
 -- Tables: seller_ratings, product_reviews, creator_scores
 -- Adds new reputation badges to badge_definitions
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Ratings given by buyers to sellers after completing an order
 CREATE TABLE IF NOT EXISTS seller_ratings (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id    UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
   seller_id   UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   buyer_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS idx_seller_ratings_order    ON seller_ratings(order_i
 
 -- Reviews left by users on individual products
 CREATE TABLE IF NOT EXISTS product_reviews (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id  UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   reviewer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   rating      SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
@@ -38,7 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_product_reviews_reviewer ON product_reviews(revie
 
 -- Aggregated reputation score for creators / sellers
 CREATE TABLE IF NOT EXISTS creator_scores (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   creator_id        UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
   sales_generated   NUMERIC(14,2) NOT NULL DEFAULT 0,
   conversion_rate   NUMERIC(5,2)  NOT NULL DEFAULT 0,   -- percent 0-100
