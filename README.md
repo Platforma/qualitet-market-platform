@@ -38,7 +38,7 @@ Plik `js/api.js` udostępnia klienta REST API jako `window.QMApi` (albo moduł E
 Umożliwia stopniowe zastąpienie odczytów z `localStorage` wywołaniami API:
 
 ```html
-<script>window.QM_API_BASE = 'https://api.uszefaqualitet.pl/api';</script>
+<script>window.QM_API_BASE = 'https://api.qualitet-market.com/api';</script>
 <script src="js/api.js"></script>
 <script>
   // Logowanie
