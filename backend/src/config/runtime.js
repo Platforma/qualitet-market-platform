@@ -7,8 +7,9 @@ const INSECURE_JWT_SECRETS = new Set([
 let hasWarnedAboutJwtFallback = false;
 
 function getAllowedOrigins() {
-  return (process.env.ALLOWED_ORIGINS || '')
-    .split(',')
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') ?? [];
+
+  return allowedOrigins
     .map((origin) => origin.trim())
     .filter(Boolean);
 }
