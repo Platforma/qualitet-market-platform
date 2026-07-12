@@ -2,7 +2,7 @@
 -- Allows creators to invite other creators and earn a percentage of their
 -- affiliate sales (2 % referral commission, 1 level only).
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- ─── users: unique referral code per creator ─────────────────────────────────
 -- Stored directly on the users row so the invite link can be resolved in one
@@ -20,7 +20,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_users_creator_referral_code
 -- have a single inviter (UNIQUE on invited_id) to enforce the 1-level limit.
 
 CREATE TABLE IF NOT EXISTS creator_referrals (
-  id          UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id          UUID                     DEFAULT gen_random_uuid() PRIMARY KEY,
   inviter_id  UUID NOT NULL            REFERENCES users (id) ON DELETE CASCADE,
   invited_id  UUID NOT NULL            REFERENCES users (id) ON DELETE CASCADE,
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -39,7 +39,7 @@ CREATE INDEX IF NOT EXISTS idx_creator_referrals_invited
 -- commission calculation logic in the backend.
 
 CREATE TABLE IF NOT EXISTS referral_commissions (
-  id                 UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id                 UUID                     DEFAULT gen_random_uuid() PRIMARY KEY,
   inviter_id         UUID NOT NULL            REFERENCES users (id) ON DELETE CASCADE,
   invited_creator_id UUID NOT NULL            REFERENCES users (id) ON DELETE CASCADE,
   order_id           UUID                     REFERENCES orders (id) ON DELETE SET NULL,

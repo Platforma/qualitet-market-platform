@@ -30,7 +30,7 @@ ALTER TABLE shop_products
 -- Per-category rows take precedence over global rows with the same threshold.
 
 CREATE TABLE IF NOT EXISTS platform_margin_config (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   category      VARCHAR(100),                      -- NULL = global
   threshold_max NUMERIC(12, 2),                    -- NULL = catch-all (above last)
   margin_percent NUMERIC(5, 2) NOT NULL,
@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS platform_margin_config (
 -- Seed default global tiers
 INSERT INTO platform_margin_config (id, category, threshold_max, margin_percent)
 VALUES
-  (uuid_generate_v4(), NULL,  20,   60),
-  (uuid_generate_v4(), NULL, 100,   40),
-  (uuid_generate_v4(), NULL, 300,   25),
-  (uuid_generate_v4(), NULL, NULL,  15)
+  (gen_random_uuid(), NULL,  20,   60),
+  (gen_random_uuid(), NULL, 100,   40),
+  (gen_random_uuid(), NULL, 300,   25),
+  (gen_random_uuid(), NULL, NULL,  15)
 ON CONFLICT DO NOTHING;
 
 CREATE INDEX IF NOT EXISTS idx_platform_margin_config_category

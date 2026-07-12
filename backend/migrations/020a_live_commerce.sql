@@ -2,11 +2,11 @@
 -- Supports live streaming for sellers and creators with real-time chat,
 -- product pinning, live promotions, and direct purchase from stream.
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Live stream sessions
 CREATE TABLE live_streams (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title          VARCHAR(255) NOT NULL,
   description    TEXT,
   streamer_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -23,7 +23,7 @@ CREATE TABLE live_streams (
 
 -- Real-time chat messages within a live stream
 CREATE TABLE live_messages (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stream_id     UUID NOT NULL REFERENCES live_streams(id) ON DELETE CASCADE,
   user_id       UUID REFERENCES users(id) ON DELETE SET NULL,
   display_name  VARCHAR(100) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE live_messages (
 
 -- Products pinned by the streamer during a live session
 CREATE TABLE live_pinned_products (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stream_id   UUID NOT NULL REFERENCES live_streams(id) ON DELETE CASCADE,
   product_id  UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   is_active   BOOLEAN NOT NULL DEFAULT TRUE,
@@ -44,7 +44,7 @@ CREATE TABLE live_pinned_products (
 
 -- Limited-time promotional offers created during a live stream
 CREATE TABLE live_promotions (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stream_id        UUID NOT NULL REFERENCES live_streams(id) ON DELETE CASCADE,
   product_id       UUID REFERENCES products(id) ON DELETE SET NULL,
   title            VARCHAR(255) NOT NULL,

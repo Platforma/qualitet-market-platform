@@ -2,14 +2,14 @@
 -- Tables: user_referrals, referral_rewards
 -- Column: users.user_referral_code
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Unique invite code stored on the user who generates the link
 ALTER TABLE users ADD COLUMN IF NOT EXISTS user_referral_code VARCHAR(20) UNIQUE;
 
 -- Tracks who invited whom via the user referral programme
 CREATE TABLE IF NOT EXISTS user_referrals (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   inviter_id  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   invited_id  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -22,7 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_user_referrals_invited ON user_referrals(invited_
 
 -- Rewards credited to the inviter from invited users' activity
 CREATE TABLE IF NOT EXISTS referral_rewards (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   inviter_id  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   invited_id  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   reward_type VARCHAR(20) NOT NULL DEFAULT 'percent',

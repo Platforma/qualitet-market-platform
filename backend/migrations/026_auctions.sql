@@ -1,11 +1,11 @@
 -- Migration 026: Art Auctions System
 -- Adds tables for artist profiles, artwork listings, and auction bids
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Artist profiles
 CREATE TABLE IF NOT EXISTS artist_profiles (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   display_name  VARCHAR(120) NOT NULL,
   bio           TEXT,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS artist_profiles (
 
 -- Artworks
 CREATE TABLE IF NOT EXISTS artworks (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   artist_id     UUID NOT NULL REFERENCES artist_profiles(id) ON DELETE CASCADE,
   title         VARCHAR(255) NOT NULL,
   description   TEXT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS artworks (
 
 -- Auctions
 CREATE TABLE IF NOT EXISTS auctions (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   artwork_id      UUID NOT NULL REFERENCES artworks(id) ON DELETE CASCADE,
   artist_id       UUID NOT NULL REFERENCES artist_profiles(id) ON DELETE CASCADE,
   title           VARCHAR(255) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS auctions (
 
 -- Auction bids
 CREATE TABLE IF NOT EXISTS auction_bids (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   auction_id  UUID NOT NULL REFERENCES auctions(id) ON DELETE CASCADE,
   bidder_id   UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   amount      NUMERIC(12,2) NOT NULL,

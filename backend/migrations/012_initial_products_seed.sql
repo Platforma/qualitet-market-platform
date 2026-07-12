@@ -256,7 +256,7 @@ priced AS (
   FROM raw r
 )
 SELECT
-  uuid_generate_v4(),
+  gen_random_uuid(),
   NULL::UUID,           -- store_id (central product)
   NULL::UUID,           -- supplier_id
   p.name,

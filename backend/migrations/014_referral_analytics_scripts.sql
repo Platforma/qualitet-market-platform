@@ -7,7 +7,7 @@
 -- or other sellers. Optionally tied to a specific store.
 
 CREATE TABLE IF NOT EXISTS referral_codes (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id       UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   store_id       UUID REFERENCES stores (id) ON DELETE SET NULL,
   code           VARCHAR(40) UNIQUE NOT NULL,
@@ -31,7 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_referral_codes_active     ON referral_codes (acti
 -- Every time a referral code is redeemed this row is inserted.
 
 CREATE TABLE IF NOT EXISTS referral_uses (
-  id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code_id            UUID NOT NULL REFERENCES referral_codes (id) ON DELETE CASCADE,
   used_by_user_id    UUID REFERENCES users (id) ON DELETE SET NULL,
   order_id           UUID REFERENCES orders (id) ON DELETE SET NULL,
@@ -49,7 +49,7 @@ CREATE INDEX IF NOT EXISTS idx_referral_uses_used_at         ON referral_uses (u
 -- Supports any snippet: Google Analytics, Meta Pixel, live-chat widgets, etc.
 
 CREATE TABLE IF NOT EXISTS scripts (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id   UUID NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
   name       VARCHAR(255) NOT NULL,
   type       VARCHAR(30) NOT NULL DEFAULT 'custom',      -- analytics | tracking | chat | pixel | custom
@@ -69,7 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_scripts_active   ON scripts (store_id, active);
 -- store_id = UUID → per-store snapshot (seller dashboard).
 
 CREATE TABLE IF NOT EXISTS analytics_snapshots (
-  id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id            UUID REFERENCES stores (id) ON DELETE CASCADE,
   period              VARCHAR(20) NOT NULL DEFAULT 'daily',   -- daily | weekly | monthly
   snapshot_date       DATE NOT NULL,
