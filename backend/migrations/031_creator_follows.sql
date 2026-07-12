@@ -16,5 +16,3 @@ CREATE INDEX IF NOT EXISTS idx_creator_follows_follower ON creator_follows(follo
 -- Add followers_count to users if not present
 ALTER TABLE users ADD COLUMN IF NOT EXISTS followers_count INTEGER NOT NULL DEFAULT 0;
 
--- Index for creator profile aggregation query (orders joined by seller_id)
-CREATE INDEX IF NOT EXISTS idx_orders_seller ON orders(seller_id) WHERE seller_id IS NOT NULL;
