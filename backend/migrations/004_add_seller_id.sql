@@ -1,1 +1,1 @@
-ALTER TABLE products ADD COLUMN seller_id INTEGER;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS seller_id INTEGER;
