@@ -3,7 +3,7 @@
 /**
  * Middleware: resolveStoreFromSubdomain
  *
- * Reads the Host header, extracts the subdomain from *.qualitet-market.com,
+ * Reads the Host header, extracts the subdomain from *.qualitetmarket.pl,
  * looks up the store by slug, and attaches it to req.store.
  *
  * If the host is not a subdomain of BASE_DOMAIN the middleware calls next()
@@ -28,7 +28,7 @@ async function resolveStoreFromSubdomain(req, res, next) {
 
   const slug = host.slice(0, host.length - BASE_DOMAIN.length - 1);
 
-  // Reject empty or nested subdomain (e.g. a.b.qualitet-market.com)
+  // Reject empty or nested subdomain (e.g. a.b.qualitetmarket.pl)
   if (!slug || slug.includes('.')) {
     return next();
   }
