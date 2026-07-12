@@ -12,7 +12,7 @@
     margin: 15,
     plan: 'basic',
     trial: true,
-    description: 'Nowoczesny sklep online na platformie U SZEFA.',
+    description: 'Nowoczesny sklep online na platformie QualitetMarket.',
     delivery: 'Wysyłka w 24h'
   };
   const STORE_SETTINGS_KEY = 'app_store_settings';
