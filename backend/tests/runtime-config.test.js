@@ -32,7 +32,9 @@ describe('production runtime config', () => {
     );
   });
 
-  it('rejects production startup without ALLOWED_ORIGINS', () => {
+  it('warns instead of crashing when ALLOWED_ORIGINS is not set in production', () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
     process.env = {
       ...originalEnv,
       NODE_ENV: 'production',
@@ -40,9 +42,12 @@ describe('production runtime config', () => {
       ALLOWED_ORIGINS: '',
     };
 
-    expect(() => require('../src/app')).toThrow(
-      'ALLOWED_ORIGINS musi być ustawione w środowisku production'
+    expect(() => require('../src/app')).not.toThrow();
+    expect(warnSpy).toHaveBeenCalledWith(
+      'ALLOWED_ORIGINS nie jest ustawione — używam pustej listy'
     );
+
+    warnSpy.mockRestore();
   });
 
   it('rejects requests from origins outside the production allowlist', async () => {
@@ -59,7 +64,7 @@ describe('production runtime config', () => {
       .set('Origin', 'https://evil.example');
 
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: 'CORS policy: origin not allowed' });
+    expect(res.body).toEqual({ error: 'Origin not allowed by CORS' });
   });
 
   it('allows requests from configured production origins', async () => {

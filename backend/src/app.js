@@ -54,18 +54,17 @@ app.use(helmet());
 
 // ─── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = getAllowedOrigins();
-const allowAllOrigins = allowedOrigins.length === 0 && process.env.NODE_ENV !== 'production';
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl)
-      if (!origin || allowAllOrigins || allowedOrigins.includes(origin)) {
-        return callback(null, true);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        const err = new Error('Origin not allowed by CORS');
+        err.status = 403;
+        callback(err);
       }
-      const err = new Error('CORS policy: origin not allowed');
-      err.status = 403;
-      return callback(err);
     },
     credentials: true,
   })
