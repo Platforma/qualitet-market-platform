@@ -5,7 +5,7 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto; -- enables gen_random_uuid()
 
 -- Live stream sessions
-CREATE TABLE live_streams (
+CREATE TABLE IF NOT EXISTS live_streams (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title          VARCHAR(255) NOT NULL,
   description    TEXT,
@@ -22,7 +22,7 @@ CREATE TABLE live_streams (
 );
 
 -- Real-time chat messages within a live stream
-CREATE TABLE live_messages (
+CREATE TABLE IF NOT EXISTS live_messages (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stream_id     UUID NOT NULL REFERENCES live_streams(id) ON DELETE CASCADE,
   user_id       UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -33,7 +33,7 @@ CREATE TABLE live_messages (
 );
 
 -- Products pinned by the streamer during a live session
-CREATE TABLE live_pinned_products (
+CREATE TABLE IF NOT EXISTS live_pinned_products (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stream_id   UUID NOT NULL REFERENCES live_streams(id) ON DELETE CASCADE,
   product_id  UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
@@ -43,7 +43,7 @@ CREATE TABLE live_pinned_products (
 );
 
 -- Limited-time promotional offers created during a live stream
-CREATE TABLE live_promotions (
+CREATE TABLE IF NOT EXISTS live_promotions (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stream_id        UUID NOT NULL REFERENCES live_streams(id) ON DELETE CASCADE,
   product_id       UUID REFERENCES products(id) ON DELETE SET NULL,
@@ -59,8 +59,8 @@ CREATE TABLE live_promotions (
 );
 
 -- Indexes for common query patterns
-CREATE INDEX idx_live_streams_streamer ON live_streams(streamer_id);
-CREATE INDEX idx_live_streams_status   ON live_streams(status);
-CREATE INDEX idx_live_messages_stream  ON live_messages(stream_id, created_at);
-CREATE INDEX idx_live_pinned_stream    ON live_pinned_products(stream_id);
-CREATE INDEX idx_live_promotions_stream ON live_promotions(stream_id);
+CREATE INDEX IF NOT EXISTS idx_live_streams_streamer ON live_streams(streamer_id);
+CREATE INDEX IF NOT EXISTS idx_live_streams_status   ON live_streams(status);
+CREATE INDEX IF NOT EXISTS idx_live_messages_stream  ON live_messages(stream_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_live_pinned_stream    ON live_pinned_products(stream_id);
+CREATE INDEX IF NOT EXISTS idx_live_promotions_stream ON live_promotions(stream_id);
