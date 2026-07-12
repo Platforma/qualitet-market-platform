@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – performance indexes and data model hardening
+-- QUALITETMARKET PLATFORMA – performance indexes and data model hardening
 -- Applies after 004_central_catalog.sql
 -- Prepares the platform for 1 000 sellers and 100 000 products.
 

@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – initial database schema
+-- QUALITETMARKET PLATFORMA – initial database schema
 -- Run: psql -U postgres -d hurtdetal_qualitet -f 001_initial_schema.sql
 
 -- Extensions

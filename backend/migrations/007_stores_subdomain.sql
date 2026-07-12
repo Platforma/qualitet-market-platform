@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Add subdomain column to stores
+-- QUALITETMARKET PLATFORMA – Add subdomain column to stores
 
 ALTER TABLE stores
   ADD COLUMN IF NOT EXISTS subdomain VARCHAR(120);

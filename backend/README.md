@@ -1,6 +1,6 @@
 # qualitet-market.com– Backend API
 
-Node.js / Express REST API z bazą danych PostgreSQL dla platformy HurtDetalUszefaQUALITET.
+Node.js / Express REST API z bazą danych PostgreSQL dla platformy QUALITETMARKET PLATFORMA.
 
 Architektura: **marketplace operatora** – centralny katalog produktów, sklepy użytkowników dodają produkty przez `shop_products`, klient kupuje od sklepu użytkownika.
 

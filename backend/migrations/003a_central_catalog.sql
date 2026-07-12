@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – central catalog migration
+-- QUALITETMARKET PLATFORMA – central catalog migration
 -- Applies after 002_extended_schema.sql
 -- Decouples products from individual stores so that the platform can maintain
 -- a shared central catalogue. shop_products remains the store→product bridge.

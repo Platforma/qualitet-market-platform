@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Creator Referral System
+-- QUALITETMARKET PLATFORMA – Creator Referral System
 -- Allows creators to invite other creators and earn a percentage of their
 -- affiliate sales (2 % referral commission, 1 level only).
 

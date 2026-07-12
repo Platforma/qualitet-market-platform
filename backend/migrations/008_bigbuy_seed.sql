@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – seed initial supplier: BigBuy
+-- QUALITETMARKET PLATFORMA – seed initial supplier: BigBuy
 -- Run after 007_suppliers_import.sql
 
 -- Insert BigBuy dropshipping supplier if it does not already exist

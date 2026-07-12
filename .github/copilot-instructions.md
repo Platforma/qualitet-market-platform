@@ -1,4 +1,4 @@
-# GitHub Copilot – instrukcje dla projektu HurtDetalUszefaQUALITET
+# GitHub Copilot – instrukcje dla projektu QUALITETMARKET PLATFORMA
 
 ## Opis projektu
 

@@ -28,7 +28,7 @@ const PRECACHE_ASSETS = [
   'js/pwa-connect.js',
   'shop.js',
   'stores.js',
-  'assets/images/logo-uszefa.svg',
+  'assets/images/logo-qualitetmarket.svg',
   'assets/images/logo-wspolne.svg',
   'assets/icons/icon-192.svg',
   'assets/icons/icon-512.svg',

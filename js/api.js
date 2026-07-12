@@ -1,5 +1,5 @@
 /**
- * HurtDetalUszefaQUALITET – Frontend API client
+ * QUALITETMARKET PLATFORMA – Frontend API client
  *
  * Thin wrapper over the backend REST API.  Provides the same conceptual
  * operations that the frontend currently satisfies through localStorage so

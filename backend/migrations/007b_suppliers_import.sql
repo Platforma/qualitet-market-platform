@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – extend suppliers table for automatic product import
+-- QUALITETMARKET PLATFORMA – extend suppliers table for automatic product import
 -- Run after 006_subscription_marketplace.sql
 
 -- New fields required by the automatic import system spec

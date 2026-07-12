@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – extended marketplace schema
+-- QUALITETMARKET PLATFORMA – extended marketplace schema
 -- Applies after 001_initial_schema.sql
 -- Adds: categories, product_images, shop_products, carts, cart_items, payments, audit_logs
 

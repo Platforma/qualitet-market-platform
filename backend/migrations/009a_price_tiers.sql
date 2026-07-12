@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – three-tier pricing system
+-- QUALITETMARKET PLATFORMA – three-tier pricing system
 -- Applies after 008_bigbuy_seed.sql
 
 -- ─── products: price tier columns ─────────────────────────────────────────────

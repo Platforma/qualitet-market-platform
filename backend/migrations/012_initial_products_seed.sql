@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Initial product catalog seed
+-- QUALITETMARKET PLATFORMA – Initial product catalog seed
 -- Applies after 011_platform_commission.sql
 --
 -- Inserts 210 central-catalog products across 5 categories (50+40+45+35+40):

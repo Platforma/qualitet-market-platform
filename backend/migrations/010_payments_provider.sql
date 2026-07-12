@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Payment provider migration
+-- QUALITETMARKET PLATFORMA – Payment provider migration
 -- Adds payment_provider column and aligns status values with spec:
 --   pending | paid | failed | refunded
 

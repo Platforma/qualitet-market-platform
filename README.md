@@ -1,4 +1,4 @@
-# HurtDetalUszefaQUALITET
+# QUALITETMARKET PLATFORMA
 
 Link do podglądu platformy: https://qualitet-market.com
 

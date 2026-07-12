@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – Referral system, seller scripts, analytics snapshots
+-- QUALITETMARKET PLATFORMA – Referral system, seller scripts, analytics snapshots
 -- Applies after 013_owner_phone.sql
 -- Adds: referral_codes, referral_uses, scripts, analytics_snapshots
 

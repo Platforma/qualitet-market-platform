@@ -1,4 +1,4 @@
--- HurtDetalUszefaQUALITET – central product catalog
+-- QUALITETMARKET PLATFORMA – central product catalog
 -- Applies after 003_product_status.sql
 
 -- ─── Make store_id optional ────────────────────────────────────────────────────
