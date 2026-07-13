@@ -19,7 +19,9 @@ function runMigrationsSafe({
   const result = spawnSyncImpl(nodeBin, [migrationFilePath], { stdio: 'inherit' });
 
   if (result.error) {
-    throw result.error;
+    const error = new Error(`Failed to spawn migration process: ${result.error.message}`);
+    error.cause = result.error;
+    throw error;
   }
 
   if (result.status !== 0) {

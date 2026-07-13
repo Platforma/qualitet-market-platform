@@ -55,7 +55,7 @@ describe('runMigrationsSafe', () => {
         spawnSyncImpl,
         migrationFilePath: '/tmp/migrate.js',
       })
-    ).toThrow('spawn failed');
+    ).toThrow('Failed to spawn migration process: spawn failed');
   });
 
   it('throws with the child exit code when migrations fail', () => {
