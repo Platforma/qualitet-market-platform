@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qualitet Market – Lista produktów</title>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <script>
+    const API_BASE = "https://api.qualitet-market.com/api";
+  </script>
+</head>
+
+<body>
+  <header class="topbar">
+    <h1>Qualitet Market</h1>
+    <nav>
+      <a href="/shop.html">Sklep</a>
+      <a href="/listing.html" class="active">Lista</a>
+      <a href="/account.html">Konto</a>
+    </nav>
+  </header>
+
+  <main class="listing-container">
+    <h2>Lista produktów</h2>
+    <div id="listing"></div>
+  </main>
+
+  <script>
+    async function loadListing() {
+      try {
+        const res = await fetch(`${API_BASE}/listing`);
+        const data = await res.json();
+
+        const container = document.getElementById("listing");
+        container.innerHTML = "";
+
+        data.items.forEach(item => {
+          const el = document.createElement("div");
+          el.className = "listing-item";
+          el.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" />
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <span class="price">${item.price} zł</span>
+          `;
+          container.appendChild(el);
+        });
+      } catch (err) {
+        console.error("Błąd ładowania listingu:", err);
+      }
+    }
+
+    loadListing();
+  </script>
+</body>
+</html>
