@@ -12,7 +12,7 @@ services:
     region: frankfurt
     branch: main
     dockerfilePath: backend/Dockerfile
-    buildCommand: npm install && npm run migrate
+    buildCommand: npm install
     startCommand: npm start
     port: 10000
     plan: free
