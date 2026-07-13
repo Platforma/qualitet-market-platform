@@ -8020,6 +8020,8 @@ describe('GET /api/social/creators/:id/profile', () => {
       .mockResolvedValueOnce({ rows: [{ id: SOCIAL_POST_ID, content: 'Post', post_type: 'general', likes_count: 2, comments_count: 0, shares_count: 0, viral_score: '6', created_at: new Date().toISOString() }] }); // recent posts
     const res = await request(app).get(`/api/social/creators/${CREATOR_PROFILE_ID}/profile`);
     expect(res.status).toBe(200);
+    expect(db.query.mock.calls[0][0]).toMatch(/LEFT JOIN orders o ON o\.store_owner_id = u\.id/);
+    expect(db.query.mock.calls[0][0]).toMatch(/SUM\(o\.total\)/);
     expect(res.body.creator.id).toBe(CREATOR_PROFILE_ID);
     expect(res.body.creator.followers_count).toBe(5);
     expect(res.body.recent_posts).toHaveLength(1);

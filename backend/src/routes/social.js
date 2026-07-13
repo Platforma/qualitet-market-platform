@@ -366,10 +366,10 @@ router.get(
         `SELECT u.id, COALESCE(u.name, u.email) AS name, u.role,
                 u.followers_count, u.created_at,
                 COUNT(DISTINCT sp.id) FILTER (WHERE sp.is_active = TRUE) AS posts_count,
-                COALESCE(SUM(o.total_price) FILTER (WHERE o.status = 'paid'), 0) AS sales_total
+                COALESCE(SUM(o.total) FILTER (WHERE o.status = 'paid'), 0) AS sales_total
            FROM users u
       LEFT JOIN social_posts sp ON sp.user_id = u.id
-      LEFT JOIN orders o ON o.seller_id = u.id
+      LEFT JOIN orders o ON o.store_owner_id = u.id
           WHERE u.id = $1
           GROUP BY u.id`,
         [req.params.id]
