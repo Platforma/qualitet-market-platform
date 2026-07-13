@@ -58,6 +58,7 @@ function sortMigrationFiles(files) {
   parsed.sort((a, b) => {
     if (a.num !== b.num) return a.num - b.num;
     if (a.suffix !== b.suffix) return a.suffix < b.suffix ? -1 : 1;
+    // Defensive guard for duplicate inputs supplied by tests or future callers.
     if (a.filename === b.filename) return 0;
     return a.filename < b.filename ? -1 : 1;
   });
