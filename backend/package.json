@@ -4,7 +4,7 @@
   "description": "Backend API for QualitetMarket platform",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node scripts/run-migrations-safe.js && node src/app.js",
     "dev": "nodemon src/app.js",
     "migrate": "node migrations/migrate.js",
     "seed:owner": "node scripts/seed-owner.js",
