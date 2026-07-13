@@ -31,6 +31,7 @@ const ROOT_STATIC_FILES = new Set([
   'stores.js',
   'styles.css'
 ]);
+const SAFE_ROOT_FILE_PATTERN = /^[A-Za-z0-9._-]+$/;
 const staticRateLimit = rateLimit({
   windowMs: 60 * 1000,
   max: 300,
@@ -47,6 +48,10 @@ const ROOT_STATIC_PATHS = new Map(
 
 function sendRootStaticFile(req, res, next) {
   const fileName = req.path === '/' ? 'index.html' : req.params.file;
+  if (!fileName || fileName.includes('..') || !SAFE_ROOT_FILE_PATTERN.test(fileName)) {
+    return next();
+  }
+
   const filePath = ROOT_STATIC_PATHS.get(fileName);
   if (!filePath) {
     return next();
