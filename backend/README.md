@@ -429,10 +429,12 @@ docker compose up --build -d
 
 1. Utwórz **Web Service** z repozytorium
 2. **Root Directory**: `backend`
-3. **Build Command**: `npm install && npm run migrate`
-4. **Start Command**: `npm start`
-5. Dodaj **PostgreSQL** w Render
-6. Uzupełnij zmienne środowiskowe
+3. **Environment**: `Docker`
+4. **Dockerfile Path**: `Dockerfile`
+5. Pozostaw **Build Command** puste – migracje uruchamia wrapper startowy
+6. **Start Command**: opcjonalnie puste (Dockerfile uruchamia `node scripts/run-migrations-safe.js && node src/app.js`)
+7. Dodaj **PostgreSQL** w Render
+8. Uzupełnij zmienne środowiskowe
 
 ### Railway
 
@@ -451,7 +453,6 @@ pm2 start backend/src/app.js --name hurtdetal-api
 pm2 startup && pm2 save
 ```                                                                                                                                       
 Trigger migrations
-
 
 
 

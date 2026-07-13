@@ -40,17 +40,17 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY backend/package*.json ./
+COPY package*.json ./
 RUN npm ci --only=production
 
 # Copy backend source
-COPY backend/ .
+COPY . .
 
 # Run migrations and start server
-CMD ["sh", "-c", "npm run migrate && npm start"]
+CMD ["sh", "-c", "node scripts/run-migrations-safe.js && node src/app.js"]
 ```
 
-**Zapisz do:** `backend/Dockerfile`
+**Zapisz do:** `backend/Dockerfile` (w serwisie Render ustaw **Root Directory** na `backend`)
 
 ---
 
@@ -103,12 +103,13 @@ openssl rand -base64 32
    | **Region** | Frankfurt |
    | **Branch** | `main` |
    | **Root Directory** | `backend` |
+   | **Dockerfile Path** | `Dockerfile` |
    | **Plan** | Free / Starter |
 
 ### 4.2 Build & Start commands
 
-- **Build Command**: `npm install && npm run migrate`
-- **Start Command**: `npm start`
+- **Build Command**: zostaw puste (Docker buduje obraz z `backend/Dockerfile`)
+- **Start Command**: zostaw puste lub ustaw `node scripts/run-migrations-safe.js && node src/app.js`
 
 ### 4.3 Ustawienie zmiennych środowiskowych
 
@@ -291,7 +292,7 @@ Render restartuje serwis, jeśli upadnie. Jeśli chcesz manual restart:
 | **502 Bad Gateway** | Czekaj na deploy, sprawdź logs |
 | **DB connection refused** | Sprawdź `DB_*` zmienne i czy DB je żyje |
 | **Build failed** | Sprawdź `npm install` – czy `package-lock.json` jest w repo? |
-| **Migrations didn't run** | Sprawdź, czy `Build Command` zawiera `npm run migrate` |
+| **Migrations didn't run** | Sprawdź log startu i czy Render używa `backend/Dockerfile` z `node scripts/run-migrations-safe.js` |
 | **JWT errors** | Upewnij się, że `JWT_SECRET` jest długim ciągiem (32+ znaków) |
 | **CORS errors** | Dodaj domenę frontendu do `ALLOWED_ORIGINS` |
 | **Email nie działa** | Skonfiguruj SMTP lub wyłącz email w backendu |
