@@ -9,6 +9,7 @@
  */
 
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const rateLimit = require('express-rate-limit');
@@ -32,26 +33,26 @@ const ROOT_STATIC_FILES = new Set([
 ]);
 const staticRateLimit = rateLimit({
   windowMs: 60 * 1000,
-  max: 600,
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false
 });
+const ROOT_STATIC_PATHS = new Map(
+  fs.readdirSync(ROOT_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .filter((fileName) => ROOT_STATIC_FILES.has(fileName) || path.extname(fileName) === '.html')
+    .map((fileName) => [fileName, path.join(ROOT_DIR, fileName)])
+);
 
-function isAllowedRootFile(fileName){
-  if (!fileName || fileName.includes('/') || fileName.includes('\\')) {
-    return false;
-  }
-
-  return ROOT_STATIC_FILES.has(fileName) || path.extname(fileName) === '.html';
-}
-
-function sendRootStaticFile(req, res, next){
+function sendRootStaticFile(req, res, next) {
   const fileName = req.path === '/' ? 'index.html' : req.params.file;
-  if (!isAllowedRootFile(fileName)) {
+  const filePath = ROOT_STATIC_PATHS.get(fileName);
+  if (!filePath) {
     return next();
   }
 
-  return res.sendFile(path.join(ROOT_DIR, fileName));
+  return res.sendFile(filePath);
 }
 
 STATIC_DIRS.forEach((dirName) => {
