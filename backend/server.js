@@ -2,12 +2,12 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
-// Serwowanie statycznych plików z folderu frontend
-app.use(express.static(path.join(__dirname, "../frontend")));
+// Serwowanie statycznych plików z głównego katalogu projektu
+app.use(express.static(path.join(__dirname, "..")));
 
 // Strona główna — index.html
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+  res.sendFile(path.join(__dirname, "../index.html"));
 });
 
 // Port dla Render
