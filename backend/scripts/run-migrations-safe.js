@@ -4,19 +4,40 @@ const { spawnSync } = require('child_process');
 
 const migrationFile = path.join(__dirname, '..', 'migrations', 'migrate.js');
 
-if (fs.existsSync(migrationFile)) {
-  console.log(`[startup] Running migrations: ${migrationFile}`);
-  const result = spawnSync('node', [migrationFile], { stdio: 'inherit' });
+function runMigrationsSafe({
+  fsImpl = fs,
+  spawnSyncImpl = spawnSync,
+  nodeBin = process.execPath,
+  migrationFilePath = migrationFile,
+} = {}) {
+  if (!fsImpl.existsSync(migrationFilePath)) {
+    console.log(`[startup] No migration file found at ${migrationFilePath}; skipping migrations.`);
+    return { skipped: true };
+  }
+
+  console.log(`[startup] Running migrations: ${migrationFilePath}`);
+  const result = spawnSyncImpl(nodeBin, [migrationFilePath], { stdio: 'inherit' });
 
   if (result.error) {
-    console.error('[startup] Failed to run migrations:', result.error.message);
-    process.exit(1);
+    throw result.error;
   }
 
   if (result.status !== 0) {
-    console.error(`[startup] Migration process exited with code ${result.status}`);
-    process.exit(result.status || 1);
+    const error = new Error(`Migration process exited with code ${result.status}`);
+    error.exitCode = result.status || 1;
+    throw error;
   }
-} else {
-  console.log(`[startup] No migration file found at ${migrationFile}; skipping migrations.`);
+
+  return { skipped: false, status: result.status };
 }
+
+if (require.main === module) {
+  try {
+    runMigrationsSafe();
+  } catch (error) {
+    console.error('[startup] Failed to run migrations:', error.message);
+    process.exit(error.exitCode || 1);
+  }
+}
+
+module.exports = { migrationFile, runMigrationsSafe };

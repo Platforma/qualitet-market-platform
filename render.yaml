@@ -8,12 +8,11 @@ services:
   - type: web
     name: qualitet-market-api
     env: docker
+    rootDir: backend
     repo: https://github.com/Platforma/qualitet-market
     region: frankfurt
     branch: main
-    dockerfilePath: backend/Dockerfile
-    buildCommand: npm install
-    startCommand: npm start
+    dockerfilePath: Dockerfile
     port: 10000
     plan: free
     envVars:
