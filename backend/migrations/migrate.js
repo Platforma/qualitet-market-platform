@@ -11,6 +11,61 @@ const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 
+// ─── Migration filename helpers ───────────────────────────────────────────────
+
+/**
+ * Parse a migration filename into its sortable components.
+ *
+ * Accepted format:  NNN[a-z]_description.sql
+ * Examples:
+ *   001_initial_schema.sql   → { num: 1,  suffix: '',  filename: '001_initial_schema.sql' }
+ *   020_creator_referrals.sql→ { num: 20, suffix: '',  filename: '020_creator_referrals.sql' }
+ *   020a_live_commerce.sql   → { num: 20, suffix: 'a', filename: '020a_live_commerce.sql' }
+ *   007b_suppliers_import.sql→ { num: 7,  suffix: 'b', filename: '007b_suppliers_import.sql' }
+ *
+ * Returns null for filenames that do not match the expected pattern.
+ */
+function parseMigrationName(filename) {
+  const match = /^(\d+)([a-z]?)_.*\.sql$/.exec(filename);
+  if (!match) return null;
+  return {
+    num: parseInt(match[1], 10),
+    suffix: match[2],
+    filename,
+  };
+}
+
+/**
+ * Sort an array of SQL migration filenames deterministically.
+ *
+ * Order: numeric prefix ASC → alphabetic suffix ASC ('' < 'a' < 'b') → filename ASC.
+ * Files that do not match the migration naming convention are skipped with a warning.
+ *
+ * @param {string[]} files  Raw list of filenames (basenames only)
+ * @returns {string[]}      Sorted, valid migration filenames
+ */
+function sortMigrationFiles(files) {
+  const parsed = [];
+  for (const f of files) {
+    const p = parseMigrationName(f);
+    if (!p) {
+      console.warn(`[migrate] skipping non-migration file: ${f}`);
+      continue;
+    }
+    parsed.push(p);
+  }
+
+  parsed.sort((a, b) => {
+    if (a.num !== b.num) return a.num - b.num;
+    if (a.suffix !== b.suffix) return a.suffix < b.suffix ? -1 : 1;
+    return a.filename < b.filename ? -1 : 1;
+  });
+
+  return parsed.map((p) => p.filename);
+}
+
+// ─── Runner ───────────────────────────────────────────────────────────────────
+
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432', 10),
@@ -35,10 +90,9 @@ async function run() {
     const appliedSet = new Set(applied.rows.map((r) => r.filename));
 
     const migrationsDir = __dirname;
-    const files = fs
-      .readdirSync(migrationsDir)
-      .filter((f) => f.endsWith('.sql'))
-      .sort();
+    const files = sortMigrationFiles(
+      fs.readdirSync(migrationsDir).filter((f) => f.endsWith('.sql'))
+    );
 
     for (const file of files) {
       if (appliedSet.has(file)) {
@@ -68,4 +122,8 @@ async function run() {
   }
 }
 
-run();
+if (require.main === module) {
+  run();
+}
+
+module.exports = { parseMigrationName, sortMigrationFiles };
