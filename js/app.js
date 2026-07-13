@@ -1,3 +1,4 @@
+window.QM_API_BASE = 'https://api.qualitet-market.com/api';
 (function(){
   const STORAGE_KEYS = {
     email: 'app_user_email',
