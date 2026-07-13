@@ -1,38 +1,17 @@
 const express = require("express");
-const cors = require("cors");
-
+const path = require("path");
 const app = express();
-app.use(cors());
 
-const PORT = 3000;
+// Serwowanie statycznych plików z folderu frontend
+app.use(express.static(path.join(__dirname, "frontend")));
 
-// MOCK PRODUKTY (na start)
-const products = [
-  {
-    id: 1,
-    name: "AirPods Pro",
-    price: 499,
-    image: "https://via.placeholder.com/300",
-  },
-  {
-    id: 2,
-    name: "iPhone 13",
-    price: 2999,
-    image: "https://via.placeholder.com/300",
-  },
-  {
-    id: 3,
-    name: "Nike Shoes",
-    price: 399,
-    image: "https://via.placeholder.com/300",
-  },
-];
-
-// endpoint
-app.get("/api/products", (req, res) => {
-  res.json(products);
+// Strona główna — index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
+// Port dla Render
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("API działa na http://localhost:" + PORT);
+  console.log(`Server running on port ${PORT}`);
 });
