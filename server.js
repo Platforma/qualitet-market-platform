@@ -8,10 +8,21 @@
  * resolved relative to that file, so no paths need to change.
  */
 
+const express = require('express');
+const path = require('path');
 const http = require('http');
 const { WebSocketServer } = require('ws');
 
-const app = require('./backend/src/app');
+const app = express();
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
+});
+
+const backendApp = require('./backend/src/app');
+app.use(backendApp);
+
 const wsManager = require('./backend/src/services/websocket');
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
