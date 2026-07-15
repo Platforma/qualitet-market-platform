@@ -2906,38 +2906,26 @@ textarea:focus-visible{
 .btn-feed:hover{background:#5548e0;color:#fff}
 
 /* ── Section background utility classes ── */
-#trending-products,
 .section-bg-trending{background:rgba(139,92,246,.04);padding-top:40px;padding-bottom:40px}
-#supplier-marketplace,
 .section-bg-supplier{background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(139,92,246,.06))}
-#new-products,
 .section-bg-new{background:linear-gradient(135deg,rgba(0,212,255,.05),rgba(34,197,94,.04))}
-#viral-products,
 .section-bg-viral{background:linear-gradient(135deg,rgba(255,79,216,.07),rgba(250,204,21,.06))}
-#social-video,
 .section-bg-dark-video{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(20,20,40,.9));padding-top:48px;padding-bottom:48px}
-#art-auctions,
 .section-bg-art{background:linear-gradient(135deg,rgba(255,79,216,.07),rgba(139,92,246,.07))}
-#community-feed,
 .section-bg-community{background:rgba(0,212,255,.03);padding-top:40px;padding-bottom:40px}
-#social-media,
 .section-bg-social{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(255,79,216,.06));padding-top:40px;padding-bottom:40px}
-#live-sales,
 .section-bg-live{padding-top:24px;padding-bottom:24px}
 
 /* ── Dark video section text color fixes ── */
-#social-video .mkt-section-head,
 .section-bg-dark-video .mkt-section-head{color:#fff}
-#social-video .eyebrow,
 .section-bg-dark-video .eyebrow{color:rgba(255,79,216,.9)}
-#social-video h2,
 .section-bg-dark-video h2{color:#fff}
 
 /* ── Social video skeleton loaders (dark bg context) ── */
-#social-video .mkt-skeleton{background:rgba(255,255,255,.08);animation:shimmer 1.4s infinite;background-size:200% 100%}
+.section-bg-dark-video .mkt-skeleton{background:rgba(255,255,255,.08);animation:shimmer 1.4s infinite;background-size:200% 100%}
 .mkt-skeleton-vertical{aspect-ratio:9/16;border-radius:14px}
 .mkt-skeleton-horizontal{aspect-ratio:16/9;border-radius:14px}
-#social-video .social-video-label{color:rgba(255,255,255,.6)}
+.section-bg-dark-video .social-video-label{color:rgba(255,255,255,.6)}
 
 /* ── Viral section intro text ── */
 .viral-intro{color:var(--muted);font-size:14px;margin:0 0 20px}
@@ -2982,4 +2970,4 @@ textarea:focus-visible{
 .hub-card-supplier .hub-badge{background:rgba(0,212,255,.15);color:var(--cyan);border-color:rgba(0,212,255,.3)}
 
 /* ── Superadmin topbar link ── */
-[data-superadmin-link]{background:rgba(255,79,216,.2);border-color:rgba(255,79,216,.5);color:#ffd6f3}
+.btn-superadmin{background:rgba(255,79,216,.2);border-color:rgba(255,79,216,.5);color:#ffd6f3}
