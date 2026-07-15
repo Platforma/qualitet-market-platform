@@ -44,7 +44,7 @@
       </a>
       <a href="login.html" class="btn btn-secondary topbar-login-btn">Zaloguj się</a>
       <a class="btn btn-primary topbar-cta" href="generator-sklepu.html">🚀 Otwórz Sklep</a>
-      <a class="btn btn-primary topbar-cta" href="owner-panel.html" data-superadmin-link hidden style="background:rgba(255,79,216,.2);border-color:rgba(255,79,216,.5);color:#ffd6f3">🔐 Panel właściciela</a>
+      <a class="btn btn-primary topbar-cta btn-superadmin" href="owner-panel.html" data-superadmin-link hidden>🔐 Panel właściciela</a>
       <button class="menu-toggle" type="button" aria-label="Otwórz menu" data-menu-toggle>☰</button>
     </div>
   </header>
@@ -292,24 +292,24 @@
     </section>
 
     <!-- Social Commerce Feed Banner -->
-    <section class="mkt-section" id="product-feed-promo" style="padding:28px 0">
+    <section class="mkt-section feed-promo-section" id="product-feed-promo">
       <div class="wrap">
-        <div style="background:linear-gradient(135deg,rgba(108,99,255,.18),rgba(167,139,250,.12));border:1px solid rgba(108,99,255,.35);border-radius:18px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
-          <div>
-            <div style="font-size:clamp(15px,2.2vw,22px);font-weight:700;margin-bottom:6px">📱 Odkryj Produkty – Feed Społecznościowy</div>
-            <div style="font-size:14px;color:rgba(255,255,255,.7);max-width:480px">Przewijaj tysiące produktów jak na TikToku. Znajdź bestsellery, nowości i produkty z najwyższą marżą. Dodaj do sklepu jednym kliknięciem.</div>
+        <div class="feed-promo-banner">
+          <div class="feed-promo-copy">
+            <div class="feed-promo-title">📱 Odkryj Produkty – Feed Społecznościowy</div>
+            <p class="feed-promo-desc">Przewijaj tysiące produktów jak na TikToku. Znajdź bestsellery, nowości i produkty z najwyższą marżą. Dodaj do sklepu jednym kliknięciem.</p>
           </div>
-          <a href="feed.html" style="display:inline-flex;align-items:center;gap:8px;background:#6c63ff;color:#fff;padding:12px 22px;border-radius:12px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;transition:background .2s" onmouseover="this.style.background='#5548e0'" onmouseout="this.style.background='#6c63ff'">✨ Otwórz Feed →</a>
+          <a href="feed.html" class="btn-feed">✨ Otwórz Feed →</a>
         </div>
       </div>
     </section>
 
     <!-- Trending Products -->
-    <section class="mkt-section" id="trending-products" style="background:rgba(139,92,246,.04);padding-top:40px;padding-bottom:40px">
+    <section class="mkt-section section-bg-trending" id="trending-products">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🔥 Popularne teraz</span>
+            <span class="eyebrow">🔥 Popularne teraz</span>
             <h2>Trending Products</h2>
           </div>
           <a href="sklep.html">Więcej produktów →</a>
@@ -329,7 +329,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🏆 Najlepsi sprzedawcy</span>
+            <span class="eyebrow">🏆 Najlepsi sprzedawcy</span>
             <h2>Top Stores</h2>
           </div>
           <a href="sklep.html">Wszystkie sklepy →</a>
@@ -345,11 +345,11 @@
     </section>
 
     <!-- Supplier Marketplace -->
-    <section class="mkt-section" id="supplier-marketplace" style="background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(139,92,246,.06))">
+    <section class="mkt-section section-bg-supplier" id="supplier-marketplace">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">📦 Hurtownie i Dostawcy</span>
+            <span class="eyebrow">📦 Hurtownie i Dostawcy</span>
             <h2>Supplier Marketplace</h2>
           </div>
           <a href="hurtownie.html">Przeglądaj hurtownie →</a>
@@ -397,11 +397,11 @@
             <p>Suplementy, zdrowa żywność i produkty eco</p>
             <span class="hub-badge">B2B</span>
           </a>
-          <a class="hub-card" href="panel-dostawcy.html" style="border-color:var(--cyan);background:rgba(0,212,255,.06)">
+          <a class="hub-card hub-card-supplier" href="panel-dostawcy.html">
             <div class="hub-card-icon">➕</div>
             <h4>Zostań Dostawcą</h4>
             <p>Dołącz jako hurtownik i zacznij sprzedawać B2B</p>
-            <span class="hub-badge" style="background:rgba(0,212,255,.15);color:var(--cyan);border-color:rgba(0,212,255,.3)">Nowe konto</span>
+            <span class="hub-badge">Nowe konto</span>
           </a>
         </div>
       </div>
@@ -412,7 +412,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">💰 Wysokie marże</span>
+            <span class="eyebrow">💰 Wysokie marże</span>
             <h2>Produkty które zarabiają</h2>
           </div>
           <a href="sklep.html">Zobacz wszystkie →</a>
@@ -428,11 +428,11 @@
     </section>
 
     <!-- Nowości -->
-    <section class="mkt-section" id="new-products" style="background:linear-gradient(135deg,rgba(0,212,255,.05),rgba(34,197,94,.04))">
+    <section class="mkt-section" id="new-products">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🆕 Właśnie dodane</span>
+            <span class="eyebrow">🆕 Właśnie dodane</span>
             <h2>Nowości</h2>
           </div>
           <a href="qualitetmarket.html">QualitetMarket →</a>
@@ -451,7 +451,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🏆 Najchętniej kupowane</span>
+            <span class="eyebrow">🏆 Najchętniej kupowane</span>
             <h2>Bestsellery</h2>
           </div>
           <a href="qualitetmarket.html">QualitetMarket →</a>
@@ -466,16 +466,16 @@
     </section>
 
     <!-- Produkty viral z social media -->
-    <section class="mkt-section" id="viral-products" style="background:linear-gradient(135deg,rgba(255,79,216,.07),rgba(250,204,21,.06))">
+    <section class="mkt-section" id="viral-products">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🔥 Viral z Social Media</span>
+            <span class="eyebrow">🔥 Viral z Social Media</span>
             <h2>Produkty viral z social media</h2>
           </div>
           <a href="qualitetmarket.html">Zobacz wszystkie →</a>
         </div>
-        <p style="color:var(--muted);font-size:14px;margin:0 0 20px">Produkty polecane przez twórców, popularne na TikTok, YouTube i Reels.</p>
+        <p class="viral-intro">Produkty polecane przez twórców, popularne na TikTok, YouTube i Reels.</p>
         <div class="mkt-products-grid" id="homepage-viral-products" aria-live="polite">
           <div class="mkt-skeleton mkt-skeleton-card"></div>
           <div class="mkt-skeleton mkt-skeleton-card"></div>
@@ -486,27 +486,27 @@
     </section>
 
     <!-- Video Embed – TikTok, YouTube, Shorts, Reels -->
-    <section class="mkt-section" id="social-video" style="background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(20,20,40,.9));padding-top:48px;padding-bottom:48px">
+    <section class="mkt-section section-bg-dark-video" id="social-video">
       <div class="wrap">
-        <div class="mkt-section-head" style="color:#fff">
+        <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="color:rgba(255,79,216,.9);margin-bottom:8px;display:inline-block">📱 Video Embed</span>
-            <h2 style="color:#fff">Oglądaj video bez wychodzenia z platformy</h2>
+            <span class="eyebrow">📱 Video Embed</span>
+            <h2>Oglądaj video bez wychodzenia z platformy</h2>
           </div>
         </div>
         <div class="social-video-grid" id="homepage-social-video">
           <!-- Skeleton video cards -->
           <div class="social-video-card">
-            <div class="mkt-skeleton" style="aspect-ratio:9/16;border-radius:14px;background:rgba(255,255,255,.08)"></div>
-            <p class="social-video-label" style="color:rgba(255,255,255,.6)">⏳ Ładowanie video…</p>
+            <div class="mkt-skeleton mkt-skeleton-vertical"></div>
+            <p class="social-video-label">⏳ Ładowanie video…</p>
           </div>
           <div class="social-video-card">
-            <div class="mkt-skeleton" style="aspect-ratio:16/9;border-radius:14px;background:rgba(255,255,255,.08)"></div>
-            <p class="social-video-label" style="color:rgba(255,255,255,.6)">⏳ Ładowanie video…</p>
+            <div class="mkt-skeleton mkt-skeleton-horizontal"></div>
+            <p class="social-video-label">⏳ Ładowanie video…</p>
           </div>
           <div class="social-video-card">
-            <div class="mkt-skeleton" style="aspect-ratio:9/16;border-radius:14px;background:rgba(255,255,255,.08)"></div>
-            <p class="social-video-label" style="color:rgba(255,255,255,.6)">⏳ Ładowanie video…</p>
+            <div class="mkt-skeleton mkt-skeleton-vertical"></div>
+            <p class="social-video-label">⏳ Ładowanie video…</p>
           </div>
         </div>
       </div>
@@ -517,54 +517,54 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">📲 Posty produktowe</span>
+            <span class="eyebrow">📲 Posty produktowe</span>
             <h2>Produkty ze społecznościowych</h2>
           </div>
           <a href="qualitetmarket.html">Kup teraz →</a>
         </div>
         <div class="social-posts-feed" id="homepage-social-posts" aria-live="polite">
-          <div class="mkt-skeleton mkt-skeleton-card" style="height:320px"></div>
-          <div class="mkt-skeleton mkt-skeleton-card" style="height:320px"></div>
-          <div class="mkt-skeleton mkt-skeleton-card" style="height:320px"></div>
+          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h320"></div>
+          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h320"></div>
+          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h320"></div>
         </div>
       </div>
     </section>
 
     <!-- Art Auctions -->
-    <section class="mkt-section" id="art-auctions" style="background:linear-gradient(135deg,rgba(255,79,216,.07),rgba(139,92,246,.07))">
+    <section class="mkt-section section-bg-art" id="art-auctions">
 
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🎨 Sztuka na aukcji</span>
+            <span class="eyebrow">🎨 Sztuka na aukcji</span>
             <h2>Art Auctions</h2>
           </div>
           <a href="auctions.html">Wszystkie aukcje →</a>
         </div>
         <div class="mkt-auctions-grid" id="homepage-art-auctions" aria-live="polite">
           <!-- Skeleton loaders -->
-          <div class="mkt-skeleton mkt-skeleton-card" style="height:260px"></div>
-          <div class="mkt-skeleton mkt-skeleton-card" style="height:260px"></div>
-          <div class="mkt-skeleton mkt-skeleton-card" style="height:260px"></div>
+          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h260"></div>
+          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h260"></div>
+          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h260"></div>
         </div>
-        <div style="text-align:center;margin-top:24px">
+        <div class="section-cta-center">
           <a class="btn btn-primary" href="auctions.html">🎨 Przeglądaj aukcje sztuki</a>
-          <a class="btn btn-secondary" href="panel-artysty.html" style="margin-left:12px">Zostań artystą</a>
+          <a class="btn btn-secondary" href="panel-artysty.html">Zostań artystą</a>
         </div>
       </div>
     </section>
 
     <!-- Live Sales Banner -->
-    <section class="mkt-section" id="live-sales" style="padding-top:24px;padding-bottom:24px">
+    <section class="mkt-section section-bg-live" id="live-sales">
       <div class="wrap">
         <div class="live-banner">
           <div class="live-dot"></div>
-          <div style="flex:1;min-width:0">
+          <div class="live-banner-content">
             <h3>📡 Live Sales — Sprzedaż na Żywo</h3>
             <p>Dołącz do transmisji na żywo i odkrywaj ekskluzywne oferty w czasie rzeczywistym</p>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <a class="btn btn-primary" href="live.html" style="background:linear-gradient(135deg,#ff4fd8,#7c3aed)">🔴 Oglądaj na żywo</a>
+          <div class="live-banner-actions">
+            <a class="btn btn-live" href="live.html">🔴 Oglądaj na żywo</a>
             <a class="btn btn-secondary" href="sklep.html">Oferty specjalne</a>
           </div>
         </div>
@@ -576,53 +576,53 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🥇 Najlepsi sprzedawcy</span>
+            <span class="eyebrow">🥇 Najlepsi sprzedawcy</span>
             <h2>Top Sellers</h2>
           </div>
           <a href="reputation.html">Ranking reputacji →</a>
         </div>
         <div class="sellers-grid" id="homepage-top-sellers" aria-live="polite">
           <!-- Skeleton loaders -->
-          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
-          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
-          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
-          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
+          <div class="mkt-skeleton mkt-skeleton-h140"></div>
+          <div class="mkt-skeleton mkt-skeleton-h140"></div>
+          <div class="mkt-skeleton mkt-skeleton-h140"></div>
+          <div class="mkt-skeleton mkt-skeleton-h140"></div>
         </div>
       </div>
     </section>
 
     <!-- Community Feed -->
-    <section class="mkt-section" id="community-feed" style="background:rgba(0,212,255,.03);padding-top:40px;padding-bottom:40px">
+    <section class="mkt-section section-bg-community" id="community-feed">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">💬 Społeczność</span>
+            <span class="eyebrow">💬 Społeczność</span>
             <h2>Posty społeczności</h2>
           </div>
           <a href="community.html">Przejdź do społeczności →</a>
         </div>
         <div class="mkt-community-grid" id="homepage-community-posts" aria-live="polite">
           <!-- Skeleton loaders — replaced dynamically by homepage.js -->
-          <div class="mkt-skeleton" style="height:160px;border-radius:18px"></div>
-          <div class="mkt-skeleton" style="height:160px;border-radius:18px"></div>
-          <div class="mkt-skeleton" style="height:160px;border-radius:18px"></div>
+          <div class="mkt-skeleton mkt-skeleton-h160"></div>
+          <div class="mkt-skeleton mkt-skeleton-h160"></div>
+          <div class="mkt-skeleton mkt-skeleton-h160"></div>
         </div>
-        <div style="text-align:center;margin-top:24px">
+        <div class="section-cta-center">
           <a class="btn btn-secondary" href="community.html">💬 Dołącz do dyskusji</a>
         </div>
       </div>
     </section>
 
     <!-- ══════════════ SOCIAL MEDIA ══════════════ -->
-    <section class="mkt-section" id="social-media" style="background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(255,79,216,.06));padding-top:40px;padding-bottom:40px">
+    <section class="mkt-section" id="social-media">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🌐 Społeczność</span>
+            <span class="eyebrow">🌐 Społeczność</span>
             <h2>Śledź nas w Social Media</h2>
           </div>
         </div>
-        <p style="color:var(--muted);font-size:15px;margin:0 0 24px">Bądź na bieżąco z najnowszymi produktami, trendami i ofertami — obserwuj QualitetMarket w mediach społecznościowych.</p>
+        <p class="social-intro">Bądź na bieżąco z najnowszymi produktami, trendami i ofertami — obserwuj QualitetMarket w mediach społecznościowych.</p>
         <div class="social-icons-row">
           <a class="social-icon-btn" href="https://www.facebook.com/qualitetverse" target="_blank" rel="noopener noreferrer" aria-label="Facebook QualitetMarket" title="Facebook">
             <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.563 9.877V14.89h-2.54v-2.89h2.54V9.845c0-2.507 1.493-3.891 3.777-3.891 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.772-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.987A10.003 10.003 0 0 0 22 12"/></svg>
@@ -653,7 +653,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">⚙️ Panele zarządzania</span>
+            <span class="eyebrow">⚙️ Panele zarządzania</span>
             <h2>Twój panel platformy</h2>
           </div>
           <a href="dashboard.html">Dashboard →</a>
@@ -688,41 +688,41 @@
     </section>
 
     <!-- ══════════════ DLA SPRZEDAWCÓW I KLIENTÓW ══════════════ -->
-    <section class="wrap" id="dla-kogo" style="padding:40px 0 20px">
-      <div class="section-head centered" style="margin-bottom:24px">
+    <section class="wrap dla-kogo-section" id="dla-kogo">
+      <div class="section-head centered">
         <span class="eyebrow">Platforma dwustronna</span>
         <h2>Dla sprzedawców <span class="text-muted-heading">i klientów</span></h2>
-        <p class="lead" style="max-width:600px;margin:10px auto 0">Otwórz swój sklep dropshipping lub po prostu kup produkty z najlepszych hurtowni — bez pośredników.</p>
+        <p class="lead audience-lead">Otwórz swój sklep dropshipping lub po prostu kup produkty z najlepszych hurtowni — bez pośredników.</p>
       </div>
       <div class="dual-audience-grid">
-        <article style="border:1px solid var(--stroke);background:linear-gradient(160deg,rgba(56,189,248,.14),rgba(34,197,94,.08));border-radius:28px;padding:32px;box-shadow:var(--shadow)">
-          <div style="font-size:48px;margin-bottom:14px">🏪</div>
+        <article class="audience-card audience-seller">
+          <div class="audience-icon">🏪</div>
           <span class="eyebrow">Dla sprzedawców</span>
-          <h3 style="font-size:clamp(20px,3vw,30px);margin:12px 0 10px">Otwórz sklep online w 5 minut</h3>
-          <p style="color:var(--muted);margin:0 0 14px;line-height:1.6">Twórz własny sklep pod swoją marką. Wybieraj produkty z setek hurtowni. Zarabiaj na marży bez pakowania ani wysyłki.</p>
-          <ul style="color:var(--muted);padding-left:18px;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:14px">
+          <h3>Otwórz sklep online w 5 minut</h3>
+          <p>Twórz własny sklep pod swoją marką. Wybieraj produkty z setek hurtowni. Zarabiaj na marży bez pakowania ani wysyłki.</p>
+          <ul>
             <li>✅ Sklep pod własnym logo</li>
             <li>✅ Tysiące produktów gotowych do sprzedaży</li>
             <li>✅ Automatyczna obsługa zamówień</li>
             <li>✅ 7 dni trial za darmo</li>
           </ul>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div class="audience-card-actions">
             <a class="btn btn-primary" href="generator-sklepu.html">Załóż sklep za darmo</a>
             <a class="btn btn-secondary" href="zarabiaj.html">Dowiedz się więcej</a>
           </div>
         </article>
-        <article style="border:1px solid var(--stroke);background:linear-gradient(160deg,rgba(255,79,216,.12),rgba(250,204,21,.08));border-radius:28px;padding:32px;box-shadow:var(--shadow)">
-          <div style="font-size:48px;margin-bottom:14px">🛒</div>
+        <article class="audience-card audience-buyer">
+          <div class="audience-icon">🛒</div>
           <span class="eyebrow">Dla kupujących</span>
-          <h3 style="font-size:clamp(20px,3vw,30px);margin:12px 0 10px">Tysiące produktów w jednym miejscu</h3>
-          <p style="color:var(--muted);margin:0 0 14px;line-height:1.6">Przeglądaj oferty od sprawdzonych dostawców. Szybka dostawa, uczciwe ceny, prosta realizacja zamówień bezpośrednio na twoją skrzynkę.</p>
-          <ul style="color:var(--muted);padding-left:18px;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:14px">
+          <h3>Tysiące produktów w jednym miejscu</h3>
+          <p>Przeglądaj oferty od sprawdzonych dostawców. Szybka dostawa, uczciwe ceny, prosta realizacja zamówień bezpośrednio na twoją skrzynkę.</p>
+          <ul>
             <li>🔥 Elektronika, moda, dom, sport i więcej</li>
             <li>🔥 Dostawa 24–72h</li>
             <li>🔥 Bezpieczne zamówienia</li>
             <li>🔥 Rejestracja niewymagana</li>
           </ul>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div class="audience-card-actions">
             <a class="btn btn-primary" href="sklep.html">Przejdź do sklepu</a>
             <a class="btn btn-secondary" href="koszyk.html">Mój koszyk 🛒</a>
           </div>
@@ -1309,9 +1309,9 @@
       <div>
         <h4>QualitetMarket</h4>
         <p>Platforma marketplace B2B/B2C łącząca hurtowników, sprzedawców, artystów i kupujących.</p>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <a class="btn btn-secondary" href="sklep.html" style="min-height:36px;font-size:13px;padding:0 14px">🛍️ Marketplace</a>
-          <a class="btn btn-primary" href="generator-sklepu.html" style="min-height:36px;font-size:13px;padding:0 14px">🚀 Załóż Sklep</a>
+        <div class="footer-cta-row">
+          <a class="btn btn-secondary" href="sklep.html">🛍️ Marketplace</a>
+          <a class="btn btn-primary" href="generator-sklepu.html">🚀 Załóż Sklep</a>
         </div>
       </div>
       <div>
@@ -1343,7 +1343,7 @@
         <p>62-600 Koło</p>
         <p>tel. +48 882 914 429</p>
         <p>email: <a href="mailto:QUALITETMARKET PLATFORMApromo@gmail.com">QUALITETMARKET PLATFORMApromo@gmail.com</a></p>
-        <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+        <div class="footer-links-col">
           <a href="privacy.html">Polityka prywatności</a>
           <a href="terms.html">Regulamin</a>
           <a href="legal.html">Informacje prawne</a>
