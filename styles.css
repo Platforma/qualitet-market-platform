@@ -1853,3 +1853,55 @@ img,video,iframe,embed,object{max-width:100%;height:auto}
     gap:8px;
   }
 }
+
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:#f7f7f7;
+  color:#222;
+}
+
+.qm-header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 25px;
+  background:#111;
+  color:#fff;
+}
+
+.qm-header nav a{
+  margin-left:20px;
+  color:#fff;
+  text-decoration:none;
+}
+
+.hero{
+  padding:80px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#111,#333);
+  color:#fff;
+}
+
+.btn{
+  display:inline-block;
+  padding:12px 25px;
+  background:#ffcc00;
+  color:#000;
+  border-radius:6px;
+  text-decoration:none;
+  margin-top:20px;
+}
+
+.product-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.product-card{
+  background:#fff;
+  border-radius:10px;
+  padding:15px;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
