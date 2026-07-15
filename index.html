@@ -17,6 +17,154 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/qualitetverse.css">
+  <style>
+    .dual-audience-grid{display:grid;gap:20px;grid-template-columns:1fr 1fr}
+    @media(max-width:640px){.dual-audience-grid{grid-template-columns:1fr}}
+    /* ── Marketplace homepage sections ── */
+    .mkt-section{padding:48px 0}
+    .mkt-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+    .mkt-section-head h2{font-size:clamp(20px,2.8vw,28px);margin:0}
+    .mkt-section-head a{font-size:14px;color:var(--cyan);white-space:nowrap}
+    .mkt-products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .mkt-stores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .mkt-auctions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .mkt-hub-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .mkt-community-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .mkt-card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;overflow:hidden;transition:transform .15s,box-shadow .15s}
+    .mkt-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
+    .mkt-card-img{width:100%;aspect-ratio:4/3;object-fit:contain;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted);padding:8px}
+    .mkt-card-body{padding:12px}
+    .mkt-card-body h4{margin:0 0 4px;font-size:14px;font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .mkt-card-body .price{color:var(--cyan);font-weight:700;font-size:15px}
+    .mkt-card-body .old-price{color:var(--muted);text-decoration:line-through;font-size:12px;margin-left:6px}
+    .mkt-card-body .store-name{color:var(--muted);font-size:12px}
+    .store-card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:transform .15s,box-shadow .15s}
+    .store-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
+    .store-card-logo{width:52px;height:52px;border-radius:14px;background:var(--purple-soft);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--purple-bright);overflow:hidden}
+    .store-card-logo img{width:100%;height:100%;object-fit:cover}
+    .store-card h4{margin:0;font-size:15px;font-weight:600}
+    .store-card p{margin:0;font-size:12px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .store-card .store-badge{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);align-self:start}
+    .auction-card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;overflow:hidden;position:relative;transition:transform .15s,box-shadow .15s}
+    .auction-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
+    .auction-card-img{width:100%;aspect-ratio:3/2;object-fit:cover;background:rgba(255,79,216,.08);display:flex;align-items:center;justify-content:center;font-size:42px;color:var(--muted)}
+    .auction-badge{position:absolute;top:10px;left:10px;background:rgba(255,79,216,.9);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
+    .auction-card-body{padding:14px}
+    .auction-card-body h4{margin:0 0 6px;font-size:15px;font-weight:600}
+    .auction-bid{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+    .auction-bid strong{color:var(--pink);font-size:16px}
+    .auction-timer{font-size:11px;color:var(--muted)}
+    .hub-card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:20px;text-align:center;transition:transform .15s,box-shadow .15s;display:block;color:var(--text);text-decoration:none}
+    .hub-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.45);border-color:var(--purple)}
+    .hub-card-icon{font-size:32px;margin-bottom:10px}
+    .hub-card h4{margin:0 0 6px;font-size:15px;font-weight:600}
+    .hub-card p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}
+    .hub-card .hub-badge{display:inline-block;margin-top:8px;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(139,92,246,.18);color:var(--purple-bright);border:1px solid rgba(139,92,246,.35)}
+    .feed-card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:16px}
+    .feed-card .feed-author{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .feed-avatar{width:36px;height:36px;border-radius:50%;background:var(--purple-soft);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--purple-bright);flex-shrink:0}
+    .feed-card h4{margin:0;font-size:14px;font-weight:600}
+    .feed-card .feed-time{font-size:11px;color:var(--muted)}
+    .feed-card p{margin:0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.6}
+    .feed-card .feed-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .feed-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+    .live-banner{background:linear-gradient(135deg,rgba(255,79,216,.2),rgba(139,92,246,.25));border:1px solid rgba(255,79,216,.35);border-radius:20px;padding:24px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .live-dot{width:12px;height:12px;border-radius:50%;background:#ff4fd8;box-shadow:0 0 10px #ff4fd8;animation:pulse 1.5s infinite;flex-shrink:0}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+    .live-banner h3{margin:0 0 4px;font-size:18px}
+    .live-banner p{margin:0;font-size:13px;color:var(--muted)}
+    .sellers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .seller-card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:16px;text-align:center;transition:transform .15s;display:block;color:var(--text)}
+    .seller-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    .seller-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--purple-dark),var(--cyan-dark));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin:0 auto 10px}
+    .seller-card h4{margin:0 0 4px;font-size:14px;font-weight:600}
+    .seller-card p{margin:0;font-size:12px;color:var(--muted)}
+    .seller-card .seller-rating{color:var(--yellow);font-size:13px;margin-top:6px}
+    .mkt-skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:12px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .mkt-skeleton-card{height:200px;border-radius:18px}
+    .nav-dropdown{position:relative}
+    .nav-dropdown-menu{position:absolute;top:calc(100% + 8px);left:0;background:var(--bg-2);border:1px solid var(--stroke);border-radius:14px;padding:8px;min-width:200px;z-index:100;display:none;flex-direction:column;gap:2px;box-shadow:var(--shadow)}
+    .nav-dropdown:hover .nav-dropdown-menu,.nav-dropdown:focus-within .nav-dropdown-menu{display:flex}
+    .nav-dropdown-menu a{padding:10px 14px;border-radius:10px;color:var(--muted);font-size:14px;white-space:nowrap;display:block}
+    .nav-dropdown-menu a:hover{background:rgba(255,255,255,.08);color:#fff}
+    /* ── Topbar: minimal login button ── */
+    .topbar-login-btn{font-size:13px;padding:8px 16px;margin-left:auto}
+    /* ── 4 Hero Feature Blocks ── */
+    .hero-features-4{padding:0 0 48px}
+    .hero-features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .hero-feature-block{display:flex;flex-direction:column;gap:12px;padding:28px 22px;background:var(--card);border:1px solid var(--stroke);border-radius:22px;text-decoration:none;color:var(--text);transition:transform .15s,box-shadow .15s,border-color .15s;position:relative;overflow:hidden}
+    .hero-feature-block::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(124,58,237,.12),transparent 65%);pointer-events:none;opacity:0;transition:opacity .2s}
+    .hero-feature-block:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5);border-color:var(--purple)}
+    .hero-feature-block:hover::before{opacity:1}
+    .hfb-icon{font-size:40px;line-height:1}
+    .hero-feature-block h3{margin:0;font-size:18px;font-weight:700;line-height:1.25}
+    .hero-feature-block p{margin:0;font-size:13px;color:var(--muted);line-height:1.65;flex:1}
+    .hfb-cta{font-size:13px;font-weight:700;color:var(--cyan);margin-top:auto}
+    .hero-feature-block.hfb-accent{background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(158,119,255,.12));border-color:rgba(124,58,237,.45)}
+    .hero-feature-block.hfb-accent::before{background:radial-gradient(ellipse at 0% 0%,rgba(124,58,237,.25),transparent 65%)}
+    .hero-feature-block.hfb-accent:hover{border-color:var(--purple-bright);box-shadow:0 16px 40px rgba(124,58,237,.32)}
+    .hero-feature-block.hfb-accent .hfb-cta{color:var(--purple-bright)}
+    @media(max-width:1024px){
+      .mkt-products-grid,.mkt-stores-grid{grid-template-columns:repeat(3,1fr)}
+      .mkt-hub-grid{grid-template-columns:repeat(3,1fr)}
+      .sellers-grid{grid-template-columns:repeat(3,1fr)}
+      .hero-features-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .mkt-products-grid,.mkt-stores-grid{grid-template-columns:repeat(2,1fr)}
+      .mkt-auctions-grid{grid-template-columns:repeat(2,1fr)}
+      .mkt-hub-grid{grid-template-columns:repeat(2,1fr)}
+      .mkt-community-grid{grid-template-columns:1fr}
+      .sellers-grid{grid-template-columns:repeat(2,1fr)}
+      .social-icons-row{gap:12px}
+      .social-icon-btn{min-width:80px;padding:14px 12px}
+      .social-video-grid{grid-template-columns:1fr}
+      .social-posts-feed{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      .mkt-products-grid,.mkt-stores-grid,.mkt-auctions-grid,.sellers-grid{grid-template-columns:repeat(2,1fr)}
+      .mkt-hub-grid{grid-template-columns:repeat(2,1fr)}
+      .mkt-section{padding:32px 0}
+      .live-banner{padding:16px}
+      .hero-features-grid{grid-template-columns:1fr}
+    }
+    /* ── Social media icons ── */
+    .social-icons-row{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+    .social-icon-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 20px;border-radius:16px;border:1px solid var(--stroke);background:var(--surface);color:var(--fg);text-decoration:none;font-size:13px;font-weight:600;min-width:90px;transition:transform .15s,box-shadow .15s,border-color .15s}
+    .social-icon-btn:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.2);border-color:var(--purple)}
+    .social-icon-btn svg{flex-shrink:0}
+    .social-tiktok svg{color:#69c9d0}
+    .social-tiktok:hover{border-color:#69c9d0;box-shadow:0 8px 24px rgba(105,201,208,.25)}
+    .social-youtube svg{color:#ff0000}
+    .social-youtube:hover{border-color:#ff0000;box-shadow:0 8px 24px rgba(255,0,0,.2)}
+    .social-instagram svg{color:#e1306c}
+    .social-instagram:hover{border-color:#e1306c;box-shadow:0 8px 24px rgba(225,48,108,.2)}
+    .social-twitter svg{color:var(--fg)}
+    /* ── Social video embed grid ── */
+    .social-video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:20px}
+    .social-video-card{display:flex;flex-direction:column;gap:10px}
+    .social-video-iframe-wrap{position:relative;border-radius:14px;overflow:hidden;background:#000;line-height:0}
+    .social-video-iframe-wrap.aspect-vertical{aspect-ratio:9/16}
+    .social-video-iframe-wrap.aspect-horizontal{aspect-ratio:16/9}
+    .social-video-iframe-wrap iframe{width:100%;height:100%;border:none;display:block}
+    .social-video-label{font-size:13px;color:var(--muted);margin:0}
+    .social-video-product-link{font-size:13px;color:var(--cyan);text-decoration:none;font-weight:600}
+    .social-video-product-link:hover{text-decoration:underline}
+    /* ── Social product posts ── */
+    .social-posts-feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:20px}
+    .social-post-card{border:1px solid var(--stroke);border-radius:18px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
+    .social-post-media{aspect-ratio:4/3;position:relative;overflow:hidden;background:#111;line-height:0}
+    .social-post-media img{width:100%;height:100%;object-fit:cover}
+    .social-post-media .social-post-video-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:700}
+    .social-post-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:8px}
+    .social-post-title{font-weight:700;font-size:15px;margin:0;line-height:1.3}
+    .social-post-desc{color:var(--muted);font-size:13px;line-height:1.5;margin:0;flex:1}
+    .social-post-price{font-weight:700;font-size:16px;color:var(--purple-bright)}
+    .social-post-actions{display:flex;gap:8px;margin-top:auto}
+    .social-post-buy{flex:1;text-align:center;padding:9px 14px;font-size:13px;font-weight:700}
+  </style>
+  <script>window.QM_API_BASE = 'https://api.uszefaqualitet.pl/api';</script>
   <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'; object-src 'none'">
   <script src="js/security-guard.js"></script>
 </head>
@@ -44,7 +192,7 @@
       </a>
       <a href="login.html" class="btn btn-secondary topbar-login-btn">Zaloguj się</a>
       <a class="btn btn-primary topbar-cta" href="generator-sklepu.html">🚀 Otwórz Sklep</a>
-      <a class="btn btn-primary topbar-cta btn-superadmin" href="owner-panel.html" data-superadmin-link hidden>🔐 Panel właściciela</a>
+      <a class="btn btn-primary topbar-cta" href="owner-panel.html" data-superadmin-link hidden style="background:rgba(255,79,216,.2);border-color:rgba(255,79,216,.5);color:#ffd6f3">🔐 Panel właściciela</a>
       <button class="menu-toggle" type="button" aria-label="Otwórz menu" data-menu-toggle>☰</button>
     </div>
   </header>
@@ -292,24 +440,24 @@
     </section>
 
     <!-- Social Commerce Feed Banner -->
-    <section class="mkt-section feed-promo-section" id="product-feed-promo">
+    <section class="mkt-section" id="product-feed-promo" style="padding:28px 0">
       <div class="wrap">
-        <div class="feed-promo-banner">
-          <div class="feed-promo-copy">
-            <div class="feed-promo-title">📱 Odkryj Produkty – Feed Społecznościowy</div>
-            <p class="feed-promo-desc">Przewijaj tysiące produktów jak na TikToku. Znajdź bestsellery, nowości i produkty z najwyższą marżą. Dodaj do sklepu jednym kliknięciem.</p>
+        <div style="background:linear-gradient(135deg,rgba(108,99,255,.18),rgba(167,139,250,.12));border:1px solid rgba(108,99,255,.35);border-radius:18px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:clamp(15px,2.2vw,22px);font-weight:700;margin-bottom:6px">📱 Odkryj Produkty – Feed Społecznościowy</div>
+            <div style="font-size:14px;color:rgba(255,255,255,.7);max-width:480px">Przewijaj tysiące produktów jak na TikToku. Znajdź bestsellery, nowości i produkty z najwyższą marżą. Dodaj do sklepu jednym kliknięciem.</div>
           </div>
-          <a href="feed.html" class="btn-feed">✨ Otwórz Feed →</a>
+          <a href="feed.html" style="display:inline-flex;align-items:center;gap:8px;background:#6c63ff;color:#fff;padding:12px 22px;border-radius:12px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;transition:background .2s" onmouseover="this.style.background='#5548e0'" onmouseout="this.style.background='#6c63ff'">✨ Otwórz Feed →</a>
         </div>
       </div>
     </section>
 
     <!-- Trending Products -->
-    <section class="mkt-section section-bg-trending" id="trending-products">
+    <section class="mkt-section" id="trending-products" style="background:rgba(139,92,246,.04);padding-top:40px;padding-bottom:40px">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🔥 Popularne teraz</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🔥 Popularne teraz</span>
             <h2>Trending Products</h2>
           </div>
           <a href="sklep.html">Więcej produktów →</a>
@@ -329,7 +477,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🏆 Najlepsi sprzedawcy</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🏆 Najlepsi sprzedawcy</span>
             <h2>Top Stores</h2>
           </div>
           <a href="sklep.html">Wszystkie sklepy →</a>
@@ -345,11 +493,11 @@
     </section>
 
     <!-- Supplier Marketplace -->
-    <section class="mkt-section section-bg-supplier" id="supplier-marketplace">
+    <section class="mkt-section" id="supplier-marketplace" style="background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(139,92,246,.06))">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">📦 Hurtownie i Dostawcy</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">📦 Hurtownie i Dostawcy</span>
             <h2>Supplier Marketplace</h2>
           </div>
           <a href="hurtownie.html">Przeglądaj hurtownie →</a>
@@ -397,11 +545,11 @@
             <p>Suplementy, zdrowa żywność i produkty eco</p>
             <span class="hub-badge">B2B</span>
           </a>
-          <a class="hub-card hub-card-supplier" href="panel-dostawcy.html">
+          <a class="hub-card" href="panel-dostawcy.html" style="border-color:var(--cyan);background:rgba(0,212,255,.06)">
             <div class="hub-card-icon">➕</div>
             <h4>Zostań Dostawcą</h4>
             <p>Dołącz jako hurtownik i zacznij sprzedawać B2B</p>
-            <span class="hub-badge">Nowe konto</span>
+            <span class="hub-badge" style="background:rgba(0,212,255,.15);color:var(--cyan);border-color:rgba(0,212,255,.3)">Nowe konto</span>
           </a>
         </div>
       </div>
@@ -412,7 +560,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">💰 Wysokie marże</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">💰 Wysokie marże</span>
             <h2>Produkty które zarabiają</h2>
           </div>
           <a href="sklep.html">Zobacz wszystkie →</a>
@@ -428,11 +576,11 @@
     </section>
 
     <!-- Nowości -->
-    <section class="mkt-section" id="new-products">
+    <section class="mkt-section" id="new-products" style="background:linear-gradient(135deg,rgba(0,212,255,.05),rgba(34,197,94,.04))">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🆕 Właśnie dodane</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🆕 Właśnie dodane</span>
             <h2>Nowości</h2>
           </div>
           <a href="qualitetmarket.html">QualitetMarket →</a>
@@ -451,7 +599,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🏆 Najchętniej kupowane</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🏆 Najchętniej kupowane</span>
             <h2>Bestsellery</h2>
           </div>
           <a href="qualitetmarket.html">QualitetMarket →</a>
@@ -466,16 +614,16 @@
     </section>
 
     <!-- Produkty viral z social media -->
-    <section class="mkt-section" id="viral-products">
+    <section class="mkt-section" id="viral-products" style="background:linear-gradient(135deg,rgba(255,79,216,.07),rgba(250,204,21,.06))">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🔥 Viral z Social Media</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🔥 Viral z Social Media</span>
             <h2>Produkty viral z social media</h2>
           </div>
           <a href="qualitetmarket.html">Zobacz wszystkie →</a>
         </div>
-        <p class="viral-intro">Produkty polecane przez twórców, popularne na TikTok, YouTube i Reels.</p>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 20px">Produkty polecane przez twórców, popularne na TikTok, YouTube i Reels.</p>
         <div class="mkt-products-grid" id="homepage-viral-products" aria-live="polite">
           <div class="mkt-skeleton mkt-skeleton-card"></div>
           <div class="mkt-skeleton mkt-skeleton-card"></div>
@@ -486,27 +634,27 @@
     </section>
 
     <!-- Video Embed – TikTok, YouTube, Shorts, Reels -->
-    <section class="mkt-section section-bg-dark-video" id="social-video">
+    <section class="mkt-section" id="social-video" style="background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(20,20,40,.9));padding-top:48px;padding-bottom:48px">
       <div class="wrap">
-        <div class="mkt-section-head">
+        <div class="mkt-section-head" style="color:#fff">
           <div>
-            <span class="eyebrow">📱 Video Embed</span>
-            <h2>Oglądaj video bez wychodzenia z platformy</h2>
+            <span class="eyebrow" style="color:rgba(255,79,216,.9);margin-bottom:8px;display:inline-block">📱 Video Embed</span>
+            <h2 style="color:#fff">Oglądaj video bez wychodzenia z platformy</h2>
           </div>
         </div>
         <div class="social-video-grid" id="homepage-social-video">
           <!-- Skeleton video cards -->
           <div class="social-video-card">
-            <div class="mkt-skeleton mkt-skeleton-vertical"></div>
-            <p class="social-video-label">⏳ Ładowanie video…</p>
+            <div class="mkt-skeleton" style="aspect-ratio:9/16;border-radius:14px;background:rgba(255,255,255,.08)"></div>
+            <p class="social-video-label" style="color:rgba(255,255,255,.6)">⏳ Ładowanie video…</p>
           </div>
           <div class="social-video-card">
-            <div class="mkt-skeleton mkt-skeleton-horizontal"></div>
-            <p class="social-video-label">⏳ Ładowanie video…</p>
+            <div class="mkt-skeleton" style="aspect-ratio:16/9;border-radius:14px;background:rgba(255,255,255,.08)"></div>
+            <p class="social-video-label" style="color:rgba(255,255,255,.6)">⏳ Ładowanie video…</p>
           </div>
           <div class="social-video-card">
-            <div class="mkt-skeleton mkt-skeleton-vertical"></div>
-            <p class="social-video-label">⏳ Ładowanie video…</p>
+            <div class="mkt-skeleton" style="aspect-ratio:9/16;border-radius:14px;background:rgba(255,255,255,.08)"></div>
+            <p class="social-video-label" style="color:rgba(255,255,255,.6)">⏳ Ładowanie video…</p>
           </div>
         </div>
       </div>
@@ -517,54 +665,54 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">📲 Posty produktowe</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">📲 Posty produktowe</span>
             <h2>Produkty ze społecznościowych</h2>
           </div>
           <a href="qualitetmarket.html">Kup teraz →</a>
         </div>
         <div class="social-posts-feed" id="homepage-social-posts" aria-live="polite">
-          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h320"></div>
-          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h320"></div>
-          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h320"></div>
+          <div class="mkt-skeleton mkt-skeleton-card" style="height:320px"></div>
+          <div class="mkt-skeleton mkt-skeleton-card" style="height:320px"></div>
+          <div class="mkt-skeleton mkt-skeleton-card" style="height:320px"></div>
         </div>
       </div>
     </section>
 
     <!-- Art Auctions -->
-    <section class="mkt-section section-bg-art" id="art-auctions">
+    <section class="mkt-section" id="art-auctions" style="background:linear-gradient(135deg,rgba(255,79,216,.07),rgba(139,92,246,.07))">
 
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🎨 Sztuka na aukcji</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🎨 Sztuka na aukcji</span>
             <h2>Art Auctions</h2>
           </div>
           <a href="auctions.html">Wszystkie aukcje →</a>
         </div>
         <div class="mkt-auctions-grid" id="homepage-art-auctions" aria-live="polite">
           <!-- Skeleton loaders -->
-          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h260"></div>
-          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h260"></div>
-          <div class="mkt-skeleton mkt-skeleton-card mkt-skeleton-h260"></div>
+          <div class="mkt-skeleton mkt-skeleton-card" style="height:260px"></div>
+          <div class="mkt-skeleton mkt-skeleton-card" style="height:260px"></div>
+          <div class="mkt-skeleton mkt-skeleton-card" style="height:260px"></div>
         </div>
-        <div class="section-cta-center">
+        <div style="text-align:center;margin-top:24px">
           <a class="btn btn-primary" href="auctions.html">🎨 Przeglądaj aukcje sztuki</a>
-          <a class="btn btn-secondary" href="panel-artysty.html">Zostań artystą</a>
+          <a class="btn btn-secondary" href="panel-artysty.html" style="margin-left:12px">Zostań artystą</a>
         </div>
       </div>
     </section>
 
     <!-- Live Sales Banner -->
-    <section class="mkt-section section-bg-live" id="live-sales">
+    <section class="mkt-section" id="live-sales" style="padding-top:24px;padding-bottom:24px">
       <div class="wrap">
         <div class="live-banner">
           <div class="live-dot"></div>
-          <div class="live-banner-content">
+          <div style="flex:1;min-width:0">
             <h3>📡 Live Sales — Sprzedaż na Żywo</h3>
             <p>Dołącz do transmisji na żywo i odkrywaj ekskluzywne oferty w czasie rzeczywistym</p>
           </div>
-          <div class="live-banner-actions">
-            <a class="btn btn-live" href="live.html">🔴 Oglądaj na żywo</a>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn btn-primary" href="live.html" style="background:linear-gradient(135deg,#ff4fd8,#7c3aed)">🔴 Oglądaj na żywo</a>
             <a class="btn btn-secondary" href="sklep.html">Oferty specjalne</a>
           </div>
         </div>
@@ -576,53 +724,53 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🥇 Najlepsi sprzedawcy</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🥇 Najlepsi sprzedawcy</span>
             <h2>Top Sellers</h2>
           </div>
           <a href="reputation.html">Ranking reputacji →</a>
         </div>
         <div class="sellers-grid" id="homepage-top-sellers" aria-live="polite">
           <!-- Skeleton loaders -->
-          <div class="mkt-skeleton mkt-skeleton-h140"></div>
-          <div class="mkt-skeleton mkt-skeleton-h140"></div>
-          <div class="mkt-skeleton mkt-skeleton-h140"></div>
-          <div class="mkt-skeleton mkt-skeleton-h140"></div>
+          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
+          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
+          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
+          <div class="mkt-skeleton" style="height:140px;border-radius:18px"></div>
         </div>
       </div>
     </section>
 
     <!-- Community Feed -->
-    <section class="mkt-section section-bg-community" id="community-feed">
+    <section class="mkt-section" id="community-feed" style="background:rgba(0,212,255,.03);padding-top:40px;padding-bottom:40px">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">💬 Społeczność</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">💬 Społeczność</span>
             <h2>Posty społeczności</h2>
           </div>
           <a href="community.html">Przejdź do społeczności →</a>
         </div>
         <div class="mkt-community-grid" id="homepage-community-posts" aria-live="polite">
           <!-- Skeleton loaders — replaced dynamically by homepage.js -->
-          <div class="mkt-skeleton mkt-skeleton-h160"></div>
-          <div class="mkt-skeleton mkt-skeleton-h160"></div>
-          <div class="mkt-skeleton mkt-skeleton-h160"></div>
+          <div class="mkt-skeleton" style="height:160px;border-radius:18px"></div>
+          <div class="mkt-skeleton" style="height:160px;border-radius:18px"></div>
+          <div class="mkt-skeleton" style="height:160px;border-radius:18px"></div>
         </div>
-        <div class="section-cta-center">
+        <div style="text-align:center;margin-top:24px">
           <a class="btn btn-secondary" href="community.html">💬 Dołącz do dyskusji</a>
         </div>
       </div>
     </section>
 
     <!-- ══════════════ SOCIAL MEDIA ══════════════ -->
-    <section class="mkt-section" id="social-media">
+    <section class="mkt-section" id="social-media" style="background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(255,79,216,.06));padding-top:40px;padding-bottom:40px">
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">🌐 Społeczność</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">🌐 Społeczność</span>
             <h2>Śledź nas w Social Media</h2>
           </div>
         </div>
-        <p class="social-intro">Bądź na bieżąco z najnowszymi produktami, trendami i ofertami — obserwuj QualitetMarket w mediach społecznościowych.</p>
+        <p style="color:var(--muted);font-size:15px;margin:0 0 24px">Bądź na bieżąco z najnowszymi produktami, trendami i ofertami — obserwuj QualitetMarket w mediach społecznościowych.</p>
         <div class="social-icons-row">
           <a class="social-icon-btn" href="https://www.facebook.com/qualitetverse" target="_blank" rel="noopener noreferrer" aria-label="Facebook QualitetMarket" title="Facebook">
             <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.563 9.877V14.89h-2.54v-2.89h2.54V9.845c0-2.507 1.493-3.891 3.777-3.891 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.772-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.987A10.003 10.003 0 0 0 22 12"/></svg>
@@ -653,7 +801,7 @@
       <div class="wrap">
         <div class="mkt-section-head">
           <div>
-            <span class="eyebrow">⚙️ Panele zarządzania</span>
+            <span class="eyebrow" style="margin-bottom:8px;display:inline-block">⚙️ Panele zarządzania</span>
             <h2>Twój panel platformy</h2>
           </div>
           <a href="dashboard.html">Dashboard →</a>
@@ -688,41 +836,41 @@
     </section>
 
     <!-- ══════════════ DLA SPRZEDAWCÓW I KLIENTÓW ══════════════ -->
-    <section class="wrap dla-kogo-section" id="dla-kogo">
-      <div class="section-head centered">
+    <section class="wrap" id="dla-kogo" style="padding:40px 0 20px">
+      <div class="section-head centered" style="margin-bottom:24px">
         <span class="eyebrow">Platforma dwustronna</span>
         <h2>Dla sprzedawców <span class="text-muted-heading">i klientów</span></h2>
-        <p class="lead audience-lead">Otwórz swój sklep dropshipping lub po prostu kup produkty z najlepszych hurtowni — bez pośredników.</p>
+        <p class="lead" style="max-width:600px;margin:10px auto 0">Otwórz swój sklep dropshipping lub po prostu kup produkty z najlepszych hurtowni — bez pośredników.</p>
       </div>
       <div class="dual-audience-grid">
-        <article class="audience-card audience-seller">
-          <div class="audience-icon">🏪</div>
+        <article style="border:1px solid var(--stroke);background:linear-gradient(160deg,rgba(56,189,248,.14),rgba(34,197,94,.08));border-radius:28px;padding:32px;box-shadow:var(--shadow)">
+          <div style="font-size:48px;margin-bottom:14px">🏪</div>
           <span class="eyebrow">Dla sprzedawców</span>
-          <h3>Otwórz sklep online w 5 minut</h3>
-          <p>Twórz własny sklep pod swoją marką. Wybieraj produkty z setek hurtowni. Zarabiaj na marży bez pakowania ani wysyłki.</p>
-          <ul>
+          <h3 style="font-size:clamp(20px,3vw,30px);margin:12px 0 10px">Otwórz sklep online w 5 minut</h3>
+          <p style="color:var(--muted);margin:0 0 14px;line-height:1.6">Twórz własny sklep pod swoją marką. Wybieraj produkty z setek hurtowni. Zarabiaj na marży bez pakowania ani wysyłki.</p>
+          <ul style="color:var(--muted);padding-left:18px;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:14px">
             <li>✅ Sklep pod własnym logo</li>
             <li>✅ Tysiące produktów gotowych do sprzedaży</li>
             <li>✅ Automatyczna obsługa zamówień</li>
             <li>✅ 7 dni trial za darmo</li>
           </ul>
-          <div class="audience-card-actions">
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
             <a class="btn btn-primary" href="generator-sklepu.html">Załóż sklep za darmo</a>
             <a class="btn btn-secondary" href="zarabiaj.html">Dowiedz się więcej</a>
           </div>
         </article>
-        <article class="audience-card audience-buyer">
-          <div class="audience-icon">🛒</div>
+        <article style="border:1px solid var(--stroke);background:linear-gradient(160deg,rgba(255,79,216,.12),rgba(250,204,21,.08));border-radius:28px;padding:32px;box-shadow:var(--shadow)">
+          <div style="font-size:48px;margin-bottom:14px">🛒</div>
           <span class="eyebrow">Dla kupujących</span>
-          <h3>Tysiące produktów w jednym miejscu</h3>
-          <p>Przeglądaj oferty od sprawdzonych dostawców. Szybka dostawa, uczciwe ceny, prosta realizacja zamówień bezpośrednio na twoją skrzynkę.</p>
-          <ul>
+          <h3 style="font-size:clamp(20px,3vw,30px);margin:12px 0 10px">Tysiące produktów w jednym miejscu</h3>
+          <p style="color:var(--muted);margin:0 0 14px;line-height:1.6">Przeglądaj oferty od sprawdzonych dostawców. Szybka dostawa, uczciwe ceny, prosta realizacja zamówień bezpośrednio na twoją skrzynkę.</p>
+          <ul style="color:var(--muted);padding-left:18px;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:14px">
             <li>🔥 Elektronika, moda, dom, sport i więcej</li>
             <li>🔥 Dostawa 24–72h</li>
             <li>🔥 Bezpieczne zamówienia</li>
             <li>🔥 Rejestracja niewymagana</li>
           </ul>
-          <div class="audience-card-actions">
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
             <a class="btn btn-primary" href="sklep.html">Przejdź do sklepu</a>
             <a class="btn btn-secondary" href="koszyk.html">Mój koszyk 🛒</a>
           </div>
@@ -906,7 +1054,7 @@
           </div>
         </div>
         <div class="app-cta-media">
-          <img class="app-cta-illustration" src="assets/images/demo/hero-market.svg" alt="Ilustracja marketplace QualitetMarket" loading="lazy" decoding="async">
+          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80" alt="Zespół biznesowy pracujący nad sprzedażą" loading="lazy" decoding="async">
           <span class="app-cta-badge">Premium mobile</span>
         </div>
       </div>
@@ -925,9 +1073,9 @@
           </ul>
         </div>
         <div class="promo-motion-gallery" aria-label="Podgląd ruchomych plansz Qualitet" aria-live="polite" aria-atomic="true" data-promo-motion>
-          <img class="promo-motion-image promo-motion-image--asset" src="assets/images/demo/product-smartphone.svg" alt="Promocja mobilnej sprzedaży" loading="lazy" decoding="async">
-          <img class="promo-motion-image promo-motion-image--asset" src="assets/images/demo/category-business.svg" alt="Promocja dla partnerów biznesowych" loading="lazy" decoding="async">
-          <img class="promo-motion-image promo-motion-image--asset" src="assets/images/demo/supplier-neotech.svg" alt="Promocja oferty hurtowej" loading="lazy" decoding="async">
+          <img class="promo-motion-image" src="https://github.com/user-attachments/assets/085d1513-747e-4d49-8334-5813ae0855a7" alt="Zarabianie u Szefa - grafika promocyjna" loading="lazy" decoding="async">
+          <img class="promo-motion-image" src="https://github.com/user-attachments/assets/bf1aaeec-617f-4741-9bd6-f4924b362ea8" alt="Ty też możesz zarabiać na dropshippingu - grafika promocyjna" loading="lazy" decoding="async">
+          <img class="promo-motion-image" src="https://github.com/user-attachments/assets/5e136c43-153f-4e14-8136-79e0715b622d" alt="Delta dochodu 85 000 zł miesięcznie - grafika promocyjna" loading="lazy" decoding="async">
           <button class="promo-motion-toggle btn btn-secondary" type="button" data-promo-motion-toggle aria-pressed="false">Zatrzymaj animację</button>
         </div>
       </div>
@@ -1309,9 +1457,9 @@
       <div>
         <h4>QualitetMarket</h4>
         <p>Platforma marketplace B2B/B2C łącząca hurtowników, sprzedawców, artystów i kupujących.</p>
-        <div class="footer-cta-row">
-          <a class="btn btn-secondary" href="sklep.html">🛍️ Marketplace</a>
-          <a class="btn btn-primary" href="generator-sklepu.html">🚀 Załóż Sklep</a>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <a class="btn btn-secondary" href="sklep.html" style="min-height:36px;font-size:13px;padding:0 14px">🛍️ Marketplace</a>
+          <a class="btn btn-primary" href="generator-sklepu.html" style="min-height:36px;font-size:13px;padding:0 14px">🚀 Załóż Sklep</a>
         </div>
       </div>
       <div>
@@ -1337,13 +1485,13 @@
       </div>
       <div>
         <h4>Dane firmy</h4>
-        <p>QUALITETMARKET PLATFORMA Sklep Internetowy Henryk Ślusarski</p>
+        <p>UszefaQualitet Sklep Internetowy Henryk Ślusarski</p>
         <p>NIP 6661894457 | REGON 300731059</p>
         <p>ul. Władysława Broniewskiego 5/10</p>
         <p>62-600 Koło</p>
         <p>tel. +48 882 914 429</p>
-        <p>email: <a href="mailto:QUALITETMARKET PLATFORMApromo@gmail.com">QUALITETMARKET PLATFORMApromo@gmail.com</a></p>
-        <div class="footer-links-col">
+        <p>email: <a href="mailto:UszefaQualitetpromo@gmail.com">UszefaQualitetpromo@gmail.com</a></p>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
           <a href="privacy.html">Polityka prywatności</a>
           <a href="terms.html">Regulamin</a>
           <a href="legal.html">Informacje prawne</a>
