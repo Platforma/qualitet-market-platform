@@ -62,20 +62,20 @@
 
     <section class="wrap stats-grid module-stats">
       <div class="stat-card">
-        <span>Aktywne listingi</span>
-        <strong>342</strong>
+        <span>Wyświetlone produkty</span>
+        <strong id="listing-count">0</strong>
       </div>
       <div class="stat-card">
-        <span>Opublikowane dziś</span>
-        <strong>18</strong>
+        <span>Aktywne kategorie</span>
+        <strong id="listing-category-count">0</strong>
       </div>
       <div class="stat-card">
-        <span>Oczekujące</span>
-        <strong>7</strong>
+        <span>Źródło danych</span>
+        <strong id="listing-source">QMApi</strong>
       </div>
       <div class="stat-card">
-        <span>Kategorie</span>
-        <strong>12</strong>
+        <span>Filtr sklepu</span>
+        <strong id="listing-store">Wszystkie</strong>
       </div>
     </section>
 
@@ -84,72 +84,10 @@
         <div class="section-head">
           <span class="eyebrow">Zarządzanie listingami</span>
           <h2>Produkty w katalogu</h2>
-          <p class="hint">Kontroluj status publikacji i kompletność danych każdego produktu.</p>
+          <p class="hint">Lista pobierana na żywo przez <code>window.QMApi.Products.list()</code>.</p>
         </div>
-        <div class="data-table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Produkt</th>
-                <th>Kategoria</th>
-                <th>Hurtownia</th>
-                <th>Cena</th>
-                <th>Marża</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Smartfon Galaxy A54</strong></td>
-                <td>Elektronika</td>
-                <td>NeoTech</td>
-                <td>899 zł</td>
-                <td>15%</td>
-                <td><span class="status-active">✓ Opublikowany</span></td>
-              </tr>
-              <tr>
-                <td><strong>Sneakersy Running Pro</strong></td>
-                <td>Moda</td>
-                <td>FashionLane</td>
-                <td>249 zł</td>
-                <td>22%</td>
-                <td><span class="status-active">✓ Opublikowany</span></td>
-              </tr>
-              <tr>
-                <td><strong>Wiertarka udarowa 750W</strong></td>
-                <td>Narzędzia</td>
-                <td>HomeHub</td>
-                <td>329 zł</td>
-                <td>18%</td>
-                <td><span class="status-active">✓ Opublikowany</span></td>
-              </tr>
-              <tr>
-                <td><strong>Sofa narożna Comfort</strong></td>
-                <td>Dom i ogród</td>
-                <td>HomeHub</td>
-                <td>2 490 zł</td>
-                <td>12%</td>
-                <td><span class="status-pending">⏳ Oczekujący</span></td>
-              </tr>
-              <tr>
-                <td><strong>Smartwatch Fit Band X2</strong></td>
-                <td>Elektronika</td>
-                <td>NeoTech</td>
-                <td>399 zł</td>
-                <td>20%</td>
-                <td><span class="status-pending">⏳ Oczekujący</span></td>
-              </tr>
-              <tr>
-                <td><strong>Kurtka zimowa Parka</strong></td>
-                <td>Moda</td>
-                <td>FashionLane</td>
-                <td>599 zł</td>
-                <td>25%</td>
-                <td><span class="status-draft">○ Szkic</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <p id="listing-status" class="hint" role="status">Ładowanie produktów z API...</p>
+        <div id="product-list" class="products-grid" aria-live="polite"></div>
       </div>
     </section>
 
@@ -221,6 +159,8 @@
     </a>
   </nav>
 
+  <script src="js/api.js" defer></script>
   <script src="js/app.js" defer></script>
+  <script src="js/listing.js" defer></script>
 </body>
 </html>
