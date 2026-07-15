@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QualitetMarket – Frontend</title>
+
+<style>
+/* ====== GLOBAL ====== */
+body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    background: #f7f7f7;
+    color: #222;
+}
+
+/* ====== HEADER ====== */
+.qm-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    background: #111;
+    color: #fff;
+}
+
+.qm-header nav a {
+    margin-left: 20px;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* ====== HERO ====== */
+.hero {
+    padding: 80px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #111, #333);
+    color: #fff;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #ffcc00;
+    color: #000;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+/* ====== PRODUCT LIST ====== */
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ====== FOOTER ====== */
+.qm-footer {
+    text-align: center;
+    padding: 20px;
+    background: #111;
+    color: #fff;
+    margin-top: 40px;
+}
+</style>
+
+<script>
+window.QM_API_BASE = "https://api.qualitet-market.com/api";
+
+/* ====== API CLIENT ====== */
+async function api(path, method = "GET", body = null) {
+    const res = await fetch(`${window.QM_API_BASE}${path}`, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: body ? JSON.stringify(body) : null
+    });
+    return res.json();
+}
+
+/* ====== PRODUCTS ====== */
+async function loadProducts() {
+    const products = await api("/products");
+    const container = document.getElementById("product-list");
+    container.innerHTML = "";
+
+    products.forEach(p => {
+        container.innerHTML += `
+            <div class="product-card">
+                <h3>${p.name}</h3>
+                <p>${p.price} zł</p>
+                <button onclick="addToCart(${p.id})">Dodaj do koszyka</button>
+            </div>
+        `;
+    });
+}
+
+/* ====== CART ====== */
+async function addToCart(id) {
+    await api("/cart/add", "POST", { productId: id, qty: 1 });
+    alert("Dodano do koszyka");
+}
+
+async function loadCart() {
+    const cart = await api("/cart");
+    const container = document.getElementById("cart-container");
+    container.innerHTML = cart.items.map(i => `
+        <div class="product-card">
+            <h3>${i.name}</h3>
+            <p>${i.quantity} × ${i.price} zł</p>
+        </div>
+    `).join("");
+}
+</script>
+
+</head>
+<body>
+
+<header class="qm-header">
+    <div class="logo">QUALITET<span>MARKET</span></div>
+    <nav>
+        <a href="#produkty" onclick="loadProducts()">Produkty</a>
+        <a href="#koszyk" onclick="loadCart()">Koszyk</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Twój sklep internetowy</h1>
+    <p>Automatyczne generowanie sklepu, produkty z hurtowni, marże, zamówienia.</p>
+    <a class="btn" href="#produkty" onclick="loadProducts()">Przeglądaj produkty</a>
+</section>
+
+<section id="produkty">
+    <h2 style="text-align:center;margin-top:40px;">Produkty</h2>
+    <div id="product-list" class="product-list"></div>
+</section>
+
+<section id="koszyk">
+    <h2 style="text-align:center;margin-top:40px;">Koszyk</h2>
+    <div id="cart-container"></div>
+</section>
+
+<footer class="qm-footer">
+    © 2026 QualitetMarket
+</footer>
+
+</body>
+</html>
