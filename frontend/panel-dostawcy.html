@@ -525,9 +525,8 @@
 
     // ── Authenticated fetch helper ───────────────────────────────────────────────
     async function apiFetch(path) {
-      const token = localStorage.getItem('qm_token')
       const res = await fetch(path, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: getAuthHeaders(),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       return res.json()
@@ -535,13 +534,25 @@
 
     function getAuthHeaders(extra = {}) {
       const token = localStorage.getItem('qm_token')
-      return token ? Object.assign({}, extra, { Authorization: 'Bearer ' + token }) : Object.assign({}, extra)
+      if (!token) return extra
+      return Object.assign({}, extra, { Authorization: 'Bearer ' + token })
+    }
+
+    const MAX_XML_IMPORT_BYTES = 5 * 1024 * 1024
+
+    function getSupplierIdFromContext(cached, urlParams) {
+      return cached.supplier_id || cached.supplierId || localStorage.getItem('qm_supplier_id') || urlParams.get('supplier_id') || null
+    }
+
+    function getStoreIdFromContext(cached) {
+      return cached.store_id || cached.storeId || localStorage.getItem('qm_store_id') || null
     }
 
     async function resolveImportContext() {
       const cached = getCachedUser() || {}
-      let supplierId = cached.supplier_id || cached.supplierId || null
-      let storeId    = cached.store_id || cached.storeId || null
+      const urlParams = new URLSearchParams(window.location.search)
+      let supplierId = getSupplierIdFromContext(cached, urlParams)
+      let storeId    = getStoreIdFromContext(cached)
 
       if (!storeId) {
         try {
@@ -550,15 +561,7 @@
         } catch { /* seller may not have store */ }
       }
 
-      if (!supplierId) {
-        try {
-          const suppliersRes = await apiFetch('/api/suppliers?limit=1')
-          const suppliers = Array.isArray(suppliersRes) ? suppliersRes : (suppliersRes.suppliers || [])
-          supplierId = suppliers[0] ? (suppliers[0].id || suppliers[0].supplier_id) : null
-        } catch { /* handled below */ }
-      }
-
-      if (!supplierId) throw new Error('Brak skonfigurowanej hurtowni dla importu.')
+      if (!supplierId) throw new Error('Brak supplier_id. Otwórz panel z parametrem supplier_id lub zaloguj się ponownie.')
       return { supplierId, storeId }
     }
 
@@ -762,10 +765,57 @@
           if (csvFile) {
             fd.append('file', csvFile)
           } else {
-            const xmlResponse = await fetch(xmlUrl.trim())
+            const xmlUrlValue = xmlUrl.trim()
+            let parsedXmlUrl
+            try {
+              parsedXmlUrl = new URL(xmlUrlValue)
+            } catch {
+              throw new Error('Nieprawidłowy adres URL XML.')
+            }
+
+            if (parsedXmlUrl.protocol !== 'https:') {
+              throw new Error('Adres XML musi używać HTTPS.')
+            }
+            if (['localhost', '127.0.0.1', '::1'].includes(parsedXmlUrl.hostname)) {
+              throw new Error('Niedozwolony adres XML.')
+            }
+
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 10000)
+            let xmlResponse
+            try {
+              xmlResponse = await fetch(parsedXmlUrl.toString(), { signal: controller.signal })
+            } catch (fetchErr) {
+              if (fetchErr && fetchErr.name === 'AbortError') {
+                throw new Error('Przekroczono czas pobierania XML.')
+              }
+              throw fetchErr
+            } finally {
+              clearTimeout(timeoutId)
+            }
+
             if (!xmlResponse.ok) throw new Error(`Nie udało się pobrać XML (${xmlResponse.status})`)
-            const xmlBlob = await xmlResponse.blob()
-            const xmlName = (xmlUrl.trim().split('/').pop() || 'feed.xml').split('?')[0] || 'feed.xml'
+
+            const contentLengthHeader = xmlResponse.headers.get('content-length')
+            if (contentLengthHeader) {
+              const contentLength = parseInt(contentLengthHeader, 10)
+              if (Number.isFinite(contentLength) && contentLength === 0) {
+                throw new Error('Plik XML jest pusty.')
+              }
+            }
+
+            const xmlText = await xmlResponse.text()
+            if (!xmlText.trim().length) {
+              throw new Error('Plik XML jest pusty.')
+            }
+            if (xmlText.length > MAX_XML_IMPORT_BYTES) {
+              throw new Error('Plik XML jest zbyt duży (max 5 MB).')
+            }
+
+            const xmlBlob = new Blob([xmlText], { type: 'application/xml' })
+            const xmlPathParts = parsedXmlUrl.pathname.split('/')
+            const xmlFilenameCandidate = xmlPathParts[xmlPathParts.length - 1] || 'feed.xml'
+            const xmlName = xmlFilenameCandidate || 'feed.xml'
             fd.append('file', xmlBlob, xmlName)
           }
 
@@ -801,14 +851,18 @@
         const btn = qs('[data-company-save]')
         if (btn) { btn.disabled = true; btn.textContent = 'Zapisywanie…' }
 
-        const payload = {
-          company_name: (qs('[data-company-name]') || {}).value || '',
-          phone:        (qs('[data-company-phone]') || {}).value || '',
+        const companyName = String((qs('[data-company-name]') || {}).value || '').trim()
+        const phone = String((qs('[data-company-phone]') || {}).value || '').trim()
+        const nip = String((qs('[data-company-nip]') || {}).value || '').trim()
+        const email = String((qs('[data-company-email]') || {}).value || '').trim()
+        const description = String((qs('[data-company-desc]') || {}).value || '').trim()
+        const userPayload = {
+          name: companyName,
+          phone,
+          nip,
+          email,
+          description,
         }
-
-        const userPayload = {}
-        if (payload.company_name.trim()) userPayload.name = payload.company_name.trim()
-        if (payload.phone.trim()) userPayload.phone = payload.phone.trim()
 
         try {
           const res = await fetch('/api/users/me', {
@@ -844,20 +898,22 @@
         // Prefill company form
         const fill = (sel, val) => { const el = qs(sel); if (el && val) el.value = val }
         fill('[data-company-name]',  profile.name)
+        fill('[data-company-nip]',   profile.nip)
         fill('[data-company-phone]', profile.phone)
         fill('[data-company-email]', profile.email)
+        fill('[data-company-desc]',  profile.description)
 
         // Verification status
         const vSel = qs('[data-verification-status]')
         if (vSel) {
-          const st = 'pending'
+          const st = profile.verification_status || 'pending'
           const map = { verified: 'pill-active', pending: 'pill-pending', rejected: 'pill-inactive' }
           const label = { verified: 'Zweryfikowany', pending: 'Oczekuje', rejected: 'Odrzucony' }
           vSel.className = 'status-pill ' + (map[st] || 'pill-pending')
           vSel.textContent = label[st] || st
         }
-        setText('[data-verification-nip]',  '—')
-        setText('[data-verification-docs]', 'Brak')
+        setText('[data-verification-nip]',  profile.nip || '—')
+        setText('[data-verification-docs]', profile.documents_submitted ? 'Przesłane' : 'Brak')
 
       } catch { /* silent */ }
     }
