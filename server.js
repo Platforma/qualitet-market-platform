@@ -47,7 +47,7 @@ const ROOT_STATIC_PATHS = new Map(
 );
 
 function sendRootStaticFile(req, res, next) {
-  const requestPath = req.path === '/' ? 'index.html' : req.params.file;
+  const requestPath = req.path === '/' ? 'index.html' : (req.params.file || '');
   const fileName = requestPath && path.extname(requestPath) === ''
     ? `${requestPath}.html`
     : requestPath;
