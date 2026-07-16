@@ -525,12 +525,44 @@
 
     // ── Authenticated fetch helper ───────────────────────────────────────────────
     async function apiFetch(path) {
-      const token = localStorage.getItem('qm_token')
       const res = await fetch(path, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: getAuthHeaders(),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       return res.json()
+    }
+
+    function getAuthHeaders(extra = {}) {
+      const token = localStorage.getItem('qm_token')
+      if (!token) return extra
+      return Object.assign({}, extra, { Authorization: 'Bearer ' + token })
+    }
+
+    const MAX_XML_IMPORT_BYTES = 5 * 1024 * 1024
+
+    function getSupplierIdFromContext(cached, urlParams) {
+      return cached.supplier_id || cached.supplierId || localStorage.getItem('qm_supplier_id') || urlParams.get('supplier_id') || null
+    }
+
+    function getStoreIdFromContext(cached) {
+      return cached.store_id || cached.storeId || localStorage.getItem('qm_store_id') || null
+    }
+
+    async function resolveImportContext() {
+      const cached = getCachedUser() || {}
+      const urlParams = new URLSearchParams(window.location.search)
+      let supplierId = getSupplierIdFromContext(cached, urlParams)
+      let storeId    = getStoreIdFromContext(cached)
+
+      if (!storeId) {
+        try {
+          const store = await apiFetch('/api/my/store')
+          storeId = store.id || store.store_id || store.storeId || null
+        } catch { /* seller may not have store */ }
+      }
+
+      if (!supplierId) throw new Error('Brak supplier_id. Otwórz panel z parametrem supplier_id lub zaloguj się ponownie.')
+      return { supplierId, storeId }
     }
 
     // ── Load supplier stats ─────────────────────────────────────────────────────
@@ -726,34 +758,75 @@
         if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Importowanie…' }
 
         try {
-          const api = window.QMApi
+          const { supplierId, storeId } = await resolveImportContext()
+          const fd = new FormData()
+          if (storeId) fd.append('store_id', storeId)
 
           if (csvFile) {
-            const fd = new FormData()
-            fd.append('csv', csvFile)
-            const token = localStorage.getItem('qm_token')
-            const res = await fetch('/api/products/import/csv', {
-              method: 'POST',
-              headers: token ? { Authorization: `Bearer ${token}` } : {},
-              body: fd,
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-            showMsg(`✓ Import zakończony. Zaimportowano ${data.imported ?? '?'} produktów.`, false)
+            fd.append('file', csvFile)
           } else {
-            const token = localStorage.getItem('qm_token')
-            const res = await fetch('/api/products/import/xml', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-              body: JSON.stringify({ url: xmlUrl.trim() }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-            showMsg(`✓ Kanał XML zapisany. Synchronizacja będzie uruchamiana co 24h.`, false)
+            const xmlUrlValue = xmlUrl.trim()
+            let parsedXmlUrl
+            try {
+              parsedXmlUrl = new URL(xmlUrlValue)
+            } catch {
+              throw new Error('Nieprawidłowy adres URL XML.')
+            }
+
+            if (parsedXmlUrl.protocol !== 'https:') {
+              throw new Error('Adres XML musi używać HTTPS.')
+            }
+            if (['localhost', '127.0.0.1', '::1'].includes(parsedXmlUrl.hostname)) {
+              throw new Error('Niedozwolony adres XML.')
+            }
+
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 10000)
+            let xmlResponse
+            try {
+              xmlResponse = await fetch(parsedXmlUrl.toString(), { signal: controller.signal })
+            } catch (fetchErr) {
+              if (fetchErr && fetchErr.name === 'AbortError') {
+                throw new Error('Przekroczono czas pobierania XML.')
+              }
+              throw fetchErr
+            } finally {
+              clearTimeout(timeoutId)
+            }
+
+            if (!xmlResponse.ok) throw new Error(`Nie udało się pobrać XML (${xmlResponse.status})`)
+
+            const contentLengthHeader = xmlResponse.headers.get('content-length')
+            if (contentLengthHeader) {
+              const contentLength = parseInt(contentLengthHeader, 10)
+              if (Number.isFinite(contentLength) && contentLength === 0) {
+                throw new Error('Plik XML jest pusty.')
+              }
+            }
+
+            const xmlText = await xmlResponse.text()
+            if (!xmlText.trim().length) {
+              throw new Error('Plik XML jest pusty.')
+            }
+            if (xmlText.length > MAX_XML_IMPORT_BYTES) {
+              throw new Error('Plik XML jest zbyt duży (max 5 MB).')
+            }
+
+            const xmlBlob = new Blob([xmlText], { type: 'application/xml' })
+            const xmlPathParts = parsedXmlUrl.pathname.split('/')
+            const xmlFilenameCandidate = xmlPathParts[xmlPathParts.length - 1] || 'feed.xml'
+            const xmlName = xmlFilenameCandidate || 'feed.xml'
+            fd.append('file', xmlBlob, xmlName)
           }
+
+          const res = await fetch(`/api/suppliers/${encodeURIComponent(supplierId)}/import`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: fd,
+          })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+          showMsg(`✓ Import zakończony. Zaimportowano ${data.count ?? data.imported ?? '?'} produktów.`, false)
 
           // Reload stats after successful import
           if (window.QMApi) setTimeout(() => loadStats(window.QMApi), 1000)
@@ -778,23 +851,24 @@
         const btn = qs('[data-company-save]')
         if (btn) { btn.disabled = true; btn.textContent = 'Zapisywanie…' }
 
-        const payload = {
-          company_name: (qs('[data-company-name]') || {}).value || '',
-          nip:          (qs('[data-company-nip]')  || {}).value || '',
-          phone:        (qs('[data-company-phone]') || {}).value || '',
-          email:        (qs('[data-company-email]') || {}).value || '',
-          description:  (qs('[data-company-desc]')  || {}).value || '',
+        const companyName = String((qs('[data-company-name]') || {}).value || '').trim()
+        const phone = String((qs('[data-company-phone]') || {}).value || '').trim()
+        const nip = String((qs('[data-company-nip]') || {}).value || '').trim()
+        const email = String((qs('[data-company-email]') || {}).value || '').trim()
+        const description = String((qs('[data-company-desc]') || {}).value || '').trim()
+        const userPayload = {
+          name: companyName,
+          phone,
+          nip,
+          email,
+          description,
         }
 
         try {
-          const token = localStorage.getItem('qm_token')
-          const res = await fetch('/api/suppliers/profile', {
+          const res = await fetch('/api/users/me', {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(payload),
+            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(userPayload),
           })
           const data = await res.json()
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
@@ -808,24 +882,22 @@
     }
 
     // ── Supplier profile info ───────────────────────────────────────────────────
-    async function loadSupplierProfile(api) {
+    async function loadSupplierProfile() {
       try {
-        const token = localStorage.getItem('qm_token')
-        const res = await fetch('/api/suppliers/profile', {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        const res = await fetch('/api/users/me', {
+          headers: getAuthHeaders(),
         })
         if (!res.ok) return
-        const data = await res.json()
-        const profile = data.profile || data
+        const profile = await res.json()
 
         const nameEl = qs('[data-supplier-name]')
-        if (nameEl && (profile.company_name || profile.name)) {
-          nameEl.textContent = profile.company_name || profile.name
+        if (nameEl && profile.name) {
+          nameEl.textContent = profile.name
         }
 
         // Prefill company form
         const fill = (sel, val) => { const el = qs(sel); if (el && val) el.value = val }
-        fill('[data-company-name]',  profile.company_name)
+        fill('[data-company-name]',  profile.name)
         fill('[data-company-nip]',   profile.nip)
         fill('[data-company-phone]', profile.phone)
         fill('[data-company-email]', profile.email)
@@ -843,7 +915,7 @@
         setText('[data-verification-nip]',  profile.nip || '—')
         setText('[data-verification-docs]', profile.documents_submitted ? 'Przesłane' : 'Brak')
 
-      } catch { /* silent – profile endpoint may not exist yet */ }
+      } catch { /* silent */ }
     }
 
     // ── Sidebar section navigation ──────────────────────────────────────────────
@@ -888,7 +960,7 @@
       const api = await new Promise(waitForApi)
       await Promise.allSettled([
         loadStats(api),
-        loadSupplierProfile(api),
+        loadSupplierProfile(),
       ])
     }
 
