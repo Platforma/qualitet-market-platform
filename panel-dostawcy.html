@@ -533,6 +533,35 @@
       return res.json()
     }
 
+    function getAuthHeaders(extra = {}) {
+      const token = localStorage.getItem('qm_token')
+      return token ? Object.assign({}, extra, { Authorization: 'Bearer ' + token }) : Object.assign({}, extra)
+    }
+
+    async function resolveImportContext() {
+      const cached = getCachedUser() || {}
+      let supplierId = cached.supplier_id || cached.supplierId || null
+      let storeId    = cached.store_id || cached.storeId || null
+
+      if (!storeId) {
+        try {
+          const store = await apiFetch('/api/my/store')
+          storeId = store.id || store.store_id || store.storeId || null
+        } catch { /* seller may not have store */ }
+      }
+
+      if (!supplierId) {
+        try {
+          const suppliersRes = await apiFetch('/api/suppliers?limit=1')
+          const suppliers = Array.isArray(suppliersRes) ? suppliersRes : (suppliersRes.suppliers || [])
+          supplierId = suppliers[0] ? (suppliers[0].id || suppliers[0].supplier_id) : null
+        } catch { /* handled below */ }
+      }
+
+      if (!supplierId) throw new Error('Brak skonfigurowanej hurtowni dla importu.')
+      return { supplierId, storeId }
+    }
+
     // ── Load supplier stats ─────────────────────────────────────────────────────
     async function loadStats(api) {
       try {
@@ -726,34 +755,28 @@
         if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Importowanie…' }
 
         try {
-          const api = window.QMApi
+          const { supplierId, storeId } = await resolveImportContext()
+          const fd = new FormData()
+          if (storeId) fd.append('store_id', storeId)
 
           if (csvFile) {
-            const fd = new FormData()
-            fd.append('csv', csvFile)
-            const token = localStorage.getItem('qm_token')
-            const res = await fetch('/api/products/import/csv', {
-              method: 'POST',
-              headers: token ? { Authorization: `Bearer ${token}` } : {},
-              body: fd,
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-            showMsg(`✓ Import zakończony. Zaimportowano ${data.imported ?? '?'} produktów.`, false)
+            fd.append('file', csvFile)
           } else {
-            const token = localStorage.getItem('qm_token')
-            const res = await fetch('/api/products/import/xml', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-              body: JSON.stringify({ url: xmlUrl.trim() }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-            showMsg(`✓ Kanał XML zapisany. Synchronizacja będzie uruchamiana co 24h.`, false)
+            const xmlResponse = await fetch(xmlUrl.trim())
+            if (!xmlResponse.ok) throw new Error(`Nie udało się pobrać XML (${xmlResponse.status})`)
+            const xmlBlob = await xmlResponse.blob()
+            const xmlName = (xmlUrl.trim().split('/').pop() || 'feed.xml').split('?')[0] || 'feed.xml'
+            fd.append('file', xmlBlob, xmlName)
           }
+
+          const res = await fetch(`/api/suppliers/${encodeURIComponent(supplierId)}/import`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: fd,
+          })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+          showMsg(`✓ Import zakończony. Zaimportowano ${data.count ?? data.imported ?? '?'} produktów.`, false)
 
           // Reload stats after successful import
           if (window.QMApi) setTimeout(() => loadStats(window.QMApi), 1000)
@@ -780,21 +803,18 @@
 
         const payload = {
           company_name: (qs('[data-company-name]') || {}).value || '',
-          nip:          (qs('[data-company-nip]')  || {}).value || '',
           phone:        (qs('[data-company-phone]') || {}).value || '',
-          email:        (qs('[data-company-email]') || {}).value || '',
-          description:  (qs('[data-company-desc]')  || {}).value || '',
         }
 
+        const userPayload = {}
+        if (payload.company_name.trim()) userPayload.name = payload.company_name.trim()
+        if (payload.phone.trim()) userPayload.phone = payload.phone.trim()
+
         try {
-          const token = localStorage.getItem('qm_token')
-          const res = await fetch('/api/suppliers/profile', {
+          const res = await fetch('/api/users/me', {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(payload),
+            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(userPayload),
           })
           const data = await res.json()
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
@@ -808,42 +828,38 @@
     }
 
     // ── Supplier profile info ───────────────────────────────────────────────────
-    async function loadSupplierProfile(api) {
+    async function loadSupplierProfile() {
       try {
-        const token = localStorage.getItem('qm_token')
-        const res = await fetch('/api/suppliers/profile', {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        const res = await fetch('/api/users/me', {
+          headers: getAuthHeaders(),
         })
         if (!res.ok) return
-        const data = await res.json()
-        const profile = data.profile || data
+        const profile = await res.json()
 
         const nameEl = qs('[data-supplier-name]')
-        if (nameEl && (profile.company_name || profile.name)) {
-          nameEl.textContent = profile.company_name || profile.name
+        if (nameEl && profile.name) {
+          nameEl.textContent = profile.name
         }
 
         // Prefill company form
         const fill = (sel, val) => { const el = qs(sel); if (el && val) el.value = val }
-        fill('[data-company-name]',  profile.company_name)
-        fill('[data-company-nip]',   profile.nip)
+        fill('[data-company-name]',  profile.name)
         fill('[data-company-phone]', profile.phone)
         fill('[data-company-email]', profile.email)
-        fill('[data-company-desc]',  profile.description)
 
         // Verification status
         const vSel = qs('[data-verification-status]')
         if (vSel) {
-          const st = profile.verification_status || 'pending'
+          const st = 'pending'
           const map = { verified: 'pill-active', pending: 'pill-pending', rejected: 'pill-inactive' }
           const label = { verified: 'Zweryfikowany', pending: 'Oczekuje', rejected: 'Odrzucony' }
           vSel.className = 'status-pill ' + (map[st] || 'pill-pending')
           vSel.textContent = label[st] || st
         }
-        setText('[data-verification-nip]',  profile.nip || '—')
-        setText('[data-verification-docs]', profile.documents_submitted ? 'Przesłane' : 'Brak')
+        setText('[data-verification-nip]',  '—')
+        setText('[data-verification-docs]', 'Brak')
 
-      } catch { /* silent – profile endpoint may not exist yet */ }
+      } catch { /* silent */ }
     }
 
     // ── Sidebar section navigation ──────────────────────────────────────────────
@@ -888,7 +904,7 @@
       const api = await new Promise(waitForApi)
       await Promise.allSettled([
         loadStats(api),
-        loadSupplierProfile(api),
+        loadSupplierProfile(),
       ])
     }
 
