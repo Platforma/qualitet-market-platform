@@ -45,12 +45,17 @@ const ROOT_STATIC_PATHS = new Map(
     .filter((fileName) => ROOT_STATIC_FILES.has(fileName) || path.extname(fileName) === '.html')
     .map((fileName) => [fileName, path.join(ROOT_DIR, fileName)])
 );
+const STATIC_ROUTE_ALIASES = new Map([
+  ['generator', 'generator-sklepu.html'],
+  ['generator-sklepu', 'generator-sklepu.html']
+]);
 
 function sendRootStaticFile(req, res, next) {
   const requestPath = req.path === '/' ? 'index.html' : (req.params.file || '');
-  const fileName = requestPath && path.extname(requestPath) === ''
-    ? `${requestPath}.html`
-    : requestPath;
+  const normalizedPath = STATIC_ROUTE_ALIASES.get(requestPath) || requestPath;
+  const fileName = normalizedPath && path.extname(normalizedPath) === ''
+    ? `${normalizedPath}.html`
+    : normalizedPath;
   if (!fileName || fileName.includes('..') || !SAFE_ROOT_FILE_PATTERN.test(fileName)) {
     return next();
   }
