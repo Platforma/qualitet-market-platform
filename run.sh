@@ -26,6 +26,14 @@ info() { echo -e "${CYAN}[run.sh]${NC} $*"; }
 warn() { echo -e "${YELLOW}[run.sh]${NC} $*"; }
 err()  { echo -e "${RED}[run.sh] ERROR:${NC} $*" >&2; }
 
+# ─── Konfiguracja ────────────────────────────────────────────────────────────
+# Nazwy serwisów muszą odpowiadać definicjom w docker-compose.yml.
+DB_SERVICE=db
+API_SERVICE=api
+# Dane do połączenia z bazą — muszą być spójne z docker-compose.yml (env: DB_*).
+PG_USER="${DB_USER:-postgres}"
+PG_DB="${DB_NAME:-hurtdetal_qualitet}"
+
 # ─── Sprawdzenie wymagań ──────────────────────────────────────────────────────
 if ! command -v docker &>/dev/null; then
   err "Docker nie jest zainstalowany lub nie jest w PATH."
@@ -38,13 +46,13 @@ fi
 
 # ─── Krok 1: Uruchom bazę danych ─────────────────────────────────────────────
 log "1/4  Uruchamianie kontenera bazy danych..."
-docker compose up -d db
+docker compose up -d "$DB_SERVICE"
 
 # ─── Krok 2: Czekaj na gotowość PostgreSQL ───────────────────────────────────
 log "2/4  Oczekiwanie na gotowość PostgreSQL..."
 MAX_DB_WAIT=60
 elapsed=0
-until docker compose exec -T db pg_isready -U postgres -d hurtdetal_qualitet >/dev/null 2>&1; do
+until docker compose exec -T "$DB_SERVICE" pg_isready -U "$PG_USER" -d "$PG_DB" >/dev/null 2>&1; do
   if [ "$elapsed" -ge "$MAX_DB_WAIT" ]; then
     err "Baza danych nie uruchomiła się w ciągu ${MAX_DB_WAIT}s."
     err "Sprawdź logi: docker compose logs db"
@@ -58,14 +66,14 @@ info "  PostgreSQL gotowy."
 
 # ─── Krok 3: Migracje bazodanowe ─────────────────────────────────────────────
 log "3/4  Wykonywanie migracji bazodanowych..."
-docker compose run --rm --no-deps api node migrations/migrate.js
+docker compose run --rm --no-deps "$API_SERVICE" node migrations/migrate.js
 info "  Migracje zakończone."
 
 # ─── Krok 4: Uruchom serwer API ──────────────────────────────────────────────
 log "4/4  Uruchamianie serwera API..."
 # Przy ponownym uruchomieniu (up -d) run-migrations-safe.js pominie już
 # zastosowane migracje — start będzie szybki.
-docker compose up -d api
+docker compose up -d "$API_SERVICE"
 
 # Poczekaj na healthcheck API
 info "  Oczekiwanie na gotowość API (healthcheck)..."
@@ -73,7 +81,7 @@ MAX_API_WAIT=90
 elapsed=0
 api_status="starting"
 while [ "$elapsed" -lt "$MAX_API_WAIT" ]; do
-  api_id=$(docker compose ps -q api 2>/dev/null || true)
+  api_id=$(docker compose ps -q "$API_SERVICE" 2>/dev/null || true)
   if [ -n "$api_id" ]; then
     api_status=$(docker inspect --format='{{.State.Health.Status}}' "$api_id" 2>/dev/null || echo "starting")
     if [ "$api_status" = "healthy" ]; then
@@ -91,7 +99,7 @@ if [ "$api_status" = "healthy" ]; then
   log ""
   log "  API:      http://localhost:3000"
   log "  Baza:     localhost:5432"
-  log "  DB name:  hurtdetal_qualitet  |  user: postgres"
+  log "  DB name:  ${PG_DB}  |  user: ${PG_USER}"
   log ""
   log "  Logi API:   docker compose logs -f api"
   log "  Zatrzymaj:  docker compose down"
@@ -99,5 +107,5 @@ if [ "$api_status" = "healthy" ]; then
 else
   warn "API nie zgłosiło statusu 'healthy' w ciągu ${MAX_API_WAIT}s."
   warn "Serwer może nadal startować. Sprawdź logi:"
-  warn "  docker compose logs api"
+  warn "  docker compose logs $API_SERVICE"
 fi
