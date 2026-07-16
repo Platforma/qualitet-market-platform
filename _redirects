@@ -1,4 +1,4 @@
-# Netlify _redirects – backup for netlify.toml
+# Legacy _redirects (root) – not served by Render; active copy is in frontend/_redirects
 /        /index.html   200
 /sklep   /sklep.html   301
 /sklep/* /sklep.html   200
