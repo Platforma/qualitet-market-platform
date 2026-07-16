@@ -65,24 +65,16 @@ services:
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
 
-  # Frontend Service (Next.js)
+  # Frontend Service (Static HTML/JS PWA)
   - type: web
     name: qualitet-market-web
-    env: node
+    env: static
     repo: https://github.com/Platforma/qualitet-market
     region: frankfurt
     branch: main
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    port: 3000
+    staticPublishPath: .
     plan: free
-    envVars:
-      - key: NEXT_PUBLIC_API_BASE
-        fromService:
-          name: qualitet-market-api
-          property: url
-        value: /api
 
 # Database
 databases:
