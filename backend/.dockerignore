@@ -12,5 +12,4 @@ tests
 .dockerignore
 Dockerfile
 docker-compose.yml
-migrations/
 uploads/

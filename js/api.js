@@ -30,7 +30,11 @@
   // Set window.QM_API_BASE before loading this script to point at your backend.
   // Example: <script>window.QM_API_BASE = 'https://api.qualitet-market.com/api';</script>
   const API_BASE = (typeof window !== 'undefined' && window.QM_API_BASE)
-    || 'http://localhost:3000/api';
+    || (
+      (typeof window !== 'undefined' && window.location && ['localhost', '127.0.0.1'].includes(window.location.hostname))
+        ? 'http://localhost:3000/api'
+        : '/api'
+    );
 
   // Health endpoint lives one level above /api.
   // Override via window.QM_HEALTH_URL if your deployment differs.
