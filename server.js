@@ -46,13 +46,15 @@ const ROOT_STATIC_PATHS = new Map(
     .map((fileName) => [fileName, path.join(ROOT_DIR, fileName)])
 );
 const STATIC_ROUTE_ALIASES = new Map([
-  ['generator', 'generator-sklepu.html'],
-  ['generator-sklepu', 'generator-sklepu.html']
+  ['generator', 'generator-sklepu']
 ]);
 
 function sendRootStaticFile(req, res, next) {
   const requestPath = req.path === '/' ? 'index.html' : (req.params.file || '');
-  const normalizedPath = STATIC_ROUTE_ALIASES.get(requestPath) || requestPath;
+  const requestPathBase = path.extname(requestPath) === '.html'
+    ? requestPath.slice(0, -5)
+    : requestPath;
+  const normalizedPath = STATIC_ROUTE_ALIASES.get(requestPathBase) || requestPathBase;
   const fileName = normalizedPath && path.extname(normalizedPath) === ''
     ? `${normalizedPath}.html`
     : normalizedPath;
