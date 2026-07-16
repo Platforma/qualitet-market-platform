@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'app-shell-v3';
+const CACHE_VERSION = 'app-shell-v4';
 const PRECACHE_ASSETS = [
   './',
   'index.html',
@@ -16,6 +16,7 @@ const PRECACHE_ASSETS = [
   'sklep.html',
   'koszyk.html',
   'css/style.css',
+  'css/qualitetverse.css',
   'styles.css',
   'panel.css',
   'shop.css',
@@ -26,6 +27,10 @@ const PRECACHE_ASSETS = [
   'js/flow.js',
   'js/cart.js',
   'js/pwa-connect.js',
+  'js/auto-store.js',
+  'js/feed.js',
+  'js/homepage.js',
+  'js/security-guard.js',
   'shop.js',
   'stores.js',
   'assets/images/logo-qualitetmarket.svg',
