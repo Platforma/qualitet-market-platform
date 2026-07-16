@@ -318,12 +318,21 @@
 <body>
 
 <!-- ── Top bar ── -->
-<header class="live-topbar">
-  <a href="index.html" class="logo">Uszefa<span>Live</span></a>
-  <div class="spacer"></div>
-  <button class="btn btn-outline btn-sm" id="btnBack" style="display:none" onclick="showList()">← Wróć</button>
-  <button class="btn btn-primary btn-sm" id="btnCreateStream" style="display:none" onclick="showCreateForm()">🎥 Nadawaj na żywo</button>
-</header>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/icons/favicon.svg" alt="QualitetMarket logo" width="42" height="42">
+        <div>
+          <strong>QualitetMarket</strong>
+          <span>Marketplace B2B/B2C</span>
+        </div>
+      </a>
+      <a href="login.html" class="btn btn-secondary topbar-login-btn">Zaloguj się</a>
+      <a class="btn btn-primary topbar-cta" href="generator-sklepu.html">🚀 Otwórz Sklep</a>
+      <a class="btn btn-primary topbar-cta" href="owner-panel.html" data-superadmin-link hidden style="background:rgba(255,79,216,.2);border-color:rgba(255,79,216,.5);color:#ffd6f3">🔐 Panel właściciela</a>
+      <button class="menu-toggle" type="button" aria-label="Otwórz menu" data-menu-toggle>☰</button>
+    </div>
+  </header>
 
 <!-- ══════════════ VIEW: Stream list ══════════════ -->
 <div id="viewList" class="view active">
