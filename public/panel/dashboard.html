@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dashboard administratora | QualitetMarket</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020617;
+      --panel: rgba(15, 23, 42, 0.9);
+      --border: rgba(148, 163, 184, 0.2);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #7c3aed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(124, 58, 237, 0.26), transparent 28%),
+        linear-gradient(180deg, var(--bg), #111827);
+    }
+    .dashboard-shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+    .dashboard-topbar,
+    .dashboard-card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(2, 6, 23, 0.35);
+    }
+    .dashboard-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+    }
+    .dashboard-topbar h1,
+    .dashboard-card h2 {
+      margin: 0;
+    }
+    .dashboard-topbar p,
+    .dashboard-card p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .dashboard-topbar button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      background: rgba(148, 163, 184, 0.14);
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+    .dashboard-grid {
+      display: grid;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .dashboard-card {
+      padding: 24px;
+    }
+    .dashboard-metrics {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-top: 18px;
+    }
+    .metric {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.76);
+    }
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.4rem;
+    }
+    .dashboard-placeholder {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+  <script>
+    if (localStorage.getItem('qm_admin_logged') !== 'true') {
+      window.location.replace('/public/panel/login-admin.html');
+    }
+  </script>
+</head>
+<body>
+  <main class="dashboard-shell">
+    <section class="dashboard-topbar">
+      <div>
+        <h1>Dashboard administratora</h1>
+        <p>Panel szefa do domknięcia aktywacji sklepu i kontroli podstawowych kroków wdrożenia.</p>
+      </div>
+      <button type="button" id="qm-admin-logout-btn">Wyloguj</button>
+    </section>
+
+    <section class="dashboard-grid">
+      <div id="qm-tasks-panel-host" aria-live="polite"></div>
+
+      <section class="dashboard-card">
+        <h2>Status wdrożenia</h2>
+        <p>Po ukończeniu wszystkich kroków moduł zadań ukryje się automatycznie.</p>
+        <div class="dashboard-metrics">
+          <article class="metric">
+            Panel
+            <strong>Aktywny</strong>
+          </article>
+          <article class="metric">
+            Logowanie
+            <strong>Lokalne</strong>
+          </article>
+          <article class="metric">
+            Zadania QM
+            <strong id="qm-tasks-status-label">W toku</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="dashboard-card">
+        <h2>Informacje</h2>
+        <p class="dashboard-placeholder">Ten dashboard ładuje komponent zadań z <code>/public/panel/qm-tasks-panel.html</code> przez <code>fetch()</code>.</p>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const TASKS_URL = '/public/panel/qm-tasks-panel.html';
+      const host = document.getElementById('qm-tasks-panel-host');
+      const logoutButton = document.getElementById('qm-admin-logout-btn');
+      const statusLabel = document.getElementById('qm-tasks-status-label');
+
+      function syncStatusLabel() {
+        statusLabel.textContent = localStorage.getItem('qm_tasks_done') === 'true' ? 'Ukończone' : 'W toku';
+      }
+
+      function executeEmbeddedScripts(scope) {
+        scope.querySelectorAll('script').forEach(function (oldScript) {
+          const newScript = document.createElement('script');
+          Array.from(oldScript.attributes).forEach(function (attribute) {
+            newScript.setAttribute(attribute.name, attribute.value);
+          });
+          newScript.textContent = oldScript.textContent;
+          oldScript.replaceWith(newScript);
+        });
+      }
+
+      async function loadTasksPanel() {
+        try {
+          const response = await fetch(TASKS_URL, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error('Nie udało się załadować modułu zadań.');
+          }
+          host.innerHTML = await response.text();
+          executeEmbeddedScripts(host);
+          syncStatusLabel();
+        } catch (error) {
+          host.innerHTML = '<section class="dashboard-card"><h2>Moduł zadań</h2><p class="dashboard-placeholder">' + error.message + '</p></section>';
+        }
+      }
+
+      logoutButton.addEventListener('click', function () {
+        localStorage.removeItem('qm_admin_logged');
+        window.location.replace('/public/panel/login-admin.html');
+      });
+
+      window.addEventListener('storage', syncStatusLabel);
+      window.addEventListener('qm:tasks-updated', syncStatusLabel);
+      syncStatusLabel();
+      loadTasksPanel();
+    }());
+  </script>
+</body>
+</html>
