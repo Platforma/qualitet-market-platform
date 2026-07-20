@@ -98,6 +98,7 @@ app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
 // ─── Health check ──────────────────────────────────────────────────────────────
+app.get('/', (_req, res) => res.json({ status: 'ok' }));
 app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 // ─── Readiness check ───────────────────────────────────────────────────────────
@@ -439,24 +440,6 @@ if (process.env.NODE_ENV !== 'test') {
   };
 
   setInterval(syncAllSuppliers, SYNC_INTERVAL_MS);
-}
-
-// ─── Start server ──────────────────────────────────────────────────────────────
-const PORT = parseInt(process.env.PORT || '3000', 10);
-
-if (require.main === module) {
-  const http = require('http');
-  const { WebSocketServer } = require('ws');
-  const wsManager = require('./services/websocket');
-
-  const server = http.createServer(app);
-  const wss = new WebSocketServer({ server });
-  wsManager.attach(wss);
-
-  server.listen(PORT, () => {
-    console.log(`QUALITETMARKET PLATFORMA API running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
-    console.log(`WebSocket server active on ws://localhost:${PORT}`);
-  });
 }
 
 module.exports = app;
