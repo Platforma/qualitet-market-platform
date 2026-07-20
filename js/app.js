@@ -3789,7 +3789,8 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
 
   function hasOwnerAccess(){
     const role = getStoredUserRole();
-    if(role === 'owner' || role === 'superadmin'){
+    // Legacy "superadmin" is still accepted for backward compatibility with older seeded/demo accounts.
+    if(role === 'owner' || role === 'superadmin' || role === 'admin'){
       return true;
     }
     const email = normalizeQueryParam(localStorage.getItem(STORAGE_KEYS.email));
@@ -3807,7 +3808,18 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     }
     const accessGranted = hasOwnerAccess();
     if(!accessGranted){
-      window.location.replace('dashboard.html');
+      const lockedPanel = document.querySelector('[data-owner-locked]');
+      const content = document.querySelector('[data-owner-content]');
+      if(lockedPanel){
+        const hint = lockedPanel.querySelector('.hint');
+        if(hint){
+          hint.textContent = 'Ten widok jest dostępny tylko dla ról owner/admin.';
+        }
+        lockedPanel.hidden = false;
+      }
+      if(content){
+        content.hidden = true;
+      }
       return false;
     }
     const lockedPanel = document.querySelector('[data-owner-locked]');
@@ -3841,6 +3853,10 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
       inactive: 'pill-inactive',
       cancelled: 'pill-cancelled',
       superadmin: 'pill-superadmin',
+      owner: 'pill-superadmin',
+      admin: 'pill-operator',
+      seller: 'pill-partner',
+      buyer: 'pill-client',
       operator: 'pill-operator',
       partner: 'pill-partner',
       client: 'pill-client'
@@ -3855,6 +3871,10 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
       inactive: 'Nieaktywny',
       cancelled: 'Anulowane',
       superadmin: 'Superadmin',
+      owner: 'Właściciel',
+      admin: 'Administrator',
+      seller: 'Sprzedawca',
+      buyer: 'Kupujący',
       operator: 'Operator',
       partner: 'Partner',
       client: 'Klient'
@@ -3863,7 +3883,7 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     return `<span class="${cls}">${label}</span>`;
   }
 
-  function initOwnerPanel(){
+  async function initOwnerPanel(){
     if(document.body.dataset.page !== 'owner-panel'){
       return;
     }
@@ -3872,23 +3892,189 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     }
 
     const data = ensureFinalStorage();
-    const users = data.users;
-    const stores = data.stores;
+    let users = data.users;
+    let stores = data.stores;
     const leads = data.leads;
-    const products = data.products;
-    const subscriptions = data.subscriptions;
+    let products = data.products;
+    let subscriptions = data.subscriptions;
     const suppliers = data.suppliers;
-    const orders = data.orders || [];
+    let orders = data.orders || [];
     const operators = data.operators || [];
     const referrals = data.referrals || [];
-    const adminLogs = data.adminLogs || [];
+    let adminLogs = data.adminLogs || [];
+
+    const api = window.QMApi;
+    const canUseAdminApi = Boolean(api && api.Admin && api.Auth && api.Auth.isLoggedIn && api.Auth.isLoggedIn());
+    let ownerStatsFromApi = null;
+    let mvpLoadWarning = '';
+
+    const normalizePagedResponse = (resp, key) => {
+      if(resp && Array.isArray(resp.items)) return resp.items;
+      if(resp && Array.isArray(resp[key])) return resp[key];
+      if(Array.isArray(resp)) return resp;
+      return [];
+    };
+
+    const withRetry = async (fn, retries = 1) => {
+      let lastErr = null;
+      for(let attempt = 0; attempt <= retries; attempt += 1){
+        try {
+          return await fn();
+        } catch (err){
+          lastErr = err;
+        }
+      }
+      throw lastErr;
+    };
+
+    if(canUseAdminApi){
+      const results = await Promise.allSettled([
+        withRetry(() => api.Admin.stats(), 1),
+        withRetry(() => api.Admin.users({ limit: 100, page: 1 }), 1),
+        withRetry(() => api.Admin.stores({ limit: 100, page: 1 }), 1),
+        withRetry(() => api.Admin.orders({ limit: 100, page: 1 }), 1),
+        withRetry(() => api.Admin.subscriptions({ limit: 100, page: 1 }), 1),
+        withRetry(() => api.Admin.products({ limit: 100, page: 1 }), 1),
+        withRetry(() => api.Admin.auditLogs({ limit: 100, page: 1 }), 1)
+      ]);
+
+      const [statsRes, usersRes, storesRes, ordersRes, subsRes, productsRes, auditRes] = results;
+      const failedLoads = results.filter(result => result.status === 'rejected').length;
+      if(failedLoads){
+        mvpLoadWarning = `Nie udało się pobrać części danych z API (${failedLoads} sekcji).`;
+      }
+
+      if(statsRes.status === 'fulfilled') ownerStatsFromApi = statsRes.value;
+      if(usersRes.status === 'fulfilled'){
+        users = normalizePagedResponse(usersRes.value, 'users').map(user => ({
+          ...user,
+          createdAt: user.created_at || user.createdAt,
+          role: user.role || 'buyer',
+          plan: user.plan || 'trial'
+        }));
+      }
+      if(storesRes.status === 'fulfilled'){
+        stores = normalizePagedResponse(storesRes.value, 'stores').map(store => ({
+          ...store,
+          userId: store.owner_id || store.userId,
+          createdAt: store.created_at || store.createdAt,
+          name: store.name || store.slug || 'Sklep',
+          plan: store.plan || 'trial',
+          status: store.status || 'active'
+        }));
+      }
+      if(ordersRes.status === 'fulfilled'){
+        orders = normalizePagedResponse(ordersRes.value, 'orders').map(order => ({
+          ...order,
+          number: order.number || order.id,
+          storeId: order.store_id || order.storeId,
+          storeName: order.store_name || order.storeName,
+          client: order.customer_name || order.client || order.buyer_email || '—',
+          product: order.product_name || order.product || '—',
+          amount: parseFloat(order.total || order.amount || 0),
+          status: order.status || 'pending',
+          createdAt: order.created_at || order.createdAt
+        }));
+      }
+      if(subsRes.status === 'fulfilled'){
+        subscriptions = normalizePagedResponse(subsRes.value, 'subscriptions').map(sub => ({
+          ...sub,
+          userId: sub.user_id || sub.userId || sub.owner_id,
+          userName: sub.owner_name || sub.user_name || sub.userName,
+          amount: parseFloat(sub.price || sub.amount || 0),
+          status: sub.status || 'pending',
+          createdAt: sub.created_at || sub.createdAt
+        }));
+      }
+      if(productsRes.status === 'fulfilled'){
+        products = normalizePagedResponse(productsRes.value, 'products').map(product => ({
+          ...product,
+          createdAt: product.created_at || product.createdAt,
+          supplier: product.supplier_name || product.supplier || '—',
+          cost: parseFloat(product.supplier_price || product.price_gross || 0),
+          margin: parseFloat(product.margin || 0)
+        }));
+      }
+      if(auditRes.status === 'fulfilled'){
+        adminLogs = normalizePagedResponse(auditRes.value, 'logs').map(log => ({
+          ...log,
+          time: log.created_at || log.time,
+          user: log.user_id || log.user || 'system',
+          role: log.role || 'admin',
+          action: log.action || '—',
+          object: log.resource || log.object || '—',
+          details: log.metadata ? JSON.stringify(log.metadata) : (log.details || '—')
+        }));
+      }
+    } else {
+      mvpLoadWarning = 'Brak aktywnej sesji API — wyświetlane są dane lokalne.';
+    }
+
     const storeMap = new Map(stores.map(store => [store.id, store]));
     const userMap = new Map(users.map(user => [user.id, user]));
+
+    if(mvpLoadWarning){
+      const ownerContent = document.querySelector('[data-owner-content]');
+      if(ownerContent && !ownerContent.querySelector('[data-owner-mvp-warning]')){
+        const warnCard = document.createElement('section');
+        warnCard.className = 'panel-card';
+        warnCard.setAttribute('data-owner-mvp-warning', '1');
+        warnCard.innerHTML = `
+          <span class="eyebrow">Status danych</span>
+          <h2 style="margin-top:6px">Tryb awaryjny panelu MVP</h2>
+          <p class="hint">${escapeHtml(mvpLoadWarning)}</p>
+          <div class="cta-row"><button class="btn btn-secondary" type="button" data-owner-mvp-retry>Spróbuj ponownie</button></div>
+        `;
+        ownerContent.prepend(warnCard);
+        const retryBtn = warnCard.querySelector('[data-owner-mvp-retry]');
+        if(retryBtn){
+          retryBtn.addEventListener('click', () => window.location.reload());
+        }
+      }
+    }
 
     // ── Tab switching ──
     const tabNav = document.querySelector('[data-owner-tab-nav]');
     const tabPanels = document.querySelectorAll('[data-owner-tab-panel]');
+    const mvpTabs = new Set(['overview', 'users', 'stores', 'orders', 'subscriptions', 'products', 'security']);
+    const stage2Tabs = new Set(
+      Array.from(tabPanels)
+        .map(panel => panel.dataset.ownerTabPanel)
+        .filter(tabId => tabId && !mvpTabs.has(tabId))
+    );
+
+    const stageInfo = document.createElement('p');
+    stageInfo.className = 'hint';
+    stageInfo.style.marginTop = '8px';
+    stageInfo.textContent = 'Aktywne moduły MVP: Przegląd, Użytkownicy, Sklepy, Produkty, Zamówienia, Subskrypcje, Logi audytu. Pozostałe sekcje są w etapie 2.';
+
+    const quickNavSection = document.querySelector('.owner-quick-nav-section');
+    if(quickNavSection){
+      quickNavSection.appendChild(stageInfo);
+    }
+
+    if(tabNav){
+      tabNav.querySelectorAll('[data-owner-tab]').forEach(link => {
+        const tabId = link.dataset.ownerTab;
+        if(stage2Tabs.has(tabId)){
+          link.style.display = 'none';
+        }
+      });
+    }
+    document.querySelectorAll('[data-owner-tab-trigger]').forEach(btn => {
+      const tabId = btn.dataset.ownerTabTrigger;
+      if(stage2Tabs.has(tabId)){
+        btn.disabled = true;
+        btn.title = 'Sekcja dostępna w etapie 2';
+        btn.style.opacity = '0.45';
+        btn.style.cursor = 'not-allowed';
+      }
+    });
+
     function showTab(tabId){
+      if(stage2Tabs.has(tabId)){
+        return;
+      }
       let targetPanel = null;
       tabPanels.forEach(panel => {
         const isActive = panel.dataset.ownerTabPanel === tabId;
@@ -3958,18 +4144,38 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     const monthStr = now.toISOString().slice(0, 7);
 
     const ordersToday = orders.filter(o => (o.createdAt || '').startsWith(todayStr));
-    const revenueToday = ordersToday.reduce((sum, o) => sum + (Number.parseFloat(o.amount) || 0), 0);
+    const revenueToday = ownerStatsFromApi && ownerStatsFromApi.revenue_today != null
+      ? Number(ownerStatsFromApi.revenue_today)
+      : ordersToday.reduce((sum, o) => sum + (Number.parseFloat(o.amount) || 0), 0);
     const ordersThisMonth = orders.filter(o => (o.createdAt || '').startsWith(monthStr));
-    const revenueMonth = ordersThisMonth.reduce((sum, o) => sum + (Number.parseFloat(o.amount) || 0), 0);
+    const revenueMonth = ownerStatsFromApi && ownerStatsFromApi.revenue_this_month != null
+      ? Number(ownerStatsFromApi.revenue_this_month)
+      : ordersThisMonth.reduce((sum, o) => sum + (Number.parseFloat(o.amount) || 0), 0);
     const regsToday = users.filter(u => (u.createdAt || '').startsWith(todayStr)).length;
     const regsMonth = users.filter(u => (u.createdAt || '').startsWith(monthStr)).length;
 
+    const totalUsersMetric = ownerStatsFromApi && ownerStatsFromApi.users != null
+      ? Number(ownerStatsFromApi.users)
+      : users.length;
+    const totalStoresMetric = ownerStatsFromApi && ownerStatsFromApi.active_stores != null
+      ? Number(ownerStatsFromApi.active_stores)
+      : stores.length;
+    const totalProductsMetric = ownerStatsFromApi && ownerStatsFromApi.products != null
+      ? Number(ownerStatsFromApi.products)
+      : products.length;
+    const totalOrdersMetric = ownerStatsFromApi && ownerStatsFromApi.orders != null
+      ? Number(ownerStatsFromApi.orders)
+      : orders.length;
+    const totalRevenueMetric = ownerStatsFromApi && ownerStatsFromApi.revenue != null
+      ? Number(ownerStatsFromApi.revenue)
+      : revenue;
+
     const counterData = [
-      ['[data-owner-users]', users.length],
-      ['[data-owner-stores]', stores.length],
-      ['[data-owner-products]', products.length],
-      ['[data-owner-orders]', orders.length],
-      ['[data-owner-revenue]', Math.round(revenue)],
+      ['[data-owner-users]', totalUsersMetric],
+      ['[data-owner-stores]', totalStoresMetric],
+      ['[data-owner-products]', totalProductsMetric],
+      ['[data-owner-orders]', totalOrdersMetric],
+      ['[data-owner-revenue]', Math.round(totalRevenueMetric)],
       ['[data-owner-platform-margin]', Math.round(platformMargin)],
       ['[data-owner-active-subs]', activeSubscriptions.length],
       ['[data-owner-referrals-count]', referrals.reduce((s, r) => s + (r.referred || 0), 0)],
@@ -4106,6 +4312,7 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     // ── USERS TAB ──
     const usersTbody = document.querySelector('[data-users-tbody]');
     if(usersTbody){
+      const canUpdateUsers = Boolean(canUseAdminApi && api.Admin && typeof api.Admin.updateUser === 'function');
       const buildUserRow = user => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -4114,11 +4321,12 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
           <td>${escapeHtml(user.email)}</td>
           <td>${escapeHtml(user.phone || '—')}</td>
           <td>${escapeHtml(user.country || '—')}</td>
-          <td>${statusPill(user.role || 'client')}</td>
+          <td>${statusPill(user.role || 'buyer')}</td>
           <td>${escapeHtml(formatPlanLabel(user.plan))}</td>
           <td class="cell-muted">${formatDate(user.createdAt)}</td>
           <td>${user.sales || 0}</td>
           <td>${formatCurrency(user.turnover || 0)}</td>
+          <td><button class="btn btn-secondary btn-sm" type="button" data-user-edit="${escapeHtml(user.id)}" ${canUpdateUsers ? '' : 'disabled'}>Edytuj</button></td>
         `;
         return tr;
       };
@@ -4135,7 +4343,7 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
         usersTbody.innerHTML = '';
         users.filter(u => {
           const matchQ = !searchQuery || (u.name || '').toLowerCase().includes(searchQuery) || (u.email || '').toLowerCase().includes(searchQuery) || (u.country || '').toLowerCase().includes(searchQuery);
-          const matchRole = !role || (u.role || 'client') === role;
+          const matchRole = !role || (u.role || 'buyer') === role;
           const matchPlan = !plan || normalizePlan(u.plan) === plan;
           return matchQ && matchRole && matchPlan;
         }).map(buildUserRow).forEach(row => usersTbody.appendChild(row));
@@ -4144,11 +4352,36 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
       if(usersRoleFilter) usersRoleFilter.addEventListener('change', applyUsersFilter);
       if(usersPlanFilter) usersPlanFilter.addEventListener('change', applyUsersFilter);
 
+      if(canUpdateUsers){
+        usersTbody.addEventListener('click', async (event) => {
+          const btn = event.target.closest('[data-user-edit]');
+          if(!btn) return;
+          const userId = btn.dataset.userEdit;
+          const user = users.find(item => String(item.id) === String(userId));
+          if(!user) return;
+
+          const nextRole = window.prompt('Nowa rola (buyer/seller/admin/owner) — kupujący/sprzedawca/administrator/właściciel:', user.role || 'seller');
+          if(!nextRole) return;
+          const nextPlan = window.prompt('Nowy plan (trial/basic/pro/elite):', normalizePlan(user.plan) || 'trial');
+          if(!nextPlan) return;
+          if(!window.confirm(`Potwierdź zmianę użytkownika ${user.email || user.id} na rolę "${nextRole}" i plan "${nextPlan}"?`)) return;
+
+          try {
+            await api.Admin.updateUser(userId, { role: nextRole, plan: nextPlan });
+            user.role = nextRole;
+            user.plan = nextPlan;
+            applyUsersFilter();
+          } catch (err){
+            alert('Nie udało się zapisać zmian użytkownika: ' + (err.message || 'Nieznany błąd'));
+          }
+        });
+      }
+
       const exportBtn = document.querySelector('[data-export-users]');
       if(exportBtn){
         exportBtn.addEventListener('click', () => {
           const headers = ['ID','Nazwa','Email','Telefon','Kraj','Rola','Plan','Rejestracja','Sprzedaże','Obrót'];
-          const rows = users.map(u => [u.id, u.name, u.email, u.phone || '', u.country || '', u.role || 'client', u.plan, u.createdAt, u.sales || 0, u.turnover || 0]);
+          const rows = users.map(u => [u.id, u.name, u.email, u.phone || '', u.country || '', u.role || 'buyer', u.plan, u.createdAt, u.sales || 0, u.turnover || 0]);
           const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
           const blob = new Blob([csv], {type: 'text/csv'});
           const url = URL.createObjectURL(blob);
@@ -4164,13 +4397,14 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     // ── STORES TAB ──
     const storesTbody = document.querySelector('[data-stores-tbody]');
     if(storesTbody){
+      const canUpdateStores = Boolean(canUseAdminApi && api.Admin && typeof api.Admin.updateStoreStatus === 'function');
       const buildStoreRow = store => {
         const owner = users.find(u => store.userId ? u.id === store.userId : false);
         const ownerName = owner ? owner.name : '—';
         const productCount = Array.isArray(store.products) ? store.products.length : 0;
         const storeOrders = orders.filter(o => o.storeId === store.id);
         const storeTurnover = storeOrders.reduce((sum, o) => sum + (Number.parseFloat(o.amount) || 0), 0);
-        const storeStatus = store.trial ? 'trial' : 'active';
+        const storeStatus = store.status || (store.trial ? 'trial' : 'active');
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="cell-mono">${escapeHtml(store.id)}</td>
@@ -4182,6 +4416,7 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
           <td>${formatCurrency(storeTurnover)}</td>
           <td>${statusPill(storeStatus)}</td>
           <td class="cell-muted">${formatDate(store.createdAt)}</td>
+          <td><button class="btn btn-secondary btn-sm" type="button" data-store-status="${escapeHtml(store.id)}" ${canUpdateStores ? '' : 'disabled'}>Status</button></td>
         `;
         return tr;
       };
@@ -4195,13 +4430,32 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
         storesTbody.innerHTML = '';
         stores.filter(s => {
           const matchQ = !searchQuery || (s.name || '').toLowerCase().includes(searchQuery);
-          const storeStatus = s.trial ? 'trial' : 'active';
-          const matchStatus = !status || storeStatus === status || (!s.trial && status === 'active');
+          const storeStatus = s.status || (s.trial ? 'trial' : 'active');
+          const matchStatus = !status || storeStatus === status;
           return matchQ && matchStatus;
         }).map(buildStoreRow).forEach(row => storesTbody.appendChild(row));
       };
       if(storesSearch) storesSearch.addEventListener('input', applyStoresFilter);
       if(storesStatusFilter) storesStatusFilter.addEventListener('change', applyStoresFilter);
+      if(canUpdateStores){
+        storesTbody.addEventListener('click', async (event) => {
+          const btn = event.target.closest('[data-store-status]');
+          if(!btn) return;
+          const storeId = btn.dataset.storeStatus;
+          const store = stores.find(item => String(item.id) === String(storeId));
+          if(!store) return;
+          const nextStatus = window.prompt('Nowy status sklepu (active/inactive/suspended/pending):', store.status || 'active');
+          if(!nextStatus) return;
+          if(!window.confirm(`Potwierdź zmianę statusu sklepu "${store.name}" na "${nextStatus}"?`)) return;
+          try {
+            await api.Admin.updateStoreStatus(storeId, nextStatus);
+            store.status = nextStatus;
+            applyStoresFilter();
+          } catch (err){
+            alert('Nie udało się zapisać statusu sklepu: ' + (err.message || 'Nieznany błąd'));
+          }
+        });
+      }
     }
 
     // ── PRODUCTS TAB ──
@@ -4628,6 +4882,7 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
     // ── SUBSCRIPTIONS TAB ──
     const subsTbody = document.querySelector('[data-subs-tbody]');
     if(subsTbody){
+      const canUpdateSubs = Boolean(canUseAdminApi && api.Admin && typeof api.Admin.updateSubscription === 'function');
       const subsActive = subscriptions.filter(s => s.status === 'active').length;
       const subsTrial = subscriptions.filter(s => s.status === 'trial').length;
       const mrr = subscriptions.filter(s => s.status === 'active').reduce((sum, s) => sum + (Number.parseFloat(s.amount) || 0), 0);
@@ -4647,9 +4902,33 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
           <td>${statusPill(sub.status || 'pending')}</td>
           <td>${formatCurrency(sub.amount || 0)}</td>
           <td class="cell-muted">${formatDate(sub.createdAt)}</td>
+          <td><button class="btn btn-secondary btn-sm" type="button" data-sub-edit="${escapeHtml(sub.id)}" ${canUpdateSubs ? '' : 'disabled'}>Edytuj</button></td>
         `;
         subsTbody.appendChild(tr);
       });
+      if(canUpdateSubs){
+        subsTbody.addEventListener('click', async (event) => {
+          const btn = event.target.closest('[data-sub-edit]');
+          if(!btn) return;
+          const subId = btn.dataset.subEdit;
+          const sub = subscriptions.find(item => String(item.id) === String(subId));
+          if(!sub) return;
+          const nextPlan = window.prompt('Nowy plan (trial/basic/pro/elite):', normalizePlan(sub.plan) || 'trial');
+          if(!nextPlan) return;
+          const nextStatus = window.prompt('Nowy status (active/cancelled/expired/superseded):', sub.status || 'active');
+          if(!nextStatus) return;
+          if(!window.confirm(`Potwierdź zmianę subskrypcji ${sub.id} na plan "${nextPlan}" i status "${nextStatus}"?`)) return;
+          try {
+            await api.Admin.updateSubscription(subId, { plan: nextPlan, status: nextStatus });
+            sub.plan = nextPlan;
+            sub.status = nextStatus;
+            btn.closest('tr').querySelectorAll('td')[2].innerHTML = escapeHtml(formatPlanLabel(nextPlan));
+            btn.closest('tr').querySelectorAll('td')[3].innerHTML = statusPill(nextStatus);
+          } catch (err){
+            alert('Nie udało się zapisać zmian subskrypcji: ' + (err.message || 'Nieznany błąd'));
+          }
+        });
+      }
     }
 
     // ── FINANCES TAB ──

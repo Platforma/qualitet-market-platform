@@ -81,8 +81,8 @@
     <main class="dashboard-main">
       <section class="panel-card owner-locked" data-owner-locked hidden>
         <span class="eyebrow">Brak dostępu</span>
-        <h2>Panel właściciela jest zastrzeżony</h2>
-        <p class="hint">Ten widok jest dostępny tylko dla właściciela konta.</p>
+        <h2>Panel owner/admin jest zastrzeżony</h2>
+        <p class="hint">Ten widok jest dostępny tylko dla ról owner/admin.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="dashboard.html">Wróć do panelu</a>
           <a class="btn btn-secondary" href="login.html">Zaloguj się</a>
@@ -369,10 +369,10 @@
               <input class="owner-search" type="search" placeholder="Szukaj po nazwie, e-mail, kraju…" data-users-search aria-label="Szukaj użytkownika">
               <select class="owner-filter" data-users-role-filter aria-label="Filtruj po roli">
                 <option value="">Wszystkie role</option>
-                <option value="superadmin">Superadmin</option>
-                <option value="operator">Operator</option>
-                <option value="partner">Partner</option>
-                <option value="client">Klient</option>
+                <option value="owner">Właściciel</option>
+                <option value="admin">Administrator</option>
+                <option value="seller">Sprzedawca</option>
+                <option value="buyer">Kupujący</option>
               </select>
               <select class="owner-filter" data-users-plan-filter aria-label="Filtruj po planie">
                 <option value="">Wszystkie plany</option>
@@ -397,6 +397,7 @@
                     <th>Rejestracja</th>
                     <th>Sprzedaże</th>
                     <th>Obrót</th>
+                    <th>Akcje</th>
                   </tr>
                 </thead>
                 <tbody data-users-tbody></tbody>
@@ -418,8 +419,9 @@
               <select class="owner-filter" data-stores-status-filter aria-label="Filtruj po statusie">
                 <option value="">Wszystkie statusy</option>
                 <option value="active">Aktywny</option>
-                <option value="trial">Trial</option>
+                <option value="pending">Oczekujący</option>
                 <option value="inactive">Nieaktywny</option>
+                <option value="suspended">Zawieszony</option>
               </select>
             </div>
             <div class="owner-table-wrap">
@@ -435,6 +437,7 @@
                     <th>Obrót</th>
                     <th>Status</th>
                     <th>Dodano</th>
+                    <th>Akcje</th>
                   </tr>
                 </thead>
                 <tbody data-stores-tbody></tbody>
@@ -682,9 +685,10 @@
               <input class="owner-search" type="search" placeholder="Szukaj zamówienia…" data-orders-search aria-label="Szukaj zamówienia">
               <select class="owner-filter" data-orders-status-filter aria-label="Filtruj po statusie">
                 <option value="">Wszystkie statusy</option>
-                <option value="paid">Opłacone</option>
                 <option value="pending">Oczekujące</option>
+                <option value="confirmed">Potwierdzone</option>
                 <option value="shipped">Wysłane</option>
+                <option value="delivered">Dostarczone</option>
                 <option value="cancelled">Anulowane</option>
               </select>
             </div>
@@ -796,6 +800,7 @@
                     <th>Status</th>
                     <th>Kwota</th>
                     <th>Data rozpoczęcia</th>
+                    <th>Akcje</th>
                   </tr>
                 </thead>
                 <tbody data-subs-tbody></tbody>
@@ -1652,7 +1657,7 @@
   // ─── Announcements tab logic ─────────────────────────────────────────────────
   (function () {
     function apiReq(method, path, body) {
-      const token = localStorage.getItem('token') || '';
+      const token = localStorage.getItem('qm_token') || localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body) opts.body = JSON.stringify(body);
       const base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
@@ -1767,7 +1772,7 @@
   // ─── Scripts tab logic (Super Admin only) ───────────────────────────────────
   (function () {
     function apiReq(method, path, body) {
-      const token = localStorage.getItem('token') || '';
+      const token = localStorage.getItem('qm_token') || localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body !== undefined) opts.body = JSON.stringify(body);
       const base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
@@ -1936,7 +1941,7 @@
     'use strict';
 
     function apiReq(method, path, body) {
-      var token = localStorage.getItem('token') || '';
+      var token = localStorage.getItem('qm_token') || localStorage.getItem('token') || localStorage.getItem('auth_token') || '';
       var opts = {
         method: method,
         headers: {

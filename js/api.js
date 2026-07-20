@@ -581,6 +581,8 @@
      *  Params: { page, limit } – response: { total, page, limit, logs[] } */
     importLogs(params)         { return get('/admin/import-logs', params); },
     subscriptions(params)      { return get('/admin/subscriptions', params); },
+    /** Update subscription plan/status. PATCH /api/admin/subscriptions/:id */
+    updateSubscription(id, data){ return patch(`/admin/subscriptions/${id}`, data); },
     auditLogs(params)          { return get('/admin/audit-logs', params); },
     /** Get platform margin tiers. GET /api/admin/platform-margins */
     platformMargins(params)    { return get('/admin/platform-margins', params); },
