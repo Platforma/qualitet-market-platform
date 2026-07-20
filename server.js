@@ -17,7 +17,7 @@ const { WebSocketServer } = require('ws');
 
 const app = express();
 const ROOT_DIR = __dirname;
-const STATIC_DIRS = ['assets', 'css', 'js'];
+const STATIC_DIRS = ['assets', 'css', 'js', 'public'];
 const ROOT_STATIC_FILES = new Set([
   '.nojekyll',
   'CNAME',

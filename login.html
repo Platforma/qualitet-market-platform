@@ -48,12 +48,6 @@
   <main class="wrap auth-layout">
     <section class="panel-card auth-card">
       <h1>Logowanie</h1>
-      <div class="auth-tabs" role="tablist">
-        <button class="auth-tab-btn active" role="tab" aria-selected="true" data-auth-tab="email" aria-controls="auth-panel-email">Email</button>
-        <button class="auth-tab-btn" role="tab" aria-selected="false" data-auth-tab="demo" aria-controls="auth-panel-demo"><span aria-hidden="true">🔥</span> Demo (lokalnie)</button>
-      </div>
-
-      <!-- Standard email login -->
       <div id="auth-panel-email" class="auth-tab-panel" role="tabpanel">
         <form class="form-card" data-login-form>
           <label>
@@ -69,22 +63,6 @@
             <button class="btn btn-secondary" type="button" data-register-btn>Utwórz konto</button>
           </div>
         </form>
-      </div>
-
-      <!-- Demo login (local development — no backend needed) -->
-      <div id="auth-panel-demo" class="auth-tab-panel" role="tabpanel" hidden>
-        <p class="hint" style="margin-bottom:16px">Logowanie demo — tylko do testów lokalnych. Nie wymaga backendu.</p>
-        <div class="form-card">
-          <p style="margin-bottom:12px">Zaloguj się jako sprzedawca demo (<code>role: seller</code>) i przejdź do panelu.</p>
-          <div class="cta-row">
-            <button class="btn btn-primary" type="button" data-demo-login-btn>Wejdź jako sprzedawca (demo)</button>
-          </div>
-          <p class="hint" style="margin-top:16px">
-            🔗 Platforma lokalnie:
-            <a href="sklep.html">sklep.html</a> ·
-            <a href="index.html">index.html</a>
-          </p>
-        </div>
       </div>
     </section>
     <section class="app-cta-section">

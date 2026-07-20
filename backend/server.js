@@ -4,7 +4,7 @@ const path = require("path");
 const rateLimit = require("express-rate-limit");
 const app = express();
 const ROOT_DIR = path.join(__dirname, "..");
-const STATIC_DIRS = ["assets", "css", "js"];
+const STATIC_DIRS = ["assets", "css", "js", "public"];
 const ROOT_STATIC_FILES = new Set([
   ".nojekyll",
   "CNAME",
