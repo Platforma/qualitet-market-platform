@@ -30,7 +30,7 @@ router.get('/me', async (req, res) => {
       [req.user.id]
     )
     if (!result.rows[0]) {
-      return res.status(403).json({ error: 'Brak uprawnień właściciela platformy' })
+      return res.status(404).json({ error: 'Nie znaleziono konta właściciela' })
     }
     return res.json(result.rows[0])
   } catch (err) {

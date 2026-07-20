@@ -42,8 +42,10 @@ error() { echo -e "${RED}[setup] ERROR:${NC} $*" >&2; }
 # ─── 0. Load .env if present (local development convenience) ──────────────────
 if [ -f "$BACKEND_DIR/.env" ]; then
   info "Loading $BACKEND_DIR/.env"
-  # shellcheck disable=SC2046
-  export $(grep -v '^#' "$BACKEND_DIR/.env" | grep -v '^\s*$' | xargs)
+  set -a
+  # shellcheck source=/dev/null
+  source "$BACKEND_DIR/.env"
+  set +a
 fi
 
 # ─── 1. Validate required variables ──────────────────────────────────────────
