@@ -19,7 +19,7 @@ docker compose up --build
 ```bash
 cd backend
 npm install
-cp .env.example .env   # uzupełnij dane DB i JWT_SECRET
+cp .env.example .env   # ustaw DATABASE_URL i JWT_SECRET
 createdb hurtdetal_qualitet
 npm run migrate
 npm run dev

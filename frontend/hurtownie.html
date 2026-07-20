@@ -31,7 +31,7 @@
     body[data-role="admin"] [data-admin-only],
     body[data-role="owner"] [data-admin-only]{display:inline-flex}
   </style>
-  <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
+  <script>window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');</script>
 </head>
 <body data-page="hurtownie" class="feature-page has-bottom-nav">
   <div class="app-splash" data-app-splash>
@@ -438,7 +438,7 @@
   (function () {
     'use strict';
 
-    var API_BASE = window.QM_API_BASE || 'https://qualitet-market.com/api';
+    var API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');
     var selectedSupplierId = null;
     var currentProducts = [];
     var filtersInitialized = false;
@@ -774,7 +774,7 @@
   (function () {
     'use strict';
 
-    var API_BASE = window.QM_API_BASE || 'https://qualitet-market.com/api';
+    var API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');
 
     function authHeaders() {
       var token = localStorage.getItem('token') || '';

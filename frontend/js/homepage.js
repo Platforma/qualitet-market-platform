@@ -12,7 +12,7 @@
   'use strict';
 
   const API_BASE = (typeof window !== 'undefined' && window.QM_API_BASE)
-    || 'https://qualitet-market.com/api';
+    || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
 
