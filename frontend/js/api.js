@@ -30,7 +30,6 @@
   // Set window.QM_API_BASE before loading this script to point at your backend.
   // Example: <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
   function getDefaultApiBase() {
-    if (typeof window === 'undefined' || !window.location) return 'https://qualitet-market.com/api';
     return 'https://qualitet-market.com/api';
   }
 
