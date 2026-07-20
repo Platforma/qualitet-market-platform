@@ -66,14 +66,11 @@ function sortMigrationFiles(files) {
   return parsed.map((p) => p.filename);
 }
 
-// ─── Runner ───────────────────────────────────────────────────────────────────
+// ─── Runner ────────────────────────────────────────────────────────────────────
 
 const pool = new Pool({
-  host: process.env.DB_HOST || 'db',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  database: process.env.DB_NAME || 'hurtdetal_qualitet',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '',
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
 async function run() {
