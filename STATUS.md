@@ -181,7 +181,7 @@
 
 1. ❌ **Email notifications** – brak wysyłki emaili (potwierdzenia zamówień, rejestracji, reset hasła)
 2. ❌ **Reset hasła** – brak endpointu i UI `forgot password / reset password`
-3. ❌ **Subdomenowe sklepy** – infrastruktura DNS/reverse proxy dla `*.qualitetmarket.pl`
+3. ❌ **Subdomenowe sklepy** – infrastruktura DNS/reverse proxy dla `*.qualitet-market.com`
 4. ❌ **Paginacja w UI** – listy produktów/zamówień nie mają pełnej paginacji po stronie frontendu
 
 ### Mobile
@@ -213,7 +213,7 @@
 
 | # | Opis | Plik | Priorytet |
 |---|---|---|---|
-| B-1 | `mobile/lib/api.ts` ma hardcoded `API_BASE = 'http://localhost:5000/api'` – nie działa na urządzeniu | `mobile/lib/api.ts` | Wysoki |
+| B-1 | `mobile/lib/api.ts` ma hardcoded `API_BASE = 'http://qualitet-market.com:5000/api'` – nie działa na urządzeniu | `mobile/lib/api.ts` | Wysoki |
 | B-2 | Duplikat numerów migracji: `003_product_status.sql` i `003a_central_catalog.sql` i `007_subdomain_support.sql` i `007_stores_subdomain.sql` – ryzyko kolizji przy migrate | `backend/migrations/` | Średni |
 | B-3 | `STRIPE_SECRET_KEY` i `P24_MERCHANT_ID` niezdefiniowane w środowisku produkcyjnym – płatności działają w sandbox | `.env` (konfiguracja) | Niski (wymaga konfiguracji) |
 
@@ -221,7 +221,7 @@
 
 | # | Opis | Plik | Priorytet |
 |---|---|---|---|
-| M-1 | Hardcoded URL API (`localhost:5000`) nie działa na fizycznym urządzeniu ani w trybie produkcyjnym | `mobile/lib/api.ts:1` | ✅ **NAPRAWIONE** – używa `EXPO_PUBLIC_API_URL` ze zmiennej środowiskowej |
+| M-1 | Hardcoded URL API (`qualitet-market.com:5000`) nie działa na fizycznym urządzeniu ani w trybie produkcyjnym | `mobile/lib/api.ts:1` | ✅ **NAPRAWIONE** – używa `EXPO_PUBLIC_API_URL` ze zmiennej środowiskowej |
 | M-2 | Brak obsługi błędów sieciowych w ekranach – crash przy braku połączenia | `mobile/app/*.tsx` | Średni |
 | M-3 | Brak ekranu ładowania/splash screen po starcie aplikacji | `mobile/app/_layout.tsx` | ✅ **NAPRAWIONE** – splash screen ładuje persystowany token |
 
@@ -233,7 +233,7 @@
 
 1. **Podłączyć Next.js frontend do backendu** – zastąpić mock dane prawdziwymi wywołaniami API w `/stores`, `/cart`, `/checkout`, `/ai`
 2. **Dodać auth guard w Next.js** – middleware chroniący trasy `/admin`, `/seller`, `/creator`
-3. **Skonfigurować URL API w Expo** – użyć zmiennej środowiskowej zamiast `localhost:5000`
+3. **Skonfigurować URL API w Expo** – użyć zmiennej środowiskowej zamiast `qualitet-market.com:5000`
 4. **Ustawić `.env` produkcyjny** – `JWT_SECRET`, `DB_PASSWORD`, `STRIPE_SECRET_KEY`, `P24_MERCHANT_ID`, `ALLOWED_ORIGINS`
 
 ### Priorytet WYSOKI
@@ -245,7 +245,7 @@
 
 ### Priorytet ŚREDNI
 
-9. **Subdomenowe sklepy** – konfiguracja reverse proxy (nginx/Vercel) dla `*.qualitetmarket.pl`
+9. **Subdomenowe sklepy** – konfiguracja reverse proxy (nginx/Vercel) dla `*.qualitet-market.com`
 10. **Naprawić duplikaty migracji** – ujednolicić numerację (`007a`, `007b` lub scalić)
 11. **CRM i Tasks** – podłączyć `crm.html` i `tasks.html` do backendu
 12. **Testy E2E** – dodać testy end-to-end dla flow zakupowego (np. Playwright)
@@ -512,7 +512,7 @@ Pokrycie testami obejmuje wszystkie kluczowe endpointy:
 
 1. **Konfiguracja bramek płatności** – wymaga ustawienia `STRIPE_SECRET_KEY` i/lub `P24_MERCHANT_ID` w `.env` dla realnych transakcji
 2. **Email notifications** – brak systemu powiadomień email (do zamówień, rejestracji itp.)
-3. **Subdomenowe sklepy** – infrastruktura DNS/reverse proxy do obsługi subdomen `*.qualitetmarket.pl`
+3. **Subdomenowe sklepy** – infrastruktura DNS/reverse proxy do obsługi subdomen `*.qualitet-market.com`
 4. **Panele administracyjne UI** – backend jest gotowy, ale dedykowane UI panele mogą wymagać dopracowania
 
 ### Czy platforma jest gotowa na pierwszych sprzedawców?
@@ -561,7 +561,7 @@ Przed wdrożeniem produkcyjnym należy skonfigurować:
 
 - Wdrożenie produkcyjne – konfiguracja env: `JWT_SECRET`, `DB_PASSWORD`, `STRIPE_SECRET_KEY`, `ALLOWED_ORIGINS`
 - Email notifications (potwierdzenie zamówienia, rejestracja)
-- Subdomenowe sklepy – infrastruktura DNS/reverse proxy dla `*.qualitetmarket.pl`
+- Subdomenowe sklepy – infrastruktura DNS/reverse proxy dla `*.qualitet-market.com`
 - Testy e2e (Playwright/Cypress) dla krytycznych przepływów
 - Testy mobilne (Detox) dla Expo
 

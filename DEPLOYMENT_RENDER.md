@@ -257,12 +257,12 @@ fetch('https://qualitet-market-api.onrender.com/api/categories')
 ### Powiąż domenę do Render
 
 1. **Web Service** → **Settings**
-2. **Custom Domain** → Dodaj `api.qualitet-market.com`
+2. **Custom Domain** → Dodaj `qualitet-market.com`
 3. Render wyświetli **CNAME record**
 4. Przejdź do DNS dostawcy (np. Namecheap, GoDaddy)
 5. Dodaj CNAME record:
    ```
-   api.qualitet-market.com CNAME qualitet-market-api.onrender.com
+   qualitet-market.com CNAME qualitet-market-api.onrender.com
    ```
 6. Czekaj 15-30 minut na propagację
 

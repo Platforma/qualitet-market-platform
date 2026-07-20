@@ -42,7 +42,7 @@ npm run dev        # tryb deweloperski (auto-restart)
 # Z katalogu głównego repozytorium:
 cp backend/.env.example .env      # opcjonalnie – nadpisz w docker-compose.yml
 docker compose up --build
-# API dostępne pod: http://localhost:3000
+# API dostępne pod: https://qualitet-market.com
 ```
 
 ---
@@ -112,7 +112,7 @@ backend/
 
 ## Lista endpointów API
 
-Bazowy URL: `http://localhost:3000/api`
+Bazowy URL: `https://qualitet-market.com/api`
 
 ### Autoryzacja
 
@@ -353,7 +353,7 @@ Testy używają mocków bazy danych – nie wymagają połączenia z PostgreSQL.
 
 ### Konfiguracja
 
-- [ ] Ustaw `API_BASE_URL` w frontend (np. `https://api.qualitet-market.com/api`)
+- [ ] Ustaw `API_BASE_URL` w frontend (np. `https://qualitet-market.com/api`)
 - [ ] Obsłuż token JWT – przechowuj w `localStorage` jako `qm_token`
 - [ ] Dodaj nagłówek `Authorization: Bearer <token>` do każdego żądania
 

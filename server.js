@@ -90,5 +90,5 @@ wsManager.attach(wss);
 
 server.listen(PORT, () => {
   console.log(`QUALITETMARKET PLATFORMA API running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
-  console.log(`WebSocket server active on ws://localhost:${PORT}`);
+  console.log(`WebSocket server active on port ${PORT}`);
 });

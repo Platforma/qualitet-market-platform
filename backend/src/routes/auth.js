@@ -67,7 +67,7 @@ router.post(
         const shopId   = uuidv4();
         const shopName = name;
         const slug     = await uniqueSlug(nameToSlug(shopName));
-        const subdomain = `${slug}.qualitetmarket.pl`;
+        const subdomain = `${slug}.qualitet-market.com`;
 
         const shopResult = await db.query(
           `INSERT INTO stores (id, owner_id, name, slug, subdomain, margin, plan, status, created_at)

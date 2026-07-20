@@ -1814,7 +1814,7 @@ describe('POST /api/auth/register', () => {
   });
 
   it('registers with default seller role and auto-creates shop', async () => {
-    const shopRow = { id: 'shop-new', owner_id: 'user-new', name: 'New Seller', slug: 'new-seller', subdomain: 'new-seller.qualitetmarket.pl', status: 'active', plan: 'trial' };
+    const shopRow = { id: 'shop-new', owner_id: 'user-new', name: 'New Seller', slug: 'new-seller', subdomain: 'new-seller.qualitet-market.com', status: 'active', plan: 'trial' };
     db.query
       .mockResolvedValueOnce({ rows: [] })        // SELECT – no duplicate email
       .mockResolvedValueOnce({ rows: [{ count: '0' }] }) // SELECT COUNT – promo tier
@@ -1832,7 +1832,7 @@ describe('POST /api/auth/register', () => {
     expect(res.body.token).toBeDefined();
     expect(res.body.shop).toBeDefined();
     expect(res.body.shop.slug).toBe('new-seller');
-    expect(res.body.shop.subdomain).toBe('new-seller.qualitetmarket.pl');
+    expect(res.body.shop.subdomain).toBe('new-seller.qualitet-market.com');
   });
 
   it('rejects duplicate email with 409', async () => {
@@ -2024,7 +2024,7 @@ describe('POST /api/shops', () => {
     db.query
       .mockResolvedValueOnce({ rows: [{ id: 'existing' }] }) // slug 'moj-sklep' taken
       .mockResolvedValueOnce({ rows: [] })                   // slug 'moj-sklep-1' free
-      .mockResolvedValueOnce({ rows: [{ id: 'new-shop-id', name: 'Sklep', slug: 'moj-sklep-1', subdomain: 'moj-sklep-1.qualitetmarket.pl', margin: 30, status: 'active' }] })
+      .mockResolvedValueOnce({ rows: [{ id: 'new-shop-id', name: 'Sklep', slug: 'moj-sklep-1', subdomain: 'moj-sklep-1.qualitet-market.com', margin: 30, status: 'active' }] })
       .mockResolvedValueOnce({ rows: [] }); // subscription
 
     const res = await request(app)
@@ -2033,13 +2033,13 @@ describe('POST /api/shops', () => {
       .send({ name: 'Sklep', slug: 'moj-sklep' });
     expect(res.status).toBe(201);
     expect(res.body.slug).toBe('moj-sklep-1');
-    expect(res.body.subdomain).toBe('moj-sklep-1.qualitetmarket.pl');
+    expect(res.body.subdomain).toBe('moj-sklep-1.qualitet-market.com');
   });
 
   it('creates shop with default 30% margin and next_step', async () => {
     db.query
       .mockResolvedValueOnce({ rows: [] })  // slug free
-      .mockResolvedValueOnce({ rows: [{ id: 'new-shop-id', name: 'Nowy Sklep', slug: 'nowy-sklep', subdomain: 'nowy-sklep.qualitetmarket.pl', margin: 30, status: 'active' }] })
+      .mockResolvedValueOnce({ rows: [{ id: 'new-shop-id', name: 'Nowy Sklep', slug: 'nowy-sklep', subdomain: 'nowy-sklep.qualitet-market.com', margin: 30, status: 'active' }] })
       .mockResolvedValueOnce({ rows: [] }); // auto-create trial subscription
 
     const res = await request(app)
@@ -2049,13 +2049,13 @@ describe('POST /api/shops', () => {
     expect(res.status).toBe(201);
     expect(res.body.next_step).toBe('add_products');
     expect(res.body.margin).toBe(30);
-    expect(res.body.subdomain).toBe('nowy-sklep.qualitetmarket.pl');
+    expect(res.body.subdomain).toBe('nowy-sklep.qualitet-market.com');
   });
 
   it('auto-generates slug from name when no slug is provided', async () => {
     db.query
       .mockResolvedValueOnce({ rows: [] })  // slug free
-      .mockResolvedValueOnce({ rows: [{ id: 'auto-shop-id', name: 'Mój Sklep', slug: 'moj-sklep', subdomain: 'moj-sklep.qualitetmarket.pl', margin: 30, status: 'active' }] })
+      .mockResolvedValueOnce({ rows: [{ id: 'auto-shop-id', name: 'Mój Sklep', slug: 'moj-sklep', subdomain: 'moj-sklep.qualitet-market.com', margin: 30, status: 'active' }] })
       .mockResolvedValueOnce({ rows: [] }); // subscription
 
     const res = await request(app)
@@ -2064,7 +2064,7 @@ describe('POST /api/shops', () => {
       .send({ name: 'Mój Sklep' });
     expect(res.status).toBe(201);
     expect(res.body.slug).toBe('moj-sklep');
-    expect(res.body.subdomain).toBe('moj-sklep.qualitetmarket.pl');
+    expect(res.body.subdomain).toBe('moj-sklep.qualitet-market.com');
   });
 });
 
@@ -2891,7 +2891,7 @@ describe('GET /api/store (subdomain)', () => {
 
     const res = await request(app)
       .get('/api/store')
-      .set('Host', 'unknown.qualitetmarket.pl');
+      .set('Host', 'unknown.qualitet-market.com');
     expect(res.status).toBe(404);
   });
 
@@ -2902,7 +2902,7 @@ describe('GET /api/store (subdomain)', () => {
 
     const res = await request(app)
       .get('/api/store')
-      .set('Host', 'moj-sklep.qualitetmarket.pl');
+      .set('Host', 'moj-sklep.qualitet-market.com');
     expect(res.status).toBe(200);
     expect(res.body.slug).toBe('moj-sklep');
     expect(res.body.name).toBe('Mój Sklep');
@@ -2913,13 +2913,13 @@ describe('GET /api/store (subdomain)', () => {
 
     const res = await request(app)
       .get('/api/store')
-      .set('Host', 'moj-sklep.qualitetmarket.pl');
+      .set('Host', 'moj-sklep.qualitet-market.com');
     expect(res.status).toBe(404);
   });
 
   it('ignores non-platform hostnames', async () => {
     // No db.query call should be made for unrelated hosts
-    const res = await request(app).get('/api/store').set('Host', 'localhost:3000');
+    const res = await request(app).get('/api/store').set('Host', 'qualitet-market.com:3000');
     expect(res.status).toBe(404);
     expect(db.query).not.toHaveBeenCalled();
   });
@@ -2939,7 +2939,7 @@ describe('GET /api/store/products (subdomain)', () => {
 
     const res = await request(app)
       .get('/api/store/products')
-      .set('Host', 'moj-sklep.qualitetmarket.pl');
+      .set('Host', 'moj-sklep.qualitet-market.com');
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('products');
     expect(res.body.total).toBe(1);
@@ -2959,7 +2959,7 @@ describe('GET /api/store/categories (subdomain)', () => {
 
     const res = await request(app)
       .get('/api/store/categories')
-      .set('Host', 'moj-sklep.qualitetmarket.pl');
+      .set('Host', 'moj-sklep.qualitet-market.com');
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('categories');
     expect(res.body.categories).toContain('Meble');
@@ -4258,7 +4258,7 @@ describe('GET /api/referral/admin', () => {
 
 describe('POST /api/auth/register – promo tier', () => {
   it('registers 1st seller and gets 12-month promo tier in response', async () => {
-    const shopRow = { id: 'shop-promo', owner_id: 'user-promo', name: 'Promo Seller', slug: 'promo-seller', subdomain: 'promo-seller.qualitetmarket.pl', status: 'active', plan: 'trial' };
+    const shopRow = { id: 'shop-promo', owner_id: 'user-promo', name: 'Promo Seller', slug: 'promo-seller', subdomain: 'promo-seller.qualitet-market.com', status: 'active', plan: 'trial' };
     db.query
       .mockResolvedValueOnce({ rows: [] })             // no duplicate email
       .mockResolvedValueOnce({ rows: [{ count: '0' }] }) // seller count = 0 → tier 1 (12 months)
@@ -4278,7 +4278,7 @@ describe('POST /api/auth/register – promo tier', () => {
   });
 
   it('registers 11th seller and gets 6-month promo tier', async () => {
-    const shopRow = { id: 'shop-promo2', owner_id: 'user-promo2', name: 'Promo Seller 2', slug: 'promo-seller-2', subdomain: 'promo-seller-2.qualitetmarket.pl', status: 'active', plan: 'trial' };
+    const shopRow = { id: 'shop-promo2', owner_id: 'user-promo2', name: 'Promo Seller 2', slug: 'promo-seller-2', subdomain: 'promo-seller-2.qualitet-market.com', status: 'active', plan: 'trial' };
     db.query
       .mockResolvedValueOnce({ rows: [] })              // no duplicate email
       .mockResolvedValueOnce({ rows: [{ count: '10' }] }) // seller count = 10 → tier 2 (6 months)
@@ -4297,7 +4297,7 @@ describe('POST /api/auth/register – promo tier', () => {
   });
 
   it('registers 31st seller and gets Tier 4 promo (1 bonus month)', async () => {
-    const shopRow = { id: 'shop-promo3', owner_id: 'user-promo3', name: 'Tier4 Seller', slug: 'tier4-seller', subdomain: 'tier4-seller.qualitetmarket.pl', status: 'active', plan: 'trial' };
+    const shopRow = { id: 'shop-promo3', owner_id: 'user-promo3', name: 'Tier4 Seller', slug: 'tier4-seller', subdomain: 'tier4-seller.qualitet-market.com', status: 'active', plan: 'trial' };
     db.query
       .mockResolvedValueOnce({ rows: [] })              // no duplicate email
       .mockResolvedValueOnce({ rows: [{ count: '30' }] }) // seller count = 30 → Tier 4
@@ -4316,7 +4316,7 @@ describe('POST /api/auth/register – promo tier', () => {
   });
 
   it('registers 101st+ seller and gets standard trial (0 bonus months)', async () => {
-    const shopRow = { id: 'shop-late', owner_id: 'user-late', name: 'Late Seller', slug: 'late-seller', subdomain: 'late-seller.qualitetmarket.pl', status: 'active', plan: 'trial' };
+    const shopRow = { id: 'shop-late', owner_id: 'user-late', name: 'Late Seller', slug: 'late-seller', subdomain: 'late-seller.qualitet-market.com', status: 'active', plan: 'trial' };
     db.query
       .mockResolvedValueOnce({ rows: [] })               // no duplicate email
       .mockResolvedValueOnce({ rows: [{ count: '100' }] }) // seller count = 100 → no promo

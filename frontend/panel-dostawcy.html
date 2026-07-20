@@ -103,7 +103,7 @@
       .supplier-stat-card .stat-value { font-size: 20px; }
     }
   </style>
-  <script>window.QM_API_BASE = 'https://api.qualitet-market.com/api';</script>
+  <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
 </head>
 <body data-page="panel-dostawcy" class="dashboard-page has-bottom-nav">
 
@@ -772,7 +772,7 @@
             if (parsedXmlUrl.protocol !== 'https:') {
               throw new Error('Adres XML musi używać HTTPS.')
             }
-            if (['localhost', '127.0.0.1', '::1'].includes(parsedXmlUrl.hostname)) {
+            if (['::1'].includes(parsedXmlUrl.hostname)) {
               throw new Error('Niedozwolony adres XML.')
             }
 

@@ -628,7 +628,7 @@ function parsePagination(req, { defaultLimit = 20, maxLimit = 100 } = {}) {
 6. **Pełna integracja Expo** – koszyk, zamówienia, auth w aplikacji mobilnej
 
 ### 🟠 ŚREDNIE
-7. **Subdomenowe sklepy** – konfiguracja nginx/Vercel dla `*.qualitetmarket.pl`
+7. **Subdomenowe sklepy** – konfiguracja nginx/Vercel dla `*.qualitet-market.com`
 8. **Integracja CRM i Tasks** – podłączenie `crm.html` i `tasks.html` do backendu
 9. **Push notifications** – Expo notifications
 
