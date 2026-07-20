@@ -67,6 +67,19 @@ function requireSuperAdmin(req, res, next) {
 }
 
 /**
+ * Middleware: require platform owner role.
+ * Only 'owner' (and legacy 'superadmin') may access owner-exclusive operations
+ * such as assigning the owner role to other users or modifying platform-level
+ * financial settings.  Regular admins are deliberately excluded.
+ */
+function requireOwner(req, res, next) {
+  if (!req.user || (req.user.role !== 'owner' && req.user.role !== 'superadmin')) {
+    return res.status(403).json({ error: 'Wymagane uprawnienia właściciela platformy' });
+  }
+  next();
+}
+
+/**
  * Sign and return a new JWT for the given user record.
  * @param {{ id: string, email: string, role: string }} user
  */
@@ -125,4 +138,4 @@ async function requireActiveSubscription(req, res, next) {
   return next();
 }
 
-module.exports = { authenticate, requireRole, requireSuperAdmin, requireActiveSubscription, signToken };
+module.exports = { authenticate, requireRole, requireSuperAdmin, requireOwner, requireActiveSubscription, signToken };

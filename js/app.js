@@ -3790,7 +3790,7 @@ window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.
   function hasOwnerAccess(){
     const role = getStoredUserRole();
     // Legacy "superadmin" is still accepted for backward compatibility with older seeded/demo accounts.
-    if(role === 'owner' || role === 'superadmin' || role === 'admin'){
+    if(role === 'owner' || role === 'superadmin'){
       return true;
     }
     const email = normalizeQueryParam(localStorage.getItem(STORAGE_KEYS.email));
