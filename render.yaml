@@ -61,6 +61,7 @@ services:
           property: password
       - key: ALLOWED_ORIGINS
         value: https://qualitet-market.com,https://www.qualitet-market.com,https://qualitet-market-web.onrender.com
+      # Override APP_URL after attaching a custom frontend domain instead of *.onrender.com.
       - key: APP_URL
         value: https://qualitet-market-web.onrender.com
       - key: STRIPE_SECRET_KEY
