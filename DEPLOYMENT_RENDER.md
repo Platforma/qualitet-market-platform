@@ -240,7 +240,8 @@ fetch('https://qualitet-market-api.onrender.com/api/categories')
    ```
    qualitet-market.com CNAME qualitet-market-api.onrender.com
    ```
-6. Czekaj 15-30 minut na propagację
+6. W backendzie zaktualizuj zmienną `APP_URL` na docelową domenę frontendu (np. `https://qualitet-market.com`), jeśli odchodzisz od adresu `*.onrender.com`
+7. Czekaj 15-30 minut na propagację
 
 ---
 
