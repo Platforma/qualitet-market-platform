@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pracownicy | QualitetMarket</title>
+  <script src="/public/panel/admin-common.js"></script>
+  <script>
+    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/public/panel/login-admin.html')) {
+      document.documentElement.classList.add('is-redirecting');
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020617;
+      --panel: rgba(15, 23, 42, 0.9);
+      --border: rgba(148, 163, 184, 0.2);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --qm-accent: #7c3aed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #020617, #111827);
+    }
+    .shell {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+    .card {
+      margin-bottom: 20px;
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(2, 6, 23, 0.35);
+    }
+    form {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.76);
+      color: var(--text);
+      font: inherit;
+    }
+    button,
+    a {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--qm-accent), #2563eb);
+      color: white;
+    }
+    .secondary {
+      background: rgba(148, 163, 184, 0.14);
+      color: var(--text);
+    }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .workers-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .worker-card {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.7);
+      display: grid;
+      gap: 12px;
+    }
+    .worker-card strong {
+      font-size: 1.1rem;
+    }
+    .worker-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .message,
+    p {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card nav">
+      <a class="secondary" href="/public/panel/admin-panel.html">← Panel szefa</a>
+      <a class="secondary" href="/public/panel/admin-settings.html">Ustawienia</a>
+      <a class="secondary" href="/public/panel/admin-permissions.html">Uprawnienia</a>
+    </section>
+
+    <section class="card">
+      <h1>Panel pracowników</h1>
+      <p>Ten widok jest dostępny tylko dla szefa i pozwala utrzymywać lokalną listę pracowników oraz kierować ich do panelu uprawnień.</p>
+
+      <form id="qm-worker-form">
+        <label>
+          Imię lub nazwa pracownika
+          <input type="text" name="workerName" placeholder="np. Anna — operacje" required>
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit">Dodaj pracownika</button>
+        </div>
+      </form>
+      <p class="message" id="qm-worker-message" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Lista pracowników</h2>
+      <div class="workers-list" id="qm-workers-list"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const admin = window.QMAdminPanel
+      const form = document.getElementById('qm-worker-form')
+      const list = document.getElementById('qm-workers-list')
+      const message = document.getElementById('qm-worker-message')
+
+      admin.applyPreferences()
+
+      function renderWorkers() {
+        const workers = admin.getWorkers()
+        if (!workers.length) {
+          list.innerHTML = '<p>Brak pracowników. Dodaj pierwszą osobę, aby przypisać jej uprawnienia.</p>'
+          return
+        }
+
+        list.innerHTML = workers.map(function (worker) {
+          const permissionLabels = worker.permissions.map(function (permissionKey) {
+            const match = admin.PERMISSIONS.find(function (permission) {
+              return permission.key === permissionKey
+            })
+            return '<li>' + (match ? match.label : permissionKey) + '</li>'
+          }).join('')
+
+          return '' +
+            '<article class="worker-card">' +
+              '<div><strong>' + worker.name + '</strong><p>ID: ' + worker.id + '</p></div>' +
+              '<div><p>Uprawnienia:</p><ul>' + (permissionLabels || '<li>Brak uprawnień</li>') + '</ul></div>' +
+              '<div class="actions">' +
+                '<a class="secondary" href="/public/panel/admin-permissions.html?workerId=' + encodeURIComponent(worker.id) + '">Zarządzaj uprawnieniami</a>' +
+                '<button class="secondary" type="button" data-remove-worker="' + worker.id + '">Usuń pracownika</button>' +
+              '</div>' +
+            '</article>'
+        }).join('')
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault()
+        const data = new FormData(form)
+        const workerName = String(data.get('workerName') || '').trim()
+        if (!workerName) {
+          message.textContent = 'Podaj nazwę pracownika.'
+          return
+        }
+        admin.addWorker(workerName)
+        form.reset()
+        message.textContent = 'Pracownik został dodany.'
+        renderWorkers()
+      })
+
+      list.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-remove-worker]')
+        if (!button) {
+          return
+        }
+        admin.removeWorker(button.dataset.removeWorker)
+        message.textContent = 'Pracownik został usunięty.'
+        renderWorkers()
+      })
+
+      renderWorkers()
+    }())
+  </script>
+</body>
+</html>

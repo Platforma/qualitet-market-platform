@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Logowanie administratora | QualitetMarket</title>
+  <script src="/public/panel/admin-common.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -90,15 +91,15 @@
     }
   </style>
   <script>
-    if (localStorage.getItem('qm_admin_logged') === 'true') {
-      window.location.replace('/public/panel/dashboard.html');
+    if (window.QMAdminPanel && window.QMAdminPanel.isLoggedIn()) {
+      window.location.replace('/public/panel/admin-panel.html');
     }
   </script>
 </head>
 <body>
   <main class="login-card">
     <h1>Panel administratora</h1>
-    <p>Zaloguj się jako szef, aby przejść do dashboardu i dokończyć konfigurację sklepu.</p>
+    <p>Zaloguj się jako szef, aby przejść do pełnego panelu administracyjnego i dokończyć konfigurację sklepu.</p>
 
     <form id="qm-admin-login-form">
       <label>
@@ -115,13 +116,14 @@
       <button type="submit">Zaloguj</button>
     </form>
 
-    <div class="login-hint">Dostęp lokalny zapisuje stan w <code>localStorage.qm_admin_logged</code>.</div>
+    <div class="login-hint">Dostęp lokalny zapisuje stan w <code>localStorage</code>, a login i hasło możesz później zmienić w ustawieniach szefa.</div>
   </main>
 
   <script>
     (function () {
       const form = document.getElementById('qm-admin-login-form');
       const message = document.getElementById('qm-admin-login-message');
+      const admin = window.QMAdminPanel;
 
       form.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -129,11 +131,11 @@
         const login = String(data.get('login') || '').trim();
         const password = String(data.get('password') || '');
 
-        if (login === 'szef' && password === 'admin') {
-          localStorage.setItem('qm_admin_logged', 'true');
+        if (admin.authenticate(login, password)) {
+          admin.login();
           message.textContent = 'Logowanie zakończone powodzeniem.';
           message.classList.add('is-success');
-          window.location.replace('/public/panel/dashboard.html');
+          window.location.replace('/public/panel/admin-panel.html');
           return;
         }
 

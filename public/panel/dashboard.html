@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dashboard administratora | QualitetMarket</title>
+  <script src="/public/panel/admin-common.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -93,8 +94,8 @@
     }
   </style>
   <script>
-    if (localStorage.getItem('qm_admin_logged') !== 'true') {
-      window.location.replace('/public/panel/login-admin.html');
+    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/public/panel/login-admin.html')) {
+      document.documentElement.classList.add('is-redirecting');
     }
   </script>
 </head>
@@ -103,9 +104,9 @@
     <section class="dashboard-topbar">
       <div>
         <h1>Dashboard administratora</h1>
-        <p>Panel szefa do domknięcia aktywacji sklepu i kontroli podstawowych kroków wdrożenia.</p>
+        <p>Ten adres pozostaje zgodny wstecznie i prowadzi do pełnego panelu szefa.</p>
       </div>
-      <button type="button" id="qm-admin-logout-btn">Wyloguj</button>
+      <button type="button" id="qm-open-admin-panel-btn">Otwórz panel szefa</button>
     </section>
 
     <section class="dashboard-grid">
@@ -113,7 +114,7 @@
 
       <section class="dashboard-card">
         <h2>Status wdrożenia</h2>
-        <p>Po ukończeniu wszystkich kroków moduł zadań ukryje się automatycznie.</p>
+        <p>Po ukończeniu wszystkich kroków moduł zadań ukryje się automatycznie, a pełne zarządzanie znajdziesz w panelu szefa.</p>
         <div class="dashboard-metrics">
           <article class="metric">
             Panel
@@ -139,43 +140,27 @@
 
   <script>
     (function () {
+      const admin = window.QMAdminPanel;
       const TASKS_URL = '/public/panel/qm-tasks-panel.html';
       const host = document.getElementById('qm-tasks-panel-host');
-      const logoutButton = document.getElementById('qm-admin-logout-btn');
+      const openButton = document.getElementById('qm-open-admin-panel-btn');
       const statusLabel = document.getElementById('qm-tasks-status-label');
 
       function syncStatusLabel() {
         statusLabel.textContent = localStorage.getItem('qm_tasks_done') === 'true' ? 'Ukończone' : 'W toku';
       }
 
-      function executeEmbeddedScripts(scope) {
-        scope.querySelectorAll('script').forEach(function (oldScript) {
-          const newScript = document.createElement('script');
-          Array.from(oldScript.attributes).forEach(function (attribute) {
-            newScript.setAttribute(attribute.name, attribute.value);
-          });
-          newScript.textContent = oldScript.textContent;
-          oldScript.replaceWith(newScript);
-        });
-      }
-
       async function loadTasksPanel() {
         try {
-          const response = await fetch(TASKS_URL, { cache: 'no-store' });
-          if (!response.ok) {
-            throw new Error('Nie udało się załadować modułu zadań.');
-          }
-          host.innerHTML = await response.text();
-          executeEmbeddedScripts(host);
+          await admin.loadFragment(TASKS_URL, host);
           syncStatusLabel();
         } catch (error) {
           host.innerHTML = '<section class="dashboard-card"><h2>Moduł zadań</h2><p class="dashboard-placeholder">' + error.message + '</p></section>';
         }
       }
 
-      logoutButton.addEventListener('click', function () {
-        localStorage.removeItem('qm_admin_logged');
-        window.location.replace('/public/panel/login-admin.html');
+      openButton.addEventListener('click', function () {
+        window.location.replace('/public/panel/admin-panel.html');
       });
 
       window.addEventListener('storage', syncStatusLabel);
