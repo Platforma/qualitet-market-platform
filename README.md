@@ -25,6 +25,22 @@ npm run migrate
 npm run dev
 ```
 
+### Frontend (lokalnie)
+
+Pliki frontendu są statyczne (`frontend/`). W development można je serwować np. przez dowolny serwer statyczny:
+
+```bash
+cd frontend
+# przykład:
+npx serve .
+```
+
+### Routing / fallback (żeby nie było „Not Found”)
+
+- Produkcja (Render Static): `frontend/_redirects` ma catch-all `/* /404.html 200`.
+- `frontend/404.html` przekierowuje na właściwy entrypoint (`/index.html`, a dla `/tasks/*` na `/tasks.html`).
+- Lokalny serwer Node (`/server.js`) ma fallback dla tras bez rozszerzenia (poza `/api*` i `/health`), dzięki czemu bezpośrednie wejście/odświeżenie trasy nie kończy się ekranem „Not Found”.
+
 ### Migracje
 
 | Plik | Tabele |
