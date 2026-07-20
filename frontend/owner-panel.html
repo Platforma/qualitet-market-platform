@@ -369,10 +369,10 @@
               <input class="owner-search" type="search" placeholder="Szukaj po nazwie, e-mail, kraju…" data-users-search aria-label="Szukaj użytkownika">
               <select class="owner-filter" data-users-role-filter aria-label="Filtruj po roli">
                 <option value="">Wszystkie role</option>
-                <option value="superadmin">Superadmin</option>
-                <option value="operator">Operator</option>
-                <option value="partner">Partner</option>
-                <option value="client">Klient</option>
+                <option value="owner">Właściciel</option>
+                <option value="admin">Administrator</option>
+                <option value="seller">Sprzedawca</option>
+                <option value="buyer">Kupujący</option>
               </select>
               <select class="owner-filter" data-users-plan-filter aria-label="Filtruj po planie">
                 <option value="">Wszystkie plany</option>
@@ -1647,12 +1647,19 @@
   </nav>
 
   <script>window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');</script>
+  <script>
+  // Shared auth token reader for owner-panel inline scripts.
+  // Checks all storage keys used by the app (qm_token is the primary one set by QMApi.Auth.login).
+  window.__ownerGetToken = function () {
+    try { return localStorage.getItem('qm_token') || localStorage.getItem('token') || localStorage.getItem('auth_token') || ''; } catch (_) { return ''; }
+  };
+  </script>
   <script src="js/app.js" defer></script>
   <script>
   // ─── Announcements tab logic ─────────────────────────────────────────────────
   (function () {
     function apiReq(method, path, body) {
-      const token = localStorage.getItem('token') || '';
+      const token = window.__ownerGetToken();
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body) opts.body = JSON.stringify(body);
       const base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
@@ -1767,7 +1774,7 @@
   // ─── Scripts tab logic (Super Admin only) ───────────────────────────────────
   (function () {
     function apiReq(method, path, body) {
-      const token = localStorage.getItem('token') || '';
+      const token = window.__ownerGetToken();
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body !== undefined) opts.body = JSON.stringify(body);
       const base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
@@ -1936,7 +1943,7 @@
     'use strict';
 
     function apiReq(method, path, body) {
-      var token = localStorage.getItem('token') || '';
+      var token = window.__ownerGetToken();
       var opts = {
         method: method,
         headers: {

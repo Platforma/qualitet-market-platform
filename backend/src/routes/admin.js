@@ -9,7 +9,7 @@ const xml2js = require('xml2js');
 const fetch = require('node-fetch');
 
 const db = require('../config/database');
-const { authenticate, requireRole, requireSuperAdmin } = require('../middleware/auth');
+const { authenticate, requireRole, requireSuperAdmin, requireOwner } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { PLAN_CONFIG } = require('./subscriptions');
 const { upsertSupplierProducts, fetchSupplierProducts, importSupplierProducts } = require('../services/supplier-import');
@@ -190,6 +190,11 @@ router.patch(
   validate,
   async (req, res) => {
     const { role, plan, name } = req.body;
+
+    // Prevent privilege escalation: only owner can assign the owner role
+    if (role === 'owner' && req.user.role !== 'owner' && req.user.role !== 'superadmin') {
+      return res.status(403).json({ error: 'Tylko właściciel platformy może nadawać rolę owner' });
+    }
 
     try {
       const result = await db.query(
@@ -1286,7 +1291,7 @@ router.get('/platform-margins', authenticate, requireRole('owner', 'admin'), asy
 router.put(
   '/platform-margins',
   authenticate,
-  requireRole('owner', 'admin'),
+  requireOwner,
   [
     body('tiers').isArray({ min: 1 }),
     body('tiers.*.margin_percent').isFloat({ min: 0, max: 999 }),
@@ -1528,7 +1533,7 @@ router.get('/settings', authenticate, requireRole('owner', 'admin'), async (req,
 router.patch(
   '/settings',
   authenticate,
-  requireRole('owner', 'admin'),
+  requireOwner,
   [
     body('commission_rate').optional().isFloat({ min: 0, max: 1 }),
   ],
