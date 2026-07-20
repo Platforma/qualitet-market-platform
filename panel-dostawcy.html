@@ -103,7 +103,7 @@
       .supplier-stat-card .stat-value { font-size: 20px; }
     }
   </style>
-  <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
+  <script>window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');</script>
 </head>
 <body data-page="panel-dostawcy" class="dashboard-page has-bottom-nav">
 

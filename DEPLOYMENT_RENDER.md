@@ -109,7 +109,7 @@ openssl rand -base64 32
 ### 4.2 Build & Start commands
 
 - **Build Command**: zostaw puste (Docker buduje obraz z `backend/Dockerfile`)
-- **Start Command**: zostaw puste lub ustaw `node scripts/run-migrations-safe.js && node src/app.js`
+- **Start Command**: zostaw puste – start jest już zdefiniowany w `backend/Dockerfile` jako `node scripts/run-migrations-safe.js && node src/server.js`
 
 ### 4.3 Ustawienie zmiennych środowiskowych
 
@@ -123,6 +123,8 @@ NODE_ENV=production
 PORT=10000
 
 # Database (z PostgreSQL)
+DATABASE_URL=<internal-connection-string-z-render-postgres>
+# opcjonalnie dodatkowo:
 DB_HOST=<host-z-render-postgres>
 DB_PORT=5432
 DB_NAME=hurtdetal_qualitet
@@ -169,6 +171,7 @@ SMTP_FROM=noreply@qualitet-market.com
 1. **Create Web Service** – Render automatycznie builds & deploys
 2. Czekaj aż status będzie **Live** (zielony)
 3. Skopiuj URL: `https://qualitet-market-api.onrender.com`
+4. Kolejne push'e do gałęzi `main` będą wdrażane automatycznie (`autoDeploy: true` w `render.yaml`)
 
 ### 5.2 Testuj API
 
@@ -193,51 +196,24 @@ curl -X POST https://qualitet-market-api.onrender.com/api/auth/login \
 
 ---
 
-## 🎨 Krok 6: Frontend (Next.js)
+## 🎨 Krok 6: Frontend statyczny (HTML/JS PWA)
 
-### Opcja A: Wdróż na Vercel (Rekomendowane)
-
-1. Zaloguj się na [vercel.com](https://vercel.com)
-2. **Add New** → **Project**
-3. Import z GitHub: `Platforma/qualitet-market`
-4. Ustawienia:
-   - **Root Directory**: `frontend`
-   - **Framework**: Next.js
-   - **Build Command**: `npm run build`
-   - **Start Command**: `npm start`
-
-5. Zmienne środowiskowe:
-   ```env
-   NEXT_PUBLIC_API_BASE=https://qualitet-market-api.onrender.com/api
-   ```
-
-6. **Deploy**
-
-### Opcja B: Web Service na Render
-
-1. **New +** → **Web Service**
+1. **New +** → **Static Site**
 2. Repo: `Platforma/qualitet-market`
 3. Ustawienia:
    - **Root Directory**: `frontend`
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
-   - **Port**: `3000`
-
-4. Zmienne:
-   ```env
-   NEXT_PUBLIC_API_BASE=https://qualitet-market-api.onrender.com/api
-   NODE_ENV=production
-   ```
+   - **Build Command**: zostaw puste
+   - **Publish Directory**: `.`
+   - **Branch**: `main`
+4. Po deployu frontend będzie dostępny np. pod `https://qualitet-market-web.onrender.com`
+5. Backend w tym repo automatycznie kieruje frontend Render na `https://qualitet-market-api.onrender.com/api`, a dla domeny produkcyjnej zostawia `https://qualitet-market.com/api`.
+6. Kolejne push'e do gałęzi `main` będą publikowane automatycznie przez Render.
 
 ---
 
 ## 🔗 Krok 7: Powiąż Frontend i Backend
 
-### frontend/.env.local (lub zmienne na Render)
-
-```env
-NEXT_PUBLIC_API_BASE=https://qualitet-market-api.onrender.com/api
-```
+Frontend nie używa `NEXT_PUBLIC_*` ani procesu build. Bazuje na `window.QM_API_BASE` / `js/api.js`, więc po deployu na Render powinien automatycznie użyć `https://qualitet-market-api.onrender.com/api`.
 
 ### Sprawdź łączność
 
@@ -264,7 +240,8 @@ fetch('https://qualitet-market-api.onrender.com/api/categories')
    ```
    qualitet-market.com CNAME qualitet-market-api.onrender.com
    ```
-6. Czekaj 15-30 minut na propagację
+6. W backendzie zaktualizuj zmienną `APP_URL` na docelową domenę frontendu (np. `https://qualitet-market.com`), jeśli odchodzisz od adresu `*.onrender.com`
+7. Czekaj 15-30 minut na propagację
 
 ---
 
@@ -277,9 +254,9 @@ fetch('https://qualitet-market-api.onrender.com/api/categories')
 - **Events** – historia deploymentów
 - **Health** – status serwisu
 
-### Automatyczne restartowanie
+### Automatyczne restartowanie i deploy
 
-Render restartuje serwis, jeśli upadnie. Jeśli chcesz manual restart:
+Render restartuje serwis, jeśli upadnie, oraz automatycznie wdraża nowe commity z `main`. Jeśli chcesz wymusić dodatkowy restart albo redeploy:
 
 **Web Service** → **Manual Deploy** → **Latest**
 
@@ -304,7 +281,7 @@ Render restartuje serwis, jeśli upadnie. Jeśli chcesz manual restart:
 Twoja aplikacja powinna być live! 🎉
 
 ```
-Frontend:      https://qualitet-market.vercel.app
+Frontend:      https://qualitet-market-web.onrender.com
 Backend API:   https://qualitet-market-api.onrender.com
 Database:      PostgreSQL na Render (niewidoczny)
 ```

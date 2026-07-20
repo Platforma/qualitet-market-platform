@@ -23,7 +23,7 @@ npm install
 
 # 2. Skonfiguruj zmienne środowiskowe
 cp .env.example .env
-# Edytuj .env i uzupełnij dane do bazy danych oraz klucz JWT
+# Edytuj .env i ustaw DATABASE_URL oraz klucz JWT
 
 # 3. Utwórz bazę danych PostgreSQL
 createdb hurtdetal_qualitet

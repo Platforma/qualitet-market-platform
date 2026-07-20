@@ -28,8 +28,11 @@
   // ─── Configuration ────────────────────────────────────────────────────────────
 
   // Set window.QM_API_BASE before loading this script to point at your backend.
-  // Example: <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
+  // Example: <script>window.QM_API_BASE = 'https://qualitet-market-api.onrender.com/api';</script>
   function getDefaultApiBase() {
+    if (typeof window !== 'undefined' && window.location && window.location.hostname.endsWith('.onrender.com')) {
+      return 'https://qualitet-market-api.onrender.com/api';
+    }
     return 'https://qualitet-market.com/api';
   }
 

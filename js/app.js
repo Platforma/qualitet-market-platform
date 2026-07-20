@@ -1,4 +1,4 @@
-window.QM_API_BASE = 'https://qualitet-market.com/api';
+window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');
 (function(){
   const STORAGE_KEYS = {
     email: 'app_user_email',

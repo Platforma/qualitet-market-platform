@@ -6,7 +6,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
-const API_BASE = "https://qualitet-market.com/api";
+const API_BASE = process.env.QM_API_BASE || 'https://qualitet-market-api.onrender.com/api';
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });

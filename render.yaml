@@ -12,6 +12,7 @@ services:
     repo: https://github.com/Platforma/qualitet-market
     region: frankfurt
     branch: main
+    autoDeploy: true
     dockerfilePath: Dockerfile
     port: 10000
     plan: free
@@ -34,6 +35,10 @@ services:
         value: "10"
       - key: JWT_SECRET
         generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: qualitet-market-db
+          property: connectionString
       - key: DB_HOST
         fromDatabase:
           name: qualitet-market-db
@@ -55,9 +60,10 @@ services:
           name: qualitet-market-db
           property: password
       - key: ALLOWED_ORIGINS
-        value: https://qualitet-market.com,https://www.qualitet-market.com
+        value: https://qualitet-market.com,https://www.qualitet-market.com,https://qualitet-market-web.onrender.com
+      # Override APP_URL after attaching a custom frontend domain instead of *.onrender.com.
       - key: APP_URL
-        value: https://www.qualitet-market.com
+        value: https://qualitet-market-web.onrender.com
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_PUBLISHABLE_KEY
@@ -72,6 +78,7 @@ services:
     repo: https://github.com/Platforma/qualitet-market
     region: frankfurt
     branch: main
+    autoDeploy: true
     rootDir: frontend
     staticPublishPath: .
     plan: free

@@ -1646,7 +1646,7 @@
     </a>
   </nav>
 
-  <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
+  <script>window.QM_API_BASE = window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api');</script>
   <script src="js/app.js" defer></script>
   <script>
   // ─── Announcements tab logic ─────────────────────────────────────────────────
@@ -1655,7 +1655,7 @@
       const token = localStorage.getItem('token') || '';
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body) opts.body = JSON.stringify(body);
-      const base = (window.QM_API_BASE || 'https://qualitet-market.com/api').replace(/\/api$/, '');
+      const base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
       return fetch(base + '/api' + path, opts).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
     }
 
@@ -1770,7 +1770,7 @@
       const token = localStorage.getItem('token') || '';
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body !== undefined) opts.body = JSON.stringify(body);
-      const base = (window.QM_API_BASE || 'https://qualitet-market.com/api').replace(/\/api$/, '');
+      const base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
       return fetch(base + '/api' + path, opts).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
     }
 
@@ -1945,7 +1945,7 @@
         },
       };
       if (body) opts.body = JSON.stringify(body);
-      var base = (window.QM_API_BASE || 'https://qualitet-market.com/api').replace(/\/api$/, '');
+      var base = (window.QM_API_BASE || ((window.location && window.location.hostname.endsWith('.onrender.com')) ? 'https://qualitet-market-api.onrender.com/api' : 'https://qualitet-market.com/api')).replace(/\/api$/, '');
       return fetch(base + '/api' + path, opts).then(function (r) { return r.json(); });
     }
 

@@ -31,6 +31,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-changeme}@db:5432/hurtdetal_qualitet
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: hurtdetal_qualitet
