@@ -2,14 +2,14 @@
   const STORAGE = {
     logged: 'qm_admin_logged',
     login: 'qm_admin_login',
-    password: 'qm_admin_password',
+    passwordHash: 'qm_admin_password_hash',
     preferences: 'qm_admin_preferences',
     workers: 'qm_admin_workers'
   }
 
   const DEFAULT_CREDENTIALS = {
     login: 'szef',
-    password: 'admin'
+    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
   }
 
   const DEFAULT_PREFERENCES = {
@@ -65,8 +65,8 @@
     if (!localStorage.getItem(STORAGE.login)) {
       localStorage.setItem(STORAGE.login, DEFAULT_CREDENTIALS.login)
     }
-    if (!localStorage.getItem(STORAGE.password)) {
-      localStorage.setItem(STORAGE.password, DEFAULT_CREDENTIALS.password)
+    if (!localStorage.getItem(STORAGE.passwordHash)) {
+      localStorage.setItem(STORAGE.passwordHash, DEFAULT_CREDENTIALS.passwordHash)
     }
     if (!localStorage.getItem(STORAGE.preferences)) {
       writeJson(STORAGE.preferences, DEFAULT_PREFERENCES)
@@ -79,14 +79,32 @@
   function getCredentials() {
     ensureDefaults()
     return {
-      login: localStorage.getItem(STORAGE.login) || DEFAULT_CREDENTIALS.login,
-      password: localStorage.getItem(STORAGE.password) || DEFAULT_CREDENTIALS.password
+      login: localStorage.getItem(STORAGE.login) || DEFAULT_CREDENTIALS.login
     }
   }
 
-  function authenticate(login, password) {
+  async function hashPassword(passwordValue) {
+    const normalized = String(passwordValue || '')
+    if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+      const encoded = new TextEncoder().encode(normalized)
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', encoded)
+      return Array.from(new Uint8Array(hashBuffer)).map(function (byte) {
+        return byte.toString(16).padStart(2, '0')
+      }).join('')
+    }
+
+    let hash = 2166136261
+    for (let index = 0; index < normalized.length; index += 1) {
+      hash ^= normalized.charCodeAt(index)
+      hash = Math.imul(hash, 16777619)
+    }
+    return 'fallback-' + String(hash >>> 0)
+  }
+
+  async function authenticate(login, password) {
     const credentials = getCredentials()
-    return login === credentials.login && password === credentials.password
+    const passwordHash = await hashPassword(password)
+    return login === credentials.login && passwordHash === localStorage.getItem(STORAGE.passwordHash)
   }
 
   function isLoggedIn() {
@@ -113,9 +131,11 @@
     return true
   }
 
-  function updateCredentials(loginValue, passwordValue) {
+  async function updateCredentials(loginValue, passwordValue) {
     localStorage.setItem(STORAGE.login, loginValue)
-    localStorage.setItem(STORAGE.password, passwordValue)
+    if (passwordValue) {
+      localStorage.setItem(STORAGE.passwordHash, await hashPassword(passwordValue))
+    }
   }
 
   function getPreferences() {
@@ -161,7 +181,7 @@
   function addWorker(name) {
     const workers = getWorkers()
     const worker = {
-      id: 'worker_' + Date.now(),
+    id: 'worker_' + Date.now() + '_' + Math.random().toString(16).slice(2, 8),
       name: name,
       permissions: ['tasks']
     }
@@ -203,6 +223,15 @@
     return Number.isFinite(value) ? value : 0
   }
 
+  function normalizeOrder(order, index) {
+    return {
+      id: order.id || order.orderId || ('ZAM-' + (index + 1)),
+      amount: resolveOrderAmount(order),
+      status: order.status || 'nowe',
+      createdAt: order.createdAt || order.created_at || order.orderDate || order.order_date || order.date || 'brak daty'
+    }
+  }
+
   function formatCurrency(value) {
     return new Intl.NumberFormat('pl-PL', {
       style: 'currency',
@@ -221,7 +250,13 @@
     const productsFromStore = activeStore && Array.isArray(activeStore.products) ? activeStore.products : []
     const combinedProducts = products.length ? products : productsFromStore
     const activeProducts = combinedProducts.filter(function (product) {
-      return !product || !product.status ? true : String(product.status).toLowerCase() === 'active'
+      if (!product) {
+        return false
+      }
+      if (!product.status) {
+        return true
+      }
+      return String(product.status).toLowerCase() === 'active'
     })
     const customers = users.filter(function (user) {
       return String(user && user.role || '').toLowerCase() === 'buyer'
@@ -312,6 +347,7 @@
     updateWorkerPermissions: updateWorkerPermissions,
     getWorker: getWorker,
     formatCurrency: formatCurrency,
+    normalizeOrder: normalizeOrder,
     getStatsSnapshot: getStatsSnapshot,
     loadFragment: loadFragment
   }

@@ -261,16 +261,13 @@
         }
 
         recentOrders.innerHTML = orders.map(function (order, index) {
-          const id = order.id || order.orderId || ('ZAM-' + (index + 1))
-          const amount = admin.formatCurrency(order.total || order.totalAmount || order.total_amount || order.amount || 0)
-          const status = order.status || 'nowe'
-          const createdAt = order.createdAt || order.created_at || order.orderDate || order.order_date || order.date || 'brak daty'
+          const normalized = admin.normalizeOrder(order, index)
           return '' +
             '<article class="list-card">' +
-              '<strong>' + id + '</strong>' +
-              '<p>Status: ' + status + '</p>' +
-              '<p>Kwota: ' + amount + '</p>' +
-              '<p>Data: ' + createdAt + '</p>' +
+              '<strong>' + normalized.id + '</strong>' +
+              '<p>Status: ' + normalized.status + '</p>' +
+              '<p>Kwota: ' + admin.formatCurrency(normalized.amount) + '</p>' +
+              '<p>Data: ' + normalized.createdAt + '</p>' +
             '</article>'
         }).join('')
       }

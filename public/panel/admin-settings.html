@@ -115,8 +115,8 @@
           <input type="text" name="login" id="qm-admin-login-input" required>
         </label>
         <label>
-          Hasło szefa
-          <input type="password" name="password" id="qm-admin-password-input" required>
+          Nowe hasło szefa
+          <input type="password" name="password" id="qm-admin-password-input" placeholder="Pozostaw puste, aby nie zmieniać hasła">
         </label>
         <div class="actions">
           <button type="submit">Zapisz dane logowania</button>
@@ -171,24 +171,26 @@
       const preferencesMessage = document.getElementById('qm-admin-preferences-message')
 
       document.getElementById('qm-admin-login-input').value = credentials.login
-      document.getElementById('qm-admin-password-input').value = credentials.password
       document.getElementById('qm-admin-accent-select').value = preferences.accent
       document.getElementById('qm-admin-compact-mode').checked = Boolean(preferences.compactMode)
       document.getElementById('qm-admin-show-sales-stats').checked = Boolean(preferences.showSalesStats)
 
-      credentialsForm.addEventListener('submit', function (event) {
+      credentialsForm.addEventListener('submit', async function (event) {
         event.preventDefault()
         const data = new FormData(credentialsForm)
         const loginValue = String(data.get('login') || '').trim()
         const passwordValue = String(data.get('password') || '')
 
-        if (!loginValue || !passwordValue) {
-          credentialsMessage.textContent = 'Login i hasło nie mogą być puste.'
+        if (!loginValue) {
+          credentialsMessage.textContent = 'Login nie może być pusty.'
           return
         }
 
-        admin.updateCredentials(loginValue, passwordValue)
-        credentialsMessage.textContent = 'Dane logowania szefa zostały zapisane lokalnie.'
+        await admin.updateCredentials(loginValue, passwordValue)
+        credentialsMessage.textContent = passwordValue
+          ? 'Login i hasło szefa zostały zapisane lokalnie.'
+          : 'Login szefa został zapisany lokalnie.'
+        document.getElementById('qm-admin-password-input').value = ''
       })
 
       preferencesForm.addEventListener('submit', function (event) {

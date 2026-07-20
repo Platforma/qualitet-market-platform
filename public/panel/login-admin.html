@@ -125,13 +125,13 @@
       const message = document.getElementById('qm-admin-login-message');
       const admin = window.QMAdminPanel;
 
-      form.addEventListener('submit', function (event) {
+      form.addEventListener('submit', async function (event) {
         event.preventDefault();
         const data = new FormData(form);
         const login = String(data.get('login') || '').trim();
         const password = String(data.get('password') || '');
 
-        if (admin.authenticate(login, password)) {
+        if (await admin.authenticate(login, password)) {
           admin.login();
           message.textContent = 'Logowanie zakończone powodzeniem.';
           message.classList.add('is-success');

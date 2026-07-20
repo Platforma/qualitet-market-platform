@@ -134,12 +134,10 @@
         localStorage.setItem(DONE_KEY, 'true');
         footer.textContent = 'Wszystkie zadania ukończone. Moduł został ukryty.';
         panel.hidden = true;
-        panel.style.display = 'none';
       } else {
         localStorage.removeItem(DONE_KEY);
         footer.textContent = 'Postęp zapisuje się automatycznie w localStorage.';
         panel.hidden = false;
-        panel.style.display = '';
       }
       dispatchUpdate();
     }
