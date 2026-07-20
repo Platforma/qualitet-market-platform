@@ -221,7 +221,7 @@ router.post('/refresh', authenticate, async (req, res) => {
 router.get('/me', authenticate, async (req, res) => {
   try {
     const result = await db.query(
-      'SELECT id, email, name, role, plan, trial_ends_at, created_at FROM users WHERE id = $1',
+      'SELECT id, email, name, phone, role, plan, trial_ends_at, created_at FROM users WHERE id = $1',
       [req.user.id]
     );
     if (!result.rows[0]) {
