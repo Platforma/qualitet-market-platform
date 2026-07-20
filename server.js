@@ -48,6 +48,7 @@ const ROOT_STATIC_PATHS = new Map(
 const STATIC_ROUTE_ALIASES = new Map([
   ['generator', 'generator-sklepu']
 ]);
+const FALLBACK_FILE_PATH = ROOT_STATIC_PATHS.get('404.html') || ROOT_STATIC_PATHS.get('index.html');
 
 function sendRootStaticFile(req, res, next) {
   const requestPath = req.path === '/' ? 'index.html' : (req.params.file || '');
@@ -70,12 +71,26 @@ function sendRootStaticFile(req, res, next) {
   return res.sendFile(filePath);
 }
 
+function sendAppFallback(req, res, next) {
+  if (req.path === '/health' || req.path === '/api' || req.path.startsWith('/api/')) {
+    return next();
+  }
+  if (path.extname(req.path)) {
+    return next();
+  }
+  if (!FALLBACK_FILE_PATH) {
+    return next();
+  }
+  return res.sendFile(FALLBACK_FILE_PATH);
+}
+
 STATIC_DIRS.forEach((dirName) => {
   app.use(`/${dirName}`, express.static(path.join(ROOT_DIR, dirName)));
 });
 
 app.get('/', staticRateLimit, sendRootStaticFile);
 app.get('/:file', staticRateLimit, sendRootStaticFile);
+app.get('*', staticRateLimit, sendAppFallback);
 
 const backendApp = require('./backend/src/app');
 app.use(backendApp);

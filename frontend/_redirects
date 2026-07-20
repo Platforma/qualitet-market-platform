@@ -11,4 +11,4 @@
 /generator/*       /generator-sklepu.html 200
 /generator-sklepu  /generator-sklepu.html 301
 /generator-sklepu/* /generator-sklepu.html 200
-/*                 /404.html            404
+/*                 /404.html            200
