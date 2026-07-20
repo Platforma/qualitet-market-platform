@@ -10,4 +10,4 @@ RUN npm ci --only=production
 COPY . .
 
 # Run migrations (safe wrapper skips if file is missing) then start server
-CMD ["sh", "-c", "node scripts/run-migrations-safe.js && node src/app.js"]
+CMD ["sh", "-c", "node scripts/run-migrations-safe.js && node src/server.js"]
