@@ -35,6 +35,13 @@
     { key: 'stats', label: 'Statystyki sprzedaży' },
     { key: 'account', label: 'Moje konto' }
   ]
+  const ORDER_STORAGE_KEY = 'qm_orders'
+  const PRODUCTS_STORAGE_KEY = 'products'
+  const SUPPLIERS_STORAGE_KEY = 'suppliers'
+  const USERS_STORAGE_KEY = 'users'
+  const ACTIVE_STORE_KEY = 'activeStore'
+  const STORE_SETTINGS_KEY = 'app_store_settings'
+  const STRIPE_SYNC_KEY = 'qm_stripe_sync_at'
 
   function readJson(key, fallbackValue) {
     try {
@@ -47,6 +54,11 @@
 
   function writeJson(key, value) {
     localStorage.setItem(key, JSON.stringify(value))
+  }
+
+  function getStoredArray(key) {
+    const value = readJson(key, [])
+    return Array.isArray(value) ? value : []
   }
 
   function ensureDefaults() {
@@ -179,6 +191,87 @@
     }) || null
   }
 
+  function resolveOrderDate(order) {
+    const raw = order.createdAt || order.created_at || order.orderDate || order.order_date || order.date || order.submittedAt
+    const date = raw ? new Date(raw) : new Date()
+    return Number.isNaN(date.getTime()) ? new Date() : date
+  }
+
+  function resolveOrderAmount(order) {
+    const raw = order.total || order.totalAmount || order.total_amount || order.amount || order.value || order.price || order.saleTotal
+    const value = Number(raw)
+    return Number.isFinite(value) ? value : 0
+  }
+
+  function formatCurrency(value) {
+    return new Intl.NumberFormat('pl-PL', {
+      style: 'currency',
+      currency: 'PLN',
+      maximumFractionDigits: 2
+    }).format(Number(value) || 0)
+  }
+
+  function getStatsSnapshot() {
+    const orders = getStoredArray(ORDER_STORAGE_KEY)
+    const products = getStoredArray(PRODUCTS_STORAGE_KEY)
+    const suppliers = getStoredArray(SUPPLIERS_STORAGE_KEY)
+    const users = getStoredArray(USERS_STORAGE_KEY)
+    const activeStore = readJson(ACTIVE_STORE_KEY, null)
+    const storeSettings = readJson(STORE_SETTINGS_KEY, {})
+    const productsFromStore = activeStore && Array.isArray(activeStore.products) ? activeStore.products : []
+    const combinedProducts = products.length ? products : productsFromStore
+    const activeProducts = combinedProducts.filter(function (product) {
+      return !product || !product.status ? true : String(product.status).toLowerCase() === 'active'
+    })
+    const customers = users.filter(function (user) {
+      return String(user && user.role || '').toLowerCase() === 'buyer'
+    })
+    const recentOrders = orders.slice().sort(function (a, b) {
+      return resolveOrderDate(b) - resolveOrderDate(a)
+    }).slice(0, 5)
+
+    const today = new Date()
+    const seriesMap = new Map()
+    for (let offset = 6; offset >= 0; offset -= 1) {
+      const pointDate = new Date(today)
+      pointDate.setHours(0, 0, 0, 0)
+      pointDate.setDate(today.getDate() - offset)
+      const key = pointDate.toISOString().slice(0, 10)
+      const label = pointDate.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' })
+      seriesMap.set(key, { label: label, total: 0 })
+    }
+
+    orders.forEach(function (order) {
+      const orderDate = resolveOrderDate(order)
+      orderDate.setHours(0, 0, 0, 0)
+      const key = orderDate.toISOString().slice(0, 10)
+      if (seriesMap.has(key)) {
+        seriesMap.get(key).total += resolveOrderAmount(order)
+      }
+    })
+
+    const stripeActive = Boolean(
+      localStorage.getItem(STRIPE_SYNC_KEY) ||
+      storeSettings.stripeConnected ||
+      storeSettings.stripe_connected ||
+      storeSettings.stripeStatus === 'active'
+    )
+
+    return {
+      orderCount: orders.length,
+      totalSales: orders.reduce(function (sum, order) {
+        return sum + resolveOrderAmount(order)
+      }, 0),
+      activeProductsCount: activeProducts.length,
+      supplierCount: suppliers.length,
+      customerCount: customers.length || users.length,
+      recentOrders: recentOrders,
+      salesSeries: Array.from(seriesMap.values()),
+      stripeActive: stripeActive,
+      supplierActive: suppliers.length > 0
+    }
+  }
+
   async function loadFragment(url, hostElement) {
     const response = await fetch(url, { cache: 'no-store' })
     if (!response.ok) {
@@ -218,6 +311,8 @@
     removeWorker: removeWorker,
     updateWorkerPermissions: updateWorkerPermissions,
     getWorker: getWorker,
+    formatCurrency: formatCurrency,
+    getStatsSnapshot: getStatsSnapshot,
     loadFragment: loadFragment
   }
 }())
