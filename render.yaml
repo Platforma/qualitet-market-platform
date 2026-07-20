@@ -82,7 +82,7 @@ services:
       - key: SMTP_PASS
         sync: false
       - key: SMTP_FROM
-        value: noreply@qualitet-market.com
+        sync: false
 
   # Frontend Service (Static HTML/JS PWA)
   - type: web

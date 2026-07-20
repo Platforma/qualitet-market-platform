@@ -9,7 +9,7 @@ Kompletny przewodnik do wdrożenia projektu **Qualitet Market** na platformie Re
 Najszybsza i rekomendowana ścieżka:
 
 1. Render → **New +** → **Blueprint**
-2. Podłącz repozytorium: `Platforma/qualitet-market`
+2. Podłącz repozytorium: `Platforma/qualitet-market` (lub własny fork)
 3. Render wykryje plik: `render.yaml`
 4. Zatwierdź utworzenie zasobów:
    - Web Service: `qualitet-market-api`
