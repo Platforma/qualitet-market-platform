@@ -471,7 +471,7 @@
           if (statusEl) statusEl.textContent = '';
 
           try {
-            const apiBase = window.QM_API_BASE || '/api';
+            const apiBase = window.QM_API_BASE || 'https://qualitet-market.com/api';
             const token = localStorage.getItem('token') || '';
             const res = await fetch(apiBase.replace(/\/api$/, '') + '/api/shops/quick-setup', {
               method: 'POST',

@@ -28,11 +28,10 @@
   // ─── Configuration ────────────────────────────────────────────────────────────
 
   // Set window.QM_API_BASE before loading this script to point at your backend.
-  // Example: <script>window.QM_API_BASE = 'https://api.qualitet-market.com/api';</script>
+  // Example: <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
   function getDefaultApiBase() {
-    if (typeof window === 'undefined' || !window.location) return '/api';
-    const host = window.location.hostname;
-    return ['localhost', '127.0.0.1'].includes(host) ? 'http://localhost:3000/api' : '/api';
+    if (typeof window === 'undefined' || !window.location) return 'https://qualitet-market.com/api';
+    return 'https://qualitet-market.com/api';
   }
 
   const API_BASE = (typeof window !== 'undefined' && window.QM_API_BASE)

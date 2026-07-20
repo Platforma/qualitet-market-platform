@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DB_HOST: localhost
+      DB_HOST: qualitet-market.com
       DB_PORT: 5432
       DB_NAME: hurtdetal_qualitet
       DB_USER: postgres

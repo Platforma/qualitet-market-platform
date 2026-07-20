@@ -1584,7 +1584,7 @@
                 <strong>Proton Mail Bridge</strong>
                 <span>Zainstaluj Proton Mail Bridge na serwerze i skonfiguruj następujące zmienne środowiskowe:</span>
                 <ul>
-                  <li><code>SMTP_HOST=127.0.0.1</code></li>
+                  <li><code>SMTP_HOST=smtp.example.com</code></li>
                   <li><code>SMTP_PORT=1025</code></li>
                   <li><code>SMTP_USER=twoj@protonmail.com</code></li>
                   <li><code>SMTP_PASS=bridge_password</code></li>
@@ -1646,6 +1646,7 @@
     </a>
   </nav>
 
+  <script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
   <script src="js/app.js" defer></script>
   <script>
   // ─── Announcements tab logic ─────────────────────────────────────────────────
@@ -1654,7 +1655,8 @@
       const token = localStorage.getItem('token') || '';
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body) opts.body = JSON.stringify(body);
-      return fetch('/api' + path, opts).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
+      const base = (window.QM_API_BASE || 'https://qualitet-market.com/api').replace(/\/api$/, '');
+      return fetch(base + '/api' + path, opts).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
     }
 
     // Load announcements
@@ -1768,7 +1770,8 @@
       const token = localStorage.getItem('token') || '';
       const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } };
       if (body !== undefined) opts.body = JSON.stringify(body);
-      return fetch('/api' + path, opts).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
+      const base = (window.QM_API_BASE || 'https://qualitet-market.com/api').replace(/\/api$/, '');
+      return fetch(base + '/api' + path, opts).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
     }
 
     const runLog = [];
@@ -1942,7 +1945,7 @@
         },
       };
       if (body) opts.body = JSON.stringify(body);
-      var base = (window.QM_API_BASE || '/api').replace(/\/api$/, '');
+      var base = (window.QM_API_BASE || 'https://qualitet-market.com/api').replace(/\/api$/, '');
       return fetch(base + '/api' + path, opts).then(function (r) { return r.json(); });
     }
 

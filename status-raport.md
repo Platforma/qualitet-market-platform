@@ -202,7 +202,7 @@ To nie musi być błąd, ale wymaga potwierdzenia, czy te zmienne są jeszcze po
    - albo katalog główny,
    - albo `frontend/`.
 2. Usuń lub ogranicz fallbacki demo/localStorage tam, gdzie mają już działać prawdziwe dane.
-3. Ustaw poprawny adres API dla środowiska lokalnego; obecnie wiele plików wskazuje bezpośrednio na `https://api.qualitet-market.com/api`.
+3. Ustaw poprawny adres API dla środowiska lokalnego; obecnie wiele plików wskazuje bezpośrednio na `https://qualitet-market.com/api`.
 4. Sprawdź ręcznie:
    - logowanie
    - listing produktów

@@ -62,7 +62,7 @@ router.post(
       // Auto-generate slug from name if not provided; ensure uniqueness
       const baseSlug = req.body.slug ? req.body.slug.toLowerCase() : nameToSlug(safeName);
       const slug = await uniqueSlug(baseSlug);
-      const subdomain = `${slug}.qualitetmarket.pl`;
+      const subdomain = `${slug}.qualitet-market.com`;
 
       const id = uuidv4();
       const result = await db.query(
@@ -209,7 +209,7 @@ router.post(
       // 1. Create store
       const baseSlug = nameToSlug(safeName);
       const slug = await uniqueSlug(baseSlug);
-      const subdomain = `${slug}.qualitetmarket.pl`;
+      const subdomain = `${slug}.qualitet-market.com`;
       const storeId = uuidv4();
 
       const storeResult = await db.query(

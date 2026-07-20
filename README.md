@@ -11,7 +11,7 @@ Pełna dokumentacja backendu: [`backend/README.md`](backend/README.md)
 ```bash
 cp backend/.env.example .env   # ustaw DB_PASSWORD i JWT_SECRET
 docker compose up --build
-# API dostępne pod http://localhost:3000
+# API dostępne pod https://qualitet-market.com
 ```
 
 ### Szybki start (lokalnie)
@@ -38,7 +38,7 @@ Plik `js/api.js` udostępnia klienta REST API jako `window.QMApi` (albo moduł E
 Umożliwia stopniowe zastąpienie odczytów z `localStorage` wywołaniami API:
 
 ```html
-<script>window.QM_API_BASE = 'https://api.qualitet-market.com/api';</script>
+<script>window.QM_API_BASE = 'https://qualitet-market.com/api';</script>
 <script src="js/api.js"></script>
 <script>
   // Logowanie

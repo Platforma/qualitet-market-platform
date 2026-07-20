@@ -39,7 +39,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change_this_in_production}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       PLATFORM_MARGIN_DEFAULT: ${PLATFORM_MARGIN_DEFAULT:-15}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://qualitet-market.com,http://localhost:3000}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://qualitet-market.com}
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
       UPLOAD_MAX_SIZE_MB: ${UPLOAD_MAX_SIZE_MB:-10}
@@ -48,7 +48,7 @@ services:
     volumes:
       - ./backend/uploads:/app/uploads
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://0.0.0.0:3000/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

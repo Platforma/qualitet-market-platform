@@ -3,36 +3,22 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || "3000", 10);
+const API_BASE = "https://qualitet-market.com/api";
 
-// MOCK PRODUKTY (na start)
-const products = [
-  {
-    id: 1,
-    name: "AirPods Pro",
-    price: 499,
-    image: "https://via.placeholder.com/300",
-  },
-  {
-    id: 2,
-    name: "iPhone 13",
-    price: 2999,
-    image: "https://via.placeholder.com/300",
-  },
-  {
-    id: 3,
-    name: "Nike Shoes",
-    price: 399,
-    image: "https://via.placeholder.com/300",
-  },
-];
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
 
-// endpoint
-app.get("/api/products", (req, res) => {
-  res.json(products);
+app.get("/api/products", (_req, res) => {
+  res.status(501).json({
+    error: "Ten serwer nie udostępnia danych demo. Użyj produkcyjnego API.",
+    api: API_BASE + "/products",
+  });
 });
 
 app.listen(PORT, () => {
-  console.log("API działa na http://localhost:" + PORT);
+  console.log("Frontend helper API server listening on port " + PORT);
 });
