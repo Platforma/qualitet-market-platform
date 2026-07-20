@@ -4,6 +4,30 @@ Kompletny przewodnik do wdrożenia projektu **Qualitet Market** na platformie Re
 
 ---
 
+## ⚡ Blueprint quick start (zalecane)
+
+Najszybsza i rekomendowana ścieżka:
+
+1. Render → **New +** → **Blueprint**
+2. Podłącz repozytorium: `Platforma/qualitet-market`
+3. Render wykryje plik: `render.yaml`
+4. Zatwierdź utworzenie zasobów:
+   - Web Service: `qualitet-market-api`
+   - Static Site: `qualitet-market-web`
+   - PostgreSQL: `qualitet-market-db`
+
+Konfiguracja z blueprinta:
+- Backend: Docker, `rootDir=backend`, `dockerfilePath=Dockerfile`, `port=10000`, `branch=main`
+- Frontend: Static Site, `rootDir=frontend`, `staticPublishPath=.`
+- Kluczowe zmienne backendu: `NODE_ENV`, `PORT`, `DATABASE_URL`, `JWT_SECRET`, `ALLOWED_ORIGINS`, `APP_URL`
+- Dodatkowe do uzupełnienia: Stripe (`STRIPE_*`) i opcjonalnie SMTP (`SMTP_*`)
+
+Po deployu sprawdź:
+- Backend health: `https://qualitet-market-api.onrender.com/health`
+- Frontend: `https://qualitet-market-web.onrender.com`
+
+---
+
 ## 📋 Przegląd architektury
 
 ```
