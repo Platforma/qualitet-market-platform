@@ -288,7 +288,19 @@
 
       document.getElementById('qm-refresh-stats').addEventListener('click', refreshStats)
       refreshStats()
-      window.setInterval(refreshStats, 10000)
+      const refreshIntervalId = window.setInterval(function () {
+        if (!document.hidden) {
+          refreshStats()
+        }
+      }, 10000)
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) {
+          refreshStats()
+        }
+      })
+      window.addEventListener('beforeunload', function () {
+        window.clearInterval(refreshIntervalId)
+      })
       window.addEventListener('storage', refreshStats)
     }())
   </script>

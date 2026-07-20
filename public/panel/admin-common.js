@@ -83,6 +83,11 @@
     }
   }
 
+  function isDefaultPassword() {
+    ensureDefaults()
+    return localStorage.getItem(STORAGE.passwordHash) === DEFAULT_CREDENTIALS.passwordHash
+  }
+
   async function hashPassword(passwordValue) {
     const normalized = String(passwordValue || '')
     if (window.crypto && window.crypto.subtle && window.TextEncoder) {
@@ -181,9 +186,11 @@
   function addWorker(name) {
     const workers = getWorkers()
     const worker = {
-    id: 'worker_' + Date.now() + '_' + Math.random().toString(16).slice(2, 8),
-      name: name,
-      permissions: ['tasks']
+    id: window.crypto && window.crypto.randomUUID
+      ? window.crypto.randomUUID()
+      : 'worker_' + Date.now() + '_' + Math.random().toString(16).slice(2, 10),
+    name: name,
+    permissions: ['tasks']
     }
     workers.push(worker)
     saveWorkers(workers)
@@ -313,7 +320,14 @@
       throw new Error('Nie udało się załadować modułu: ' + url)
     }
 
-    hostElement.innerHTML = await response.text()
+    const parser = new DOMParser()
+    const parsed = parser.parseFromString(await response.text(), 'text/html')
+    const fragment = document.createDocumentFragment()
+    Array.from(parsed.body.childNodes).forEach(function (node) {
+      fragment.appendChild(document.importNode(node, true))
+    })
+    hostElement.replaceChildren(fragment)
+
     hostElement.querySelectorAll('script').forEach(function (oldScript) {
       const newScript = document.createElement('script')
       Array.from(oldScript.attributes).forEach(function (attribute) {
@@ -334,6 +348,7 @@
     getCredentials: getCredentials,
     authenticate: authenticate,
     isLoggedIn: isLoggedIn,
+    isDefaultPassword: isDefaultPassword,
     login: login,
     logout: logout,
     requireLogin: requireLogin,

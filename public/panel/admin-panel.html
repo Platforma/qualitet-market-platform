@@ -133,6 +133,16 @@
       color: var(--muted);
       min-width: 260px;
     }
+    .security-warning {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      background: rgba(127, 29, 29, 0.18);
+      color: #fecaca;
+    }
+    .security-warning a {
+      text-decoration: underline;
+    }
     select {
       border-radius: 14px;
       border: 1px solid var(--border);
@@ -196,6 +206,10 @@
           </select>
         </label>
         <p id="qm-preview-note">Wybierz pracownika, aby sprawdzić które sekcje panelu będą dla niego dostępne według zapisanych uprawnień.</p>
+      </div>
+
+      <div class="security-warning" id="qm-admin-security-warning" hidden>
+        Używasz domyślnego hasła szefa. Dla bezpieczeństwa zmień je od razu w <a href="/public/panel/admin-settings.html">ustawieniach szefa</a>.
       </div>
     </section>
 
@@ -268,6 +282,7 @@
       const workersCount = document.getElementById('qm-admin-workers-count')
       const accentLabel = document.getElementById('qm-admin-accent-label')
       const logoutButton = document.getElementById('qm-admin-logout-button')
+      const securityWarning = document.getElementById('qm-admin-security-warning')
       const sectionCards = Array.from(document.querySelectorAll('.section-card'))
 
       function syncTaskStatus() {
@@ -319,6 +334,7 @@
 
       loginLabel.textContent = admin.getCredentials().login
       admin.applyPreferences()
+      securityWarning.hidden = !admin.isDefaultPassword()
       renderPreviewOptions()
       applySectionVisibility()
       loadTasks()

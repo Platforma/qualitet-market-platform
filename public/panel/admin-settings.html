@@ -91,6 +91,13 @@
       min-height: 20px;
       color: #a7f3d0;
     }
+    .warning {
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.18);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      padding: 14px 16px;
+      border-radius: 16px;
+    }
     p {
       color: var(--muted);
       line-height: 1.5;
@@ -108,6 +115,7 @@
     <section class="card">
       <h1>Ustawienia szefa</h1>
       <p>Zmieniaj lokalny login i hasło, zapisuj preferencje panelu oraz zarządzaj sesją właściciela.</p>
+      <p class="warning" id="qm-admin-default-password-warning" hidden>Aktywne jest domyślne hasło. Ustaw nowe hasło, aby zabezpieczyć panel.</p>
 
       <form id="qm-admin-credentials-form">
         <label>
@@ -169,8 +177,10 @@
       const preferencesForm = document.getElementById('qm-admin-preferences-form')
       const credentialsMessage = document.getElementById('qm-admin-credentials-message')
       const preferencesMessage = document.getElementById('qm-admin-preferences-message')
+      const defaultPasswordWarning = document.getElementById('qm-admin-default-password-warning')
 
       document.getElementById('qm-admin-login-input').value = credentials.login
+      defaultPasswordWarning.hidden = !admin.isDefaultPassword()
       document.getElementById('qm-admin-accent-select').value = preferences.accent
       document.getElementById('qm-admin-compact-mode').checked = Boolean(preferences.compactMode)
       document.getElementById('qm-admin-show-sales-stats').checked = Boolean(preferences.showSalesStats)
@@ -191,6 +201,7 @@
           ? 'Login i hasło szefa zostały zapisane lokalnie.'
           : 'Login szefa został zapisany lokalnie.'
         document.getElementById('qm-admin-password-input').value = ''
+        defaultPasswordWarning.hidden = !admin.isDefaultPassword()
       })
 
       preferencesForm.addEventListener('submit', function (event) {
