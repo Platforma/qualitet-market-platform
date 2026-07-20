@@ -171,6 +171,7 @@ SMTP_FROM=noreply@qualitet-market.com
 1. **Create Web Service** – Render automatycznie builds & deploys
 2. Czekaj aż status będzie **Live** (zielony)
 3. Skopiuj URL: `https://qualitet-market-api.onrender.com`
+4. Kolejne push'e do gałęzi `main` będą wdrażane automatycznie (`autoDeploy: true` w `render.yaml`)
 
 ### 5.2 Testuj API
 
@@ -206,6 +207,7 @@ curl -X POST https://qualitet-market-api.onrender.com/api/auth/login \
    - **Branch**: `main`
 4. Po deployu frontend będzie dostępny np. pod `https://qualitet-market-web.onrender.com`
 5. Backend w tym repo automatycznie kieruje frontend Render na `https://qualitet-market-api.onrender.com/api`, a dla domeny produkcyjnej zostawia `https://qualitet-market.com/api`.
+6. Kolejne push'e do gałęzi `main` będą publikowane automatycznie przez Render.
 
 ---
 
@@ -251,9 +253,9 @@ fetch('https://qualitet-market-api.onrender.com/api/categories')
 - **Events** – historia deploymentów
 - **Health** – status serwisu
 
-### Automatyczne restartowanie
+### Automatyczne restartowanie i deploy
 
-Render restartuje serwis, jeśli upadnie. Jeśli chcesz manual restart:
+Render restartuje serwis, jeśli upadnie, oraz automatycznie wdraża nowe commity z `main`. Jeśli chcesz wymusić dodatkowy restart albo redeploy:
 
 **Web Service** → **Manual Deploy** → **Latest**
 

@@ -12,6 +12,7 @@ services:
     repo: https://github.com/Platforma/qualitet-market
     region: frankfurt
     branch: main
+    autoDeploy: true
     dockerfilePath: Dockerfile
     port: 10000
     plan: free
@@ -76,6 +77,7 @@ services:
     repo: https://github.com/Platforma/qualitet-market
     region: frankfurt
     branch: main
+    autoDeploy: true
     rootDir: frontend
     staticPublishPath: .
     plan: free
