@@ -2992,3 +2992,106 @@ textarea:focus-visible{
 
 /* ── Superadmin topbar link ── */
 .btn-superadmin{background:rgba(255,79,216,.2);border-color:rgba(255,79,216,.5);color:#ffd6f3}
+/* ====== GLOBAL ====== */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* ====== TOP BAR ====== */
+.topbar {
+    background: linear-gradient(90deg, #4a90e2, #357ABD);
+    padding: 15px 25px;
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* ====== CONTAINER ====== */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ====== SECTION HEADERS ====== */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #357ABD;
+    border-left: 5px solid #4a90e2;
+    padding-left: 10px;
+}
+
+/* ====== BUTTONS ====== */
+.btn {
+    display: inline-block;
+    background: #4a90e2;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background: #357ABD;
+}
+
+/* ====== INPUTS ====== */
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+/* ====== CARDS ====== */
+.card {
+    background: #f9fbfd;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e3e6ea;
+    margin-bottom: 20px;
+}
+
+/* ====== TABLE ====== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table th {
+    background: #4a90e2;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ====== WARNING / NO ACCESS ====== */
+.no-access {
+    background: #ffeded;
+    border-left: 5px solid #ff4d4d;
+    padding: 15px;
+    border-radius: 8px;
+    color: #b30000;
+    font-size: 16px;
+    margin-top: 20px;
+}
