@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dashboard administratora | QualitetMarket</title>
-  <script src="/public/panel/admin-common.js"></script>
+  <script src="/js/admin-common.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -94,7 +94,7 @@
     }
   </style>
   <script>
-    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/public/panel/login-admin.html')) {
+    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/panel/login-admin.html')) {
       document.documentElement.classList.add('is-redirecting');
     }
   </script>
@@ -133,7 +133,7 @@
 
       <section class="dashboard-card">
         <h2>Informacje</h2>
-        <p class="dashboard-placeholder">Ten dashboard ładuje komponent zadań z <code>/public/panel/qm-tasks-panel.html</code> przez <code>fetch()</code>.</p>
+        <p class="dashboard-placeholder">Ten dashboard ładuje komponent zadań z <code>/panel/qm-tasks-panel.html</code> przez <code>fetch()</code>.</p>
       </section>
     </section>
   </main>
@@ -141,7 +141,7 @@
   <script>
     (function () {
       const admin = window.QMAdminPanel;
-      const TASKS_URL = '/public/panel/qm-tasks-panel.html';
+      const TASKS_URL = '/panel/qm-tasks-panel.html';
       const host = document.getElementById('qm-tasks-panel-host');
       const openButton = document.getElementById('qm-open-admin-panel-btn');
       const statusLabel = document.getElementById('qm-tasks-status-label');
@@ -160,7 +160,7 @@
       }
 
       openButton.addEventListener('click', function () {
-        window.location.replace('/public/panel/admin-panel.html');
+        window.location.replace('/panel/admin-panel.html');
       });
 
       window.addEventListener('storage', syncStatusLabel);

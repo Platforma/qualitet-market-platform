@@ -633,7 +633,7 @@ router.get('/my-billing', authenticate, async (req, res) => {
       try {
         const portalSession = await stripe.billingPortal.sessions.create({
           customer: user.stripe_customer_id,
-          return_url: `${base}/owner-panel.html`,
+          return_url: `${base}/panel/owner-panel.html`,
         });
         customerPortalUrl = portalSession.url;
       } catch (_portalErr) {
@@ -720,4 +720,3 @@ module.exports = { router, PLAN_CONFIG, PLAN_DISPLAY_NAMES, VALID_PLANS };
 if (process.env.NODE_ENV === 'test') {
   module.exports._resetStripeForTest = () => { _stripe = null; };
 }
-

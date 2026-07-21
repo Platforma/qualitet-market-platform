@@ -4,19 +4,10 @@ const path = require("path");
 const rateLimit = require("express-rate-limit");
 const app = express();
 const ROOT_DIR = path.join(__dirname, "..");
-const STATIC_DIRS = ["assets", "css", "js", "public"];
+const PUBLIC_DIR = path.join(ROOT_DIR, "public");
 const ROOT_STATIC_FILES = new Set([
-  ".nojekyll",
-  "CNAME",
-  "_redirects",
-  "landing.css",
   "manifest.json",
-  "panel.css",
-  "service-worker.js",
-  "shop.css",
-  "shop.js",
-  "stores.js",
-  "styles.css"
+  "service-worker.js"
 ]);
 const SAFE_ROOT_FILE_PATTERN = /^[A-Za-z0-9._-]+$/;
 const staticRateLimit = rateLimit({
@@ -26,11 +17,11 @@ const staticRateLimit = rateLimit({
   legacyHeaders: false
 });
 const ROOT_STATIC_PATHS = new Map(
-  fs.readdirSync(ROOT_DIR, { withFileTypes: true })
+  fs.readdirSync(PUBLIC_DIR, { withFileTypes: true })
     .filter((entry) => entry.isFile())
     .map((entry) => entry.name)
     .filter((fileName) => ROOT_STATIC_FILES.has(fileName) || path.extname(fileName) === ".html")
-    .map((fileName) => [fileName, path.join(ROOT_DIR, fileName)])
+    .map((fileName) => [fileName, path.join(PUBLIC_DIR, fileName)])
 );
 const STATIC_ROUTE_ALIASES = new Map([
   ["generator", "generator-sklepu"]
@@ -57,8 +48,11 @@ function sendRootStaticFile(req, res, next) {
   return res.sendFile(filePath);
 }
 
-STATIC_DIRS.forEach((dirName) => {
-  app.use(`/${dirName}`, express.static(path.join(ROOT_DIR, dirName)));
+app.use(staticRateLimit, express.static(PUBLIC_DIR));
+app.use("/public", staticRateLimit, express.static(PUBLIC_DIR));
+
+app.get(["/owner-panel", "/owner-panel.html"], (_req, res) => {
+  res.redirect(301, "/panel/owner-panel.html");
 });
 
 // Strona główna i pliki statyczne z głównego katalogu projektu
