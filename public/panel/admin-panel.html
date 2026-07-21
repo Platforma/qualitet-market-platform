@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Panel szefa | QualitetMarket</title>
-  <script src="/public/panel/admin-common.js"></script>
+  <script src="/js/admin-common.js"></script>
   <script>
-    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/public/panel/login-admin.html')) {
+    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/panel/login-admin.html')) {
       document.documentElement.classList.add('is-redirecting');
     }
   </script>
@@ -170,11 +170,11 @@
           <p>Kompletny panel administracyjny do domknięcia wdrożenia, zarządzania pracownikami i kontroli sekcji platformy.</p>
         </div>
         <div class="nav-links">
-          <a href="/public/panel/dashboard.html">Dashboard</a>
-          <a href="/public/panel/admin-stats.html">Statystyki sprzedaży</a>
-          <a href="/public/panel/admin-settings.html">Ustawienia szefa</a>
-          <a href="/public/panel/admin-users.html">Pracownicy</a>
-          <a href="/public/panel/admin-permissions.html">Uprawnienia</a>
+          <a href="/panel/dashboard.html">Dashboard</a>
+          <a href="/panel/admin-stats.html">Statystyki sprzedaży</a>
+          <a href="/panel/admin-settings.html">Ustawienia szefa</a>
+          <a href="/panel/admin-users.html">Pracownicy</a>
+          <a href="/panel/admin-permissions.html">Uprawnienia</a>
           <button type="button" id="qm-admin-logout-button">Wyloguj</button>
         </div>
       </div>
@@ -209,7 +209,7 @@
       </div>
 
       <div class="security-warning" id="qm-admin-security-warning" hidden>
-        Używasz domyślnego hasła szefa. Dla bezpieczeństwa zmień je od razu w <a href="/public/panel/admin-settings.html">ustawieniach szefa</a>.
+        Używasz domyślnego hasła szefa. Dla bezpieczeństwa zmień je od razu w <a href="/panel/admin-settings.html">ustawieniach szefa</a>.
       </div>
     </section>
 
@@ -219,7 +219,7 @@
           <h2>Moje zadania</h2>
           <p>Moduł ładuje się bezpośrednio z <code>qm-tasks-panel.html</code>.</p>
         </div>
-        <a class="accent" href="/public/panel/admin-permissions.html">Zarządzaj uprawnieniami</a>
+        <a class="accent" href="/panel/admin-permissions.html">Zarządzaj uprawnieniami</a>
       </div>
       <div id="qm-admin-tasks-host" style="margin-top:18px"></div>
     </section>
@@ -229,7 +229,7 @@
         <h2>Ustawienia szefa</h2>
         <p>Zmień login, hasło, preferencje panelu i zarządzaj sesją szefa.</p>
         <div class="section-actions" style="margin-top:16px">
-          <a class="accent" href="/public/panel/admin-settings.html">Otwórz ustawienia</a>
+          <a class="accent" href="/panel/admin-settings.html">Otwórz ustawienia</a>
         </div>
       </article>
 
@@ -256,7 +256,7 @@
         <p>Analizuj postęp wdrożenia, przychód, skuteczność kampanii i aktywność zespołu.</p>
         <div class="section-note">Widoczność tej sekcji zależy też od preferencji panelu szefa.</div>
         <div class="section-actions" style="margin-top:16px">
-          <a class="accent" href="/public/panel/admin-stats.html">Otwórz statystyki</a>
+          <a class="accent" href="/panel/admin-stats.html">Otwórz statystyki</a>
         </div>
       </article>
 
@@ -264,8 +264,8 @@
         <h2>Moje konto</h2>
         <p>Zarządzaj danymi właściciela, statusem sesji oraz skrótami do paneli administracyjnych.</p>
         <div class="section-actions" style="margin-top:16px">
-          <a href="/public/panel/admin-users.html">Przejdź do pracowników</a>
-          <a href="/public/panel/admin-permissions.html">Przejdź do uprawnień</a>
+          <a href="/panel/admin-users.html">Przejdź do pracowników</a>
+          <a href="/panel/admin-permissions.html">Przejdź do uprawnień</a>
         </div>
       </article>
     </section>
@@ -325,7 +325,7 @@
 
       async function loadTasks() {
         try {
-          await admin.loadFragment('/public/panel/qm-tasks-panel.html', taskHost)
+          await admin.loadFragment('/panel/qm-tasks-panel.html', taskHost)
         } catch (error) {
           taskHost.innerHTML = '<p>Nie udało się załadować modułu zadań.</p>'
         }
@@ -342,7 +342,7 @@
 
       previewSelect.addEventListener('change', applySectionVisibility)
       logoutButton.addEventListener('click', function () {
-        admin.logout('/public/panel/login-admin.html')
+        admin.logout('/panel/login-admin.html')
       })
       window.addEventListener('qm:tasks-updated', syncTaskStatus)
       window.addEventListener('storage', function () {

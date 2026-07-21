@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pracownicy | QualitetMarket</title>
-  <script src="/public/panel/admin-common.js"></script>
+  <script src="/js/admin-common.js"></script>
   <script>
-    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/public/panel/login-admin.html')) {
+    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/panel/login-admin.html')) {
       document.documentElement.classList.add('is-redirecting');
     }
   </script>
@@ -113,9 +113,9 @@
 <body>
   <main class="shell">
     <section class="card nav">
-      <a class="secondary" href="/public/panel/admin-panel.html">← Panel szefa</a>
-      <a class="secondary" href="/public/panel/admin-settings.html">Ustawienia</a>
-      <a class="secondary" href="/public/panel/admin-permissions.html">Uprawnienia</a>
+      <a class="secondary" href="/panel/admin-panel.html">← Panel szefa</a>
+      <a class="secondary" href="/panel/admin-settings.html">Ustawienia</a>
+      <a class="secondary" href="/panel/admin-permissions.html">Uprawnienia</a>
     </section>
 
     <section class="card">
@@ -169,7 +169,7 @@
               '<div><strong>' + worker.name + '</strong><p>ID: ' + worker.id + '</p></div>' +
               '<div><p>Uprawnienia:</p><ul>' + (permissionLabels || '<li>Brak uprawnień</li>') + '</ul></div>' +
               '<div class="actions">' +
-                '<a class="secondary" href="/public/panel/admin-permissions.html?workerId=' + encodeURIComponent(worker.id) + '">Zarządzaj uprawnieniami</a>' +
+                '<a class="secondary" href="/panel/admin-permissions.html?workerId=' + encodeURIComponent(worker.id) + '">Zarządzaj uprawnieniami</a>' +
                 '<button class="secondary" type="button" data-remove-worker="' + worker.id + '">Usuń pracownika</button>' +
               '</div>' +
             '</article>'

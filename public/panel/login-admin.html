@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Logowanie administratora | QualitetMarket</title>
-  <script src="/public/panel/admin-common.js"></script>
+  <script src="/js/admin-common.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -92,7 +92,7 @@
   </style>
   <script>
     if (window.QMAdminPanel && window.QMAdminPanel.isLoggedIn()) {
-      window.location.replace('/public/panel/admin-panel.html');
+      window.location.replace('/panel/admin-panel.html');
     }
   </script>
 </head>
@@ -135,7 +135,7 @@
           admin.login();
           message.textContent = 'Logowanie zakończone powodzeniem.';
           message.classList.add('is-success');
-          window.location.replace('/public/panel/admin-panel.html');
+          window.location.replace('/panel/admin-panel.html');
           return;
         }
 
