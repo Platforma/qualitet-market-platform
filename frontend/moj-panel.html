@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mój Panel</title>
+
+  <style>
+    body {
+      background: #0d0f13;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .panel {
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 24px;
+      border-radius: 14px;
+      background: #1a1f27;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+    }
+
+    .btn-secret {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #4de1c1, #2bb8ff);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PANEL WIDOCZNY TYLKO DLA CIEBIE -->
+  <div id="private-panel" class="panel hidden">
+    <h2>Twój prywatny panel</h2>
+    <p>Tylko Ty możesz to zobaczyć.</p>
+
+    <button id="secret-btn" class="btn-secret">
+      🔒 Tajny przycisk
+    </button>
+  </div>
+
+  <script>
+    /*
+      🔑 USTAW SWOJE ID
+      W prawdziwym projekcie pobierzesz je z backendu:
+      np. z JWT, API, localStorage, session, itp.
+    */
+
+    const LOGGED_USER_ID = "TWOJE_ID";   // <- wpisz tu swoje ID
+    const OWNER_ID = "TWOJE_ID";         // <- to samo ID
+
+    const panel = document.getElementById("private-panel");
+    const secretBtn = document.getElementById("secret-btn");
+
+    // Pokazuj panel tylko jeśli zalogowany użytkownik to TY
+    if (LOGGED_USER_ID === OWNER_ID) {
+      panel.classList.remove("hidden");
+    }
+
+    // Akcja po kliknięciu
+    secretBtn.addEventListener("click", () => {
+      alert("To jest Twój prywatny przycisk 🔐");
+    });
+  </script>
+
+</body>
+</html>
