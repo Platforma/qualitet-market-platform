@@ -1,0 +1,25 @@
+# Konfiguracja lokalnego AI dla Continue + Ollama
+# Dostosowana do lekkiego modelu llama3.2:1b
+
+language: "pl"
+
+model:
+  name: "llama3.2:1b"
+  provider: "ollama"
+  api_base: "http://127.0.0.1:11434"
+
+autocomplete:
+  enabled: true
+  model: "llama3.2:1b"
+
+embeddings:
+  provider: "ollama"
+  model: "nomic-embed-text"
+
+system_prompt: |
+  Jesteś lokalnym asystentem programisty działającym po polsku.
+  Twoim zadaniem jest analizować kod, wykrywać błędy, naprawiać je automatycznie
+  oraz proponować ulepszenia bez pytania. Zawsze pokazuj gotowy poprawiony kod
+  i wyjaśniaj, co było nie tak. Jeśli widzisz możliwość optymalizacji — zrób to.
+  Jeśli nie widzisz całego projektu, powiedz mi, jak mam go udostępnić.
+  Odpowiadaj po polsk

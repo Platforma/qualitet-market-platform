@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel szefa | QualitetMarket</title>
+  <script src="/js/admin-common.js"></script>
+  <script>
+    if (!window.QMAdminPanel || !window.QMAdminPanel.requireLogin('/panel/login-admin.html')) {
+      document.documentElement.classList.add('is-redirecting');
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020617;
+      --panel: rgba(15, 23, 42, 0.9);
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --qm-accent: #7c3aed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, color-mix(in srgb, var(--qm-accent) 24%, transparent), transparent 28%),
+        linear-gradient(180deg, var(--bg), #111827);
+    }
+    body.is-compact .section-card,
+    body.is-compact .hero-card,
+    body.is-compact .tasks-card {
+      padding: 18px;
+    }
+    a { color: inherit; }
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+    .hero-card,
+    .section-card,
+    .tasks-card {
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(2, 6, 23, 0.35);
+    }
+    .hero-card {
+      padding: 24px;
+      display: grid;
+      gap: 20px;
+    }
+    .hero-top,
+    .toolbar,
+    .section-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .nav-links a,
+    .nav-links button,
+    .section-actions a,
+    .section-actions button {
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.72);
+      border-radius: 14px;
+      padding: 11px 14px;
+      color: var(--text);
+      text-decoration: none;
+      font: inherit;
+      cursor: pointer;
+    }
+    .nav-links .accent,
+    .section-actions .accent {
+      background: linear-gradient(135deg, var(--qm-accent), #2563eb);
+      border-color: transparent;
+    }
+    .section-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      margin-top: 24px;
+    }
+    .section-card,
+    .tasks-card {
+      padding: 22px;
+    }
+    .section-card h2,
+    .tasks-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+    }
+    .section-card p,
+    .tasks-card p,
+    .hero-card p {
+      margin: 0;
+      line-height: 1.5;
+      color: var(--muted);<section id="file-editor" style="display:none; padding:20px;">
+    <h2>Edytor plików</h2>
+
+    <div id="file-list"></div>
+
+    <hr>
+
+    <h3>Edytowany plik:</h3>
+    <p id="current-file"></p>
+
+    <textarea id="file-content" style="width:100%; height:400px; font-family:monospace;"></textarea>
+
+    <br><br>
+
+    <button onclick="saveCurrentFile()">💾 Zapisz plik</button>
+    <button onclick="deleteCurrentFile()">🗑 Usuń plik</button>
+</section>
+
+    }
+    .tasks-card {
+      margin-top: 24px;
+    }
+    .meta-row {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .meta-box {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.7);
+    }
+    .meta-box strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.15rem;
+      color: #fff;
+    }
+    .toolbar label {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      min-width: 260px;
+    }
+    .security-warning {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      background: rgba(127, 29, 29, 0.18);
+      color: #fecaca;
+    }
+    .security-warning a {
+      text-decoration: underline;
+    }
+    select {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.72);
+      color: var(--text);
+      padding: 12px 14px;
+      font: inherit;
+    }
+    .section-card[hidden] {
+      display: none !important;
+    }
+    .section-note {
+      margin-top: 14px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero-card">
+      <div class="hero-top">
+        <div>
+          <h1>Panel szefa</h1>
+          <p>Kompletny panel administracyjny do domknięcia wdrożenia, zarządzania pracownikami i kontroli sekcji platformy.</p>
+        </div>
+        <div class="nav-links">
+          <a href="/panel/dashboard.html">Dashboard</a>
+          <a href="/panel/admin-stats.html">Statystyki sprzedaży</a>
+          <a href="/panel/admin-settings.html">Ustawienia szefa</a>
+          <a href="/panel/admin-users.html">Pracownicy</a>
+          <a href="/panel/admin-permissions.html">Uprawnienia</a>
+          <button type="button" id="qm-admin-logout-button">Wyloguj</button>
+        </div>
+      </div>
+
+      <div class="meta-row">
+        <article class="meta-box">
+          Aktywny login
+          <strong id="qm-admin-login-label">szef</strong>
+        </article>
+        <article class="meta-box">
+          Zadania QM
+          <strong id="qm-admin-task-status">W toku</strong>
+        </article>
+        <article class="meta-box">
+          Pracownicy
+          <strong id="qm-admin-workers-count">0</strong>
+        </article>
+        <article class="meta-box">
+          Akcent panelu
+          <strong id="qm-admin-accent-label">violet</strong>
+        </article>
+      </div>
+
+      <div class="toolbar">
+        <label>
+          Podgląd dostępu pracownika
+          <select id="qm-worker-preview">
+            <option value="">Widok szefa — pełny dostęp</option>
+          </select>
+        </label>
+        <p id="qm-preview-note">Wybierz pracownika, aby sprawdzić które sekcje panelu będą dla niego dostępne według zapisanych uprawnień.</p>
+      </div>
+
+      <div class="security-warning" id="qm-admin-security-warning" hidden>
+        Używasz domyślnego hasła szefa. Dla bezpieczeństwa zmień je od razu w <a href="/panel/admin-settings.html">ustawieniach szefa</a>.
+      </div>
+    </section>
+
+    <section class="tasks-card">
+      <div class="section-actions">
+        <div>
+          <h2>Moje zadania</h2>
+          <p>Moduł ładuje się bezpośrednio z <code>qm-tasks-panel.html</code>.</p>
+        </div>
+        <a class="accent" href="/panel/admin-permissions.html">Zarządzaj uprawnieniami</a>
+      </div>
+      <div id="qm-admin-tasks-host" style="margin-top:18px"></div>
+    </section>
+
+    <section class="section-grid">
+      <article class="section-card" data-section-key="settings">
+        <h2>Ustawienia szefa</h2>
+<li onclick="openFileEditor()">Edytor plików</li>
+        <p>Zmień login, hasło, preferencje panelu i zarządzaj sesją szefa.</p>
+        <div class="section-actions" style="margin-top:16px">
+          <a class="accent" href="/panel/admin-settings.html">Otwórz ustawienia</a>
+        </div>
+      </article>
+
+      <article class="section-card" data-section-key="store" data-permission-key="store">
+        <h2>Zarządzanie sklepem</h2>
+        <p>Kontroluj aktywację sklepu, marże, gotowość publikacji i katalog produktów.</p>
+        <div class="section-note">Uprawnienie pracownika: <strong>Zarządzanie sklepem</strong></div>
+      </article>
+
+      <article class="section-card" data-section-key="suppliers" data-permission-key="suppliers">
+        <h2>Zarządzanie hurtowniami</h2>
+        <p>Nadzoruj integracje dropshippingowe, pobieranie ofert i jakość połączeń.</p>
+        <div class="section-note">Uprawnienie pracownika: <strong>Zarządzanie hurtowniami</strong></div>
+      </article>
+
+      <article class="section-card" data-section-key="payments" data-permission-key="payments">
+        <h2>Zarządzanie płatnościami (Stripe)</h2>
+        <p>Monitoruj stan podłączenia Stripe, testowe płatności i gotowość bramki.</p>
+        <div class="section-note">Uprawnienie pracownika: <strong>Zarządzanie płatnościami</strong></div>
+      </article>
+
+      <article class="section-card" data-section-key="stats" data-permission-key="stats">
+        <h2>Statystyki sprzedaży</h2>
+        <p>Analizuj postęp wdrożenia, przychód, skuteczność kampanii i aktywność zespołu.</p>
+        <div class="section-note">Widoczność tej sekcji zależy też od preferencji panelu szefa.</div>
+        <div class="section-actions" style="margin-top:16px">
+          <a class="accent" href="/panel/admin-stats.html">Otwórz statystyki</a>
+        </div>
+      </article>
+
+      <article class="section-card" data-section-key="account" data-permission-key="account">
+        <h2>Moje konto</h2>
+        <p>Zarządzaj danymi właściciela, statusem sesji oraz skrótami do paneli administracyjnych.</p>
+        <div class="section-actions" style="margin-top:16px">
+          <a href="/panel/admin-users.html">Przejdź do pracowników</a>
+          <a href="/panel/admin-permissions.html">Przejdź do uprawnień</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const admin = window.QMAdminPanel
+      const taskHost = document.getElementById('qm-admin-tasks-host')
+      const previewSelect = document.getElementById('qm-worker-preview')
+      const previewNote = document.getElementById('qm-preview-note')
+      const loginLabel = document.getElementById('qm-admin-login-label')
+      const taskStatus = document.getElementById('qm-admin-task-status')
+      const workersCount = document.getElementById('qm-admin-workers-count')
+      const accentLabel = document.getElementById('qm-admin-accent-label')
+      const logoutButton = document.getElementById('qm-admin-logout-button')
+      const securityWarning = document.getElementById('qm-admin-security-warning')
+      const sectionCards = Array.from(document.querySelectorAll('.section-card'))
+
+      function syncTaskStatus() {
+        taskStatus.textContent = localStorage.getItem('qm_tasks_done') === 'true' ? 'Ukończone' : 'W toku'
+      }
+
+      function renderPreviewOptions() {
+        const workers = admin.getWorkers()
+        previewSelect.innerHTML = '<option value="">Widok szefa — pełny dostęp</option>' + workers.map(function (worker) {
+          return '<option value="' + worker.id + '">' + worker.name + '</option>'
+        }).join('')
+        workersCount.textContent = String(workers.length)
+      }
+
+      function applySectionVisibility() {
+        const preferences = admin.applyPreferences()
+        const workerId = previewSelect.value
+        const worker = workerId ? admin.getWorker(workerId) : null
+
+        sectionCards.forEach(function (card) {
+          const permissionKey = card.dataset.permissionKey
+          if (!permissionKey) {
+            card.hidden = Boolean(worker)
+            return
+          }
+
+          const hiddenByPreference = permissionKey === 'stats' && !preferences.showSalesStats
+          const hiddenByPermission = worker ? !worker.permissions.includes(permissionKey) : false
+          card.hidden = hiddenByPreference || hiddenByPermission
+        })
+
+        if (worker) {
+          previewNote.textContent = 'Podgląd pracownika: ' + worker.name + '. Widzisz tylko sekcje zgodne z zapisanymi uprawnieniami.'
+        } else {
+          previewNote.textContent = 'Widok szefa — pełny dostęp do wszystkich sekcji panelu.'
+        }
+
+        accentLabel.textContent = preferences.accent
+      }
+
+      async function loadTasks() {
+        try {
+          await admin.loadFragment('/panel/qm-tasks-panel.html', taskHost)
+        } catch (error) {
+          taskHost.innerHTML = '<p>Nie udało się załadować modułu zadań.</p>'
+        }
+        syncTaskStatus()
+      }
+
+      loginLabel.textContent = admin.getCredentials().login
+      admin.applyPreferences()
+      securityWarning.hidden = !admin.isDefaultPassword()
+      renderPreviewOptions()
+      applySectionVisibility()
+      loadTasks()
+      syncTaskStatus()
+
+      previewSelect.addEventListener('change', applySectionVisibility)
+      logoutButton.addEventListener('click', function () {
+        admin.logout('/panel/login-admin.html')
+      })
+      window.addEventListener('qm:tasks-updated', syncTaskStatus)
+      window.addEventListener('storage', function () {
+        renderPreviewOptions()
+        applySectionVisibility()
+        syncTaskStatus()
+      })
+    }())
+  </script>
+</body>
+</html>
