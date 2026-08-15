@@ -1,24 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
-const pool = require("./db");
 
+const express = require('express');
 const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 10000;
 
-app.get("/", (req, res) => {
-  res.send("Backend działa!");
+app.use('/api/products', require('./routes/products'));
+
+app.get('/', (req, res) => {
+  res.send('Backend dziaa na porcie ' + PORT);
 });
 
-app.get("/test-db", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT NOW()");
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+app.listen(PORT, () => {
+  console.log('Backend dziaa na porcie ' + PORT);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Backend działa na porcie ${PORT}`));
