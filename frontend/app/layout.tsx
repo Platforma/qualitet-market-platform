@@ -1,9 +1,14 @@
 import type { ReactNode } from "react";
+import Navbar from "../components/Navbar";
+import "../styles/globals.css";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pl">
-      <body>{children}</body>
+      <body className="min-h-screen bg-gray-100">
+        <Navbar />
+        <main className="p-6">{children}</main>
+      </body>
     </html>
   );
 }
