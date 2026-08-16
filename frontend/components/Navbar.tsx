@@ -10,21 +10,10 @@ export default function Navbar() {
       </Link>
 
       <div className="flex gap-6">
-        <Link href="/parts" className="hover:text-gray-300">
-          Części
-        </Link>
-
-        <Link href="/sellers" className="hover:text-gray-300">
-          Sprzedawcy
-        </Link>
-
-        <Link href="/breakdowns" className="hover:text-gray-300">
-          Awarie
-        </Link>
-
-        <Link href="/admin" className="hover:text-gray-300">
-          Panel Admina
-        </Link>
+        <Link href="/parts" className="hover:text-gray-300">Części</Link>
+        <Link href="/sellers" className="hover:text-gray-300">Sprzedawcy</Link>
+        <Link href="/breakdowns" className="hover:text-gray-300">Awarie</Link>
+        <Link href="/admin" className="hover:text-gray-300">Panel Admina</Link>
       </div>
     </nav>
   );
